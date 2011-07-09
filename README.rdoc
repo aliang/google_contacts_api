@@ -1,6 +1,20 @@
 = google_contacts_api
 
-Description goes here.
+An unofficial Google Contacts API for ruby. Might not be stable (but probably is). In active usage at thirsst.com.
+
+== Usage
+
+You need to give me an OAuth access token from one of the major OAuth libraries.
+Then you can instantiate a GoogleContactsApi::Api object or a GoogleContactsApi::User object.
+
+== TODO
+
+I welcome patches and pull requests, see the guidelines below (handily auto-generated
+by jeweler).
+
+* Tests! (using RSpec, please)
+* Posting/putting/deleting groups, contacts and their photos
+* Support ClientLogin
 
 == Contributing to google_contacts_api
  
@@ -14,6 +28,5 @@ Description goes here.
 
 == Copyright
 
-Copyright (c) 2011 Alvin Liang. See LICENSE.txt for
-further details.
+Copyright (c) 2011 Alvin Liang. See LICENSE.txt for further details.
 
