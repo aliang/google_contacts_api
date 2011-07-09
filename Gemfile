@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 # Add dependencies required to use your gem here.
 # Example:
-gem "active_support"
+gem "activesupport"
 gem "json"
 gem "hashie"
 

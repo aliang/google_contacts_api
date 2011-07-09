@@ -21,7 +21,7 @@ Jeweler::Tasks.new do |gem|
   gem.authors = ["Alvin Liang"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  gem.add_runtime_dependency 'active_support'
+  gem.add_runtime_dependency 'activesupport'
   gem.add_runtime_dependency 'hashie'
   gem.add_runtime_dependency 'json'
   #  gem.add_development_dependency 'rspec', '> 1.2.3'
