@@ -47,7 +47,7 @@ module GoogleContactsApi
   end
 
   module Contacts
-    # Retrieve the contacts for this user
+    # Retrieve the contacts for this user or group
     def contacts(params = {})
       params = params.with_indifferent_access
 
@@ -105,6 +105,7 @@ module GoogleContactsApi
     end
   end
 
+  # Base class for GroupSet and ContactSet
   class ResultSet
     include Enumerable
     attr_reader :api
@@ -149,6 +150,7 @@ module GoogleContactsApi
     end
   end
 
+  # Base class for Group and Contact
   class Result < Hashie::Mash
     # Note that the title is really just the (full) name
     # ":" replaced with $, element content is keyed with $t
