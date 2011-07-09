@@ -12,10 +12,18 @@ GoogleContactsApi::User object for easier stuff.
 google_contacts_user = GoogleContactsApi::User(oauth_access_token_for_user)
 contacts = google_contacts_user.contacts
 groups = google_contacts_user.groups
-groups.first.contacts
-contacts.first.photo
-contacts.first.title
-contacts.first.id
+
+# group methods
+group = groups[0]
+group.contacts
+
+# contact methods
+contact = contacts[0]
+contact.photo
+contact.title
+contact.id
+contact.primary_email
+contact.emails
 ```
 
 In addition, Contacts and Groups are subclasses of [Hashie::Mash](https://github.com/intridea/hashie), so you can access any of the underlying data directly. Note that data is retrieved using Google's JSON API so the equivalent content of an XML element from the XML API is stored under the key "$t".
@@ -25,10 +33,10 @@ In addition, Contacts and Groups are subclasses of [Hashie::Mash](https://github
 I welcome patches and pull requests, see the guidelines below (handily auto-generated
 by jeweler).
 
-* Tests! (using RSpec, please)
+* Any missing tests! (using RSpec, please)
 * Read more contact information (structured name, address, phone, ...)
 * Get single contacts and groups
-* Posting/putting/deleting groups, contacts and their photos
+* Posting/putting/deleting groups, contacts and their photos. This might require XML?
 * Support ClientLogin
 
 ## Contributing to google_contacts_api
