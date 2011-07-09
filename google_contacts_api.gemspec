@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{google_contacts_api}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alvin Liang"]
@@ -19,11 +19,11 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
     "Gemfile",
-    "Gemfile.lock",
     "LICENSE.txt",
     "README.markdown",
     "Rakefile",
     "VERSION",
+    "google_contacts_api.gemspec",
     "lib/google_contacts_api.rb",
     "test/helper.rb",
     "test/test_google_contacts_api.rb"
@@ -42,37 +42,37 @@ Gem::Specification.new do |s|
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
-      s.add_runtime_dependency(%q<active_support>, [">= 0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_runtime_dependency(%q<json>, [">= 0"])
       s.add_runtime_dependency(%q<hashie>, [">= 0"])
       s.add_development_dependency(%q<shoulda>, [">= 0"])
       s.add_development_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_development_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_development_dependency(%q<rcov>, [">= 0"])
-      s.add_runtime_dependency(%q<active_support>, [">= 0"])
+      s.add_runtime_dependency(%q<activesupport>, [">= 0"])
       s.add_runtime_dependency(%q<hashie>, [">= 0"])
       s.add_runtime_dependency(%q<json>, [">= 0"])
     else
-      s.add_dependency(%q<active_support>, [">= 0"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<json>, [">= 0"])
       s.add_dependency(%q<hashie>, [">= 0"])
       s.add_dependency(%q<shoulda>, [">= 0"])
       s.add_dependency(%q<bundler>, ["~> 1.0.0"])
       s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
       s.add_dependency(%q<rcov>, [">= 0"])
-      s.add_dependency(%q<active_support>, [">= 0"])
+      s.add_dependency(%q<activesupport>, [">= 0"])
       s.add_dependency(%q<hashie>, [">= 0"])
       s.add_dependency(%q<json>, [">= 0"])
     end
   else
-    s.add_dependency(%q<active_support>, [">= 0"])
+    s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<json>, [">= 0"])
     s.add_dependency(%q<hashie>, [">= 0"])
     s.add_dependency(%q<shoulda>, [">= 0"])
     s.add_dependency(%q<bundler>, ["~> 1.0.0"])
     s.add_dependency(%q<jeweler>, ["~> 1.5.2"])
     s.add_dependency(%q<rcov>, [">= 0"])
-    s.add_dependency(%q<active_support>, [">= 0"])
+    s.add_dependency(%q<activesupport>, [">= 0"])
     s.add_dependency(%q<hashie>, [">= 0"])
     s.add_dependency(%q<json>, [">= 0"])
   end
