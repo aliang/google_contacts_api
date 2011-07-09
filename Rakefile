@@ -19,12 +19,6 @@ Jeweler::Tasks.new do |gem|
   gem.description = %Q{Lets you read from the Google Contacts API. Posting to come later. Tests to come later.}
   gem.email = "ayliang@gmail.com"
   gem.authors = ["Alvin Liang"]
-  # Include your dependencies below. Runtime dependencies are required when using your gem,
-  # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  gem.add_runtime_dependency 'activesupport'
-  gem.add_runtime_dependency 'hashie'
-  gem.add_runtime_dependency 'json'
-  #  gem.add_development_dependency 'rspec', '> 1.2.3'
 end
 Jeweler::RubygemsDotOrgTasks.new
 
