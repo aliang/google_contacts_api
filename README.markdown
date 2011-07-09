@@ -28,6 +28,8 @@ contact.emails
 
 In addition, Contacts and Groups are subclasses of [Hashie::Mash](https://github.com/intridea/hashie), so you can access any of the underlying data directly. Note that data is retrieved using Google's JSON API so the equivalent content of an XML element from the XML API is stored under the key "$t".
 
+The easiest way to see the convenience methods I've provided is to look at the RSpec tests.
+
 ## TODO
 
 I welcome patches and pull requests, see the guidelines below (handily auto-generated
