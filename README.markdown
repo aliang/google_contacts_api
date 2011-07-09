@@ -8,7 +8,7 @@ You need to provide an OAuth access token from one of the major OAuth libraries 
 Then you can instantiate a GoogleContactsApi::Api object for direct posting and parsing, or a
 GoogleContactsApi::User object for easier stuff.
 
-```
+```ruby
 google_contacts_user = GoogleContactsApi::User(oauth_access_token_for_user)
 contacts = google_contacts_user.contacts
 groups = google_contacts_user.groups
