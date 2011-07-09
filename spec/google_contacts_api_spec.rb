@@ -8,7 +8,7 @@ describe "GoogleContactsApi" do
       @api = GoogleContactsApi::Api.new(@oauth)
     end
 
-    it "should perform a get request using oauth" do
+    it "should perform a get request using oauth returning json" do
       # expectation should come before execution
       @oauth.should_receive(:get).with(
         GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param", {"header" => "header"})

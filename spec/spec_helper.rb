@@ -12,10 +12,17 @@ RSpec.configure do |config|
 end
 
 def contact_set_json
-  # Load from a file
+  f = File.open("#{File.dirname(__FILE__)}/contact_set.json")
+  json = f.read
+  f.close
+  json
 end
 
 def group_set_json
+  f = File.open("#{File.dirname(__FILE__)}/group_set.json")
+  json = f.read
+  f.close
+  json
 end
 
 def contact_json

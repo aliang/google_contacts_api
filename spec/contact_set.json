@@ -1,0 +1,1096 @@
+{
+    "version": "1.0",
+    "encoding": "UTF-8",
+    "feed": {
+        "xmlns": "http://www.w3.org/2005/Atom",
+        "xmlns$openSearch": "http://a9.com/-/spec/opensearch/1.1/",
+        "xmlns$gContact": "http://schemas.google.com/contact/2008",
+        "xmlns$batch": "http://schemas.google.com/gdata/batch",
+        "xmlns$gd": "http://schemas.google.com/g/2005",
+        "gd$etag": "W/\"C0QAQ3k8eCp7ImA9WhdTEkw.\"",
+        "id": {
+            "$t": "example@gmail.com"
+        },
+        "updated": {
+            "$t": "2011-07-09T11:35:42.770Z"
+        },
+        "category": [{
+            "scheme": "http://schemas.google.com/g/2005#kind",
+            "term": "http://schemas.google.com/contact/2008#contact"
+        }],
+        "title": {
+            "$t": "Example User's Contacts"
+        },
+        "link": [{
+            "rel": "alternate",
+            "type": "text/html",
+            "href": "http://www.google.com/"
+        },
+        {
+            "rel": "http://schemas.google.com/g/2005#feed",
+            "type": "application/atom+xml",
+            "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full"
+        },
+        {
+            "rel": "http://schemas.google.com/g/2005#post",
+            "type": "application/atom+xml",
+            "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full"
+        },
+        {
+            "rel": "http://schemas.google.com/g/2005#batch",
+            "type": "application/atom+xml",
+            "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/batch"
+        },
+        {
+            "rel": "self",
+            "type": "application/atom+xml",
+            "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full?alt\u003djson\u0026max-results\u003d25"
+        },
+        {
+            "rel": "next",
+            "type": "application/atom+xml",
+            "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full?alt\u003djson\u0026start-index\u003d26\u0026max-results\u003d25"
+        }],
+        "author": [{
+            "name": {
+                "$t": "Example User"
+            },
+            "email": {
+                "$t": "example@gmail.com"
+            }
+        }],
+        "generator": {
+            "version": "1.0",
+            "uri": "http://www.google.com/m8/feeds",
+            "$t": "Contacts"
+        },
+        "openSearch$totalResults": {
+            "$t": "500"
+        },
+        "openSearch$startIndex": {
+            "$t": "1"
+        },
+        "openSearch$itemsPerPage": {
+            "$t": "25"
+        },
+        "entry": [{
+            "gd$etag": "\"Q309eDVSLip7ImA9WhdTEEoIQgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/0"
+            },
+            "updated": {
+                "$t": "2011-07-07T21:02:42.360Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2011-07-07T21:02:42.360Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 1"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/0",
+                "gd$etag": "\"dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM.\""
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact1@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"QX8_ejVSLip7ImA9WB5UF0QCQAQ.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/1"
+            },
+            "updated": {
+                "$t": "2007-08-22T16:05:00.142Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2007-08-22T16:05:00.142Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 2"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/1"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/1"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/1"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact2@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/2"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 3"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/2"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/2"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/2"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact3@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"SXo9ejVSLyp7ImA9Wx5QGU4ORgM.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/4"
+            },
+            "updated": {
+                "$t": "2010-09-08T08:22:58.462Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-09-08T08:22:58.462Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 4"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/4"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/4"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/4"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact4@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/5"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 5"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/5"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/5"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/5"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact5@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/6"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 6"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/6"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/6"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/6"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact6@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/7"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 7"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/7"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/7"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/7"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact7@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/8"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 8"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/8"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/8"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/8"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact8@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/9"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 9"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/9"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/9"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/9"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact9@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"Q3s6eDVSLyp7ImA9WhdTEk0LTgQ.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/a"
+            },
+            "updated": {
+                "$t": "2011-07-09T08:58:22.510Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2011-07-09T08:58:22.510Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 10"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/a",
+                "gd$etag": "\"LyRNAEkkbCp7ImBHCk9TSh5vMVIDfTsDbSQ.\""
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/a"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/a"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact10@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/b"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 11"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/b"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/b"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/b"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact11@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/d"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 12"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/d"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/d"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/d"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact12@example.com",
+                "primary": "true"
+            }],
+            "gContact$groupMembershipInfo": [{
+                "deleted": "false",
+                "href": "http://www.google.com/m8/feeds/groups/example%40gmail.com/base/270f"
+            },
+            {
+                "deleted": "false",
+                "href": "http://www.google.com/m8/feeds/groups/example%40gmail.com/base/6"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/e"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 13"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/e"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/e"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/e"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact13@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/f"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 14"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/f"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/f"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/f"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact14@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/10"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 15"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/10"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/10"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/10"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact15@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/11"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 16"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/11"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/11"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/11"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact16@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/12"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 17"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/12"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/12"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/12"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact17@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/13"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 18"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/13"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/13"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/13"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact18@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/14"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 19"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/14"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/14"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/14"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact19@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXsyeTVSLip7ImA9WhdTEEwOQQw.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/15"
+            },
+            "updated": {
+                "$t": "2011-07-07T04:58:04.591Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2011-07-07T04:58:04.591Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 20"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/15",
+                "gd$etag": "\"LyRNAEkkbCp7ImBHCk9TSh5vMVIDfTsDbSQ.\""
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/15"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/15"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact20@example.com",
+                "primary": "true"
+            }],
+            "gd$postalAddress": [{
+                "rel": "http://schemas.google.com/g/2005#work",
+                "$t": "4453 Volta Place SW\r\nWashington, DC 20007"
+            }],
+            "gContact$groupMembershipInfo": [{
+                "deleted": "false",
+                "href": "http://www.google.com/m8/feeds/groups/example%40gmail.com/base/6"
+            }]
+        },
+        {
+            "gd$etag": "\"QX8_ejVSLip7ImA9WB5UF0QCQAQ.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/16"
+            },
+            "updated": {
+                "$t": "2007-08-22T16:05:00.142Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2007-08-22T16:05:00.142Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 21"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/16"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/16"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/16"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact21@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/17"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 22"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/17"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/17"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/17"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact22@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/18"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 23"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/18"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/18"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/18"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact23@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"Q3o8eTVSLyp7ImA9WxFVEU4PRQM.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/19"
+            },
+            "updated": {
+                "$t": "2010-06-10T02:01:12.471Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-06-10T02:01:12.471Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 24"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/19"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/19"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/19"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact24@example.com",
+                "primary": "true"
+            }]
+        },
+        {
+            "gd$etag": "\"RXo9fjVSLyp7ImA9WxBQFk0KRgI.\"",
+            "id": {
+                "$t": "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/1a"
+            },
+            "updated": {
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "app$edited": {
+                "xmlns$app": "http://www.w3.org/2007/app",
+                "$t": "2010-01-16T00:02:44.466Z"
+            },
+            "category": [{
+                "scheme": "http://schemas.google.com/g/2005#kind",
+                "term": "http://schemas.google.com/contact/2008#contact"
+            }],
+            "title": {
+                "$t": "Contact 25"
+            },
+            "link": [{
+                "rel": "http://schemas.google.com/contacts/2008/rel#photo",
+                "type": "image/*",
+                "href": "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/1a"
+            },
+            {
+                "rel": "self",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/1a"
+            },
+            {
+                "rel": "edit",
+                "type": "application/atom+xml",
+                "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/1a"
+            }],
+            "gd$email": [{
+                "rel": "http://schemas.google.com/g/2005#other",
+                "address": "contact25@example.com",
+                "primary": "true"
+            }]
+        }]
+    }
+}
