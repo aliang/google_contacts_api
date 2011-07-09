@@ -24,6 +24,7 @@ I welcome patches and pull requests, see the guidelines below (handily auto-gene
 by jeweler).
 
 * Tests! (using RSpec, please)
+* Read more contact information (structured name, address, phone, ...)
 * Posting/putting/deleting groups, contacts and their photos
 * Support ClientLogin
 
