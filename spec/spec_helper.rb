@@ -1,6 +1,8 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
+require 'json'
+require 'hashie'
 require 'google_contacts_api'
 
 # Requires supporting files with custom matchers and macros, etc,
@@ -25,8 +27,10 @@ def group_set_json
   json
 end
 
-def contact_json
+def contact_json_hash
+  Hashie::Mash.new(JSON.parse(contact_set_json)).feed.entry.first
 end
 
-def group_json
+def group_json_hash
+  Hashie::Mash.new(JSON.parse(group_set_json)).feed.entry.first
 end

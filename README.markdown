@@ -27,6 +27,7 @@ by jeweler).
 
 * Tests! (using RSpec, please)
 * Read more contact information (structured name, address, phone, ...)
+* Get single contacts and groups
 * Posting/putting/deleting groups, contacts and their photos
 * Support ClientLogin
 

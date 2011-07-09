@@ -51,24 +51,51 @@ describe "GoogleContactsApi" do
   describe "ContactSet" do
     before(:all) do
       @contact_set_json = contact_set_json
+      @contact_set = GoogleContactsApi::ContactSet.new(@contact_set_json)
     end
-    # Need an example result to parse
-    pending "should return the right starting index"
-    pending "should return the right number of results per page"
-    pending "should return the right number of total results"
-    pending "should tell me if there are more results"
-    pending "should parse results into Contacts"
+
+    it "should return the right starting index" do
+      @contact_set.start_index.should == 1
+    end
+    it "should return the right number of results per page" do
+      @contact_set.items_per_page.should == 25
+    end
+    it "should return the right number of total results" do
+      @contact_set.total_results.should == 500
+    end
+    it "should tell me if there are more results" do
+      # yeah this is an awkward assertion and matcher
+      @contact_set.should be_has_more
+      @contact_set.has_more?.should == true
+    end
+    it "should parse results into Contacts" do
+      @contact_set.to_a.first.should be_instance_of(GoogleContactsApi::Contact)
+    end
   end
   
   describe "GroupSet" do
     before(:all) do
       @group_set_json = group_set_json
+      @group_set = GoogleContactsApi::GroupSet.new(@group_set_json)
     end
-    pending "should return the right starting index"
-    pending "should return the right number of results per page"
-    pending "should return the right number of total results"
-    pending "should tell me if there are more results"
-    pending "should parse results into Groups"
+
+    it "should return the right starting index" do
+      @group_set.start_index.should == 1
+    end
+    it "should return the right number of results per page" do
+      @group_set.items_per_page.should == 25
+    end
+    it "should return the right number of total results" do
+      @group_set.total_results.should == 5
+    end
+    it "should tell me if there are more results" do
+      # yeah this is an awkward assertion and matcher
+      @group_set.should_not be_has_more
+      @group_set.has_more?.should == false
+    end
+    it "should parse results into Groups" do
+      @group_set.to_a.first.should be_instance_of(GoogleContactsApi::Group)
+    end
   end
   
   describe "Result" do
@@ -77,18 +104,93 @@ describe "GoogleContactsApi" do
   
   describe "Contact" do
     before(:all) do
-      @contact_json = contact_json
+      @contact_json_hash = contact_json_hash
+      @contact = GoogleContactsApi::Contact.new(@contact_json_hash)
     end
-    pending "should return the right title"
-    pending "should return the right id"
-    pending "should return the right primary e-mail address"
+    # ok, these tests are kind of silly
+    it "should return the right title" do
+      @contact.title.should == "Contact 1"
+    end
+    it "should return the right id" do
+      @contact.id.should == "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/0"
+    end
+    it "should return the right content" do
+      # TODO: Nothing in source, oops
+      @contact.content.should == nil
+    end
+    it "should return the right updated time" do
+      # different representation slightly
+      @contact.updated.to_s.should == "2011-07-07T21:02:42+00:00"
+    end
+    it "should return the right self link" do
+      @contact.self_link.should == "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0"
+    end
+    it "should return the right photo link" do
+      @contact.photo_link.should == "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/0"
+    end
+    it "should return the right edit link" do
+      @contact.edit_link.should == "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0"
+    end
+    it "should return the right edit photo link" do
+      # TODO: there isn't one in this contact, hahah
+      @contact.edit_photo_link.should == nil
+    end
+    it "should try to fetch a photo" do
+      @oauth = mock("oauth")
+      @oauth.stub(:get).and_return(Hashie::Mash.new({
+        "body" => "some response", # could use example response here
+        "code" => 200
+      }))
+      # @api = GoogleContactsApi::Api.new(@oauth)
+      @api = mock("api")
+      @api.stub(:oauth).and_return(@oauth)
+      @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
+      @oauth.should_receive("get").with(@contact.photo_link)
+      @contact.photo
+    end
+    it "should return all e-mail addresses" do
+      @contact.emails.should == ["contact1@example.com"]
+    end
+    it "should return the right primary e-mail address" do
+      @contact.primary_email.should == "contact1@example.com"
+    end
   end
   
   describe "Group" do
     before(:all) do
-      @group_json = group_json
+      @group_json_hash = group_json_hash
+      @group = GoogleContactsApi::Group.new(group_json_hash)
     end
-    pending "should return the right title"
-    pending "should return the right id"
+    # ok, these tests are kind of silly
+    it "should return the right title" do
+      @group.title.should == "System Group: My Contacts"
+    end
+    it "should return the right id" do
+      @group.id.should == "http://www.google.com/m8/feeds/groups/example%40gmail.com/base/6"
+    end
+    it "should return the right content" do
+      # TODO: Nothing in source, oops
+      @group.content.should == "System Group: My Contacts"
+    end
+    it "should return the right updated time" do
+      # different representation slightly
+      @group.updated.to_s.should == "1970-01-01T00:00:00+00:00"
+    end
+    it "should tell me if it's a system group" do
+      @group.should be_system_group
+    end
+    it "should get contacts from the group and cache them" do
+      @api = mock("api")
+      @api.stub(:get).and_return(Hashie::Mash.new({
+        "body" => "some response", # could use example response here
+        "code" => 200
+      }))
+      GoogleContactsApi::ContactSet.stub(:new).and_return("contact set")
+      @group = GoogleContactsApi::Group.new(@contact_json_hash, nil, @api)
+      @api.should_receive("get").with(an_instance_of(String),
+        hash_including({"group" => @group.id})).once
+      @group.contacts
+      @group.contacts
+    end
   end
 end
