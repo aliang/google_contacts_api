@@ -18,6 +18,8 @@ contacts.first.title
 contacts.first.id
 ```
 
+In addition, Contacts and Groups are subclasses of [Hashie::Mash](https://github.com/intridea/hashie), so you can access any of the underlying data directly. Note that data is retrieved using Google's JSON API so the equivalent content of an XML element from the XML API is stored under the key "$t".
+
 ## TODO
 
 I welcome patches and pull requests, see the guidelines below (handily auto-generated
