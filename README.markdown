@@ -1,6 +1,6 @@
 # google_contacts_api
 
-An unofficial Google Contacts API for ruby. Might not be stable (but probably is). In active usage at thirsst.com.
+An unofficial Google Contacts API for ruby. Might not be stable (but probably is). In active usage at [thirsst.com](http://thirsst.com/). (Shameless plug: We help you manage your RSS and group bookmarking!)
 
 ## Usage
 
