@@ -4,7 +4,8 @@ An unofficial Google Contacts API for ruby. Might not be stable (but probably is
 
 ## Usage
 
-You need to provide an OAuth access token from one of the major OAuth libraries to this library.
+You need to provide an OAuth client, with access token, from an OAuth 1.0 access library to this library. I've tested it with OAuth::AccessToken from the [oauth-ruby](https://github.com/oauth/oauth-ruby) gem. I'm guessing there would be a few small changes in implementation details of the GoogleContactsApi::Api class if you use another library, mostly to change how the base get/post/put/delete methods work.
+
 Then you can instantiate a GoogleContactsApi::Api object for direct posting and parsing, or a
 GoogleContactsApi::User object for easier stuff.
 
@@ -39,7 +40,8 @@ by jeweler).
 * Read more contact information (structured name, address, phone, ...)
 * Get single contacts and groups
 * Posting/putting/deleting groups, contacts and their photos. This might require XML?
-* Support ClientLogin
+* Test other OAuth libraries. Does Google support OAuth 2.0 for contacts?
+* Support ClientLogin (maybe not)
 
 ## Contributing to google_contacts_api
  
