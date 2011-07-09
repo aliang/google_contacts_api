@@ -1,6 +1,6 @@
 # TODO: Use more than one file
 
-require 'active_support'
+require 'active_support/core_ext'
 require 'json'
 require 'hashie'
 
