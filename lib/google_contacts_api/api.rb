@@ -23,6 +23,7 @@ module GoogleContactsApi
     # Post request to specified link, with query params
     # Not tried yet, might be issues with params
     def post(link, params = {}, headers = {})
+      raise NotImplementedError
       params["alt"] = "json"
       @oauth.post("#{BASE_URL}#{link}?#{params.to_query}", headers)
     end
@@ -30,6 +31,7 @@ module GoogleContactsApi
     # Put request to specified link, with query params
     # Not tried yet
     def put(link, params = {}, headers = {})
+      raise NotImplementedError
       params["alt"] = "json"
       @oauth.put("#{BASE_URL}#{link}?#{params.to_query}", headers)
     end
@@ -37,6 +39,7 @@ module GoogleContactsApi
     # Delete request to specified link, with query params
     # Not tried yet
     def delete(link, params = {}, headers = {})
+      raise NotImplementedError
       params["alt"] = "json"
       @oauth.delete("#{BASE_URL}#{link}?#{params.to_query}", headers)
     end
