@@ -147,11 +147,6 @@
                 "rel": "edit",
                 "type": "application/atom+xml",
                 "href": "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/1"
-            }],
-            "gd$email": [{
-                "rel": "http://schemas.google.com/g/2005#other",
-                "address": "contact2@example.com",
-                "primary": "true"
             }]
         },
         {
@@ -190,8 +185,7 @@
             }],
             "gd$email": [{
                 "rel": "http://schemas.google.com/g/2005#other",
-                "address": "contact3@example.com",
-                "primary": "true"
+                "address": "contact3@example.com"
             }]
         },
         {

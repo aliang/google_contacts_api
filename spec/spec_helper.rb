@@ -31,6 +31,14 @@ def contact_json_hash
   Hashie::Mash.new(JSON.parse(contact_set_json)).feed.entry.first
 end
 
+def contact_no_emails_json_hash
+  Hashie::Mash.new(JSON.parse(contact_set_json)).feed.entry[1]
+end
+
+def contact_no_primary_email_json_hash
+  Hashie::Mash.new(JSON.parse(contact_set_json)).feed.entry[2]
+end
+
 def group_json_hash
   Hashie::Mash.new(JSON.parse(group_set_json)).feed.entry.first
 end

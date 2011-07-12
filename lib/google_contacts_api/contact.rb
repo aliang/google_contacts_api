@@ -60,13 +60,17 @@ module GoogleContactsApi
     
     # Returns all email addresses for the contact
     def emails
-      self["gd$email"].map { |e| e.address }
+      self["gd$email"] ? self["gd$email"].map { |e| e.address } : []
     end
     
     # Returns primary email for the contact
     def primary_email
-      _email = self["gd$email"].find { |e| e.primary == "true" }
-      _email ? _email.address : nil
+      if self["gd$email"]
+        _email = self["gd$email"].find { |e| e.primary == "true" }
+        _email ? _email.address : nil
+      else
+        nil # no emails at all
+      end
     end
   end
 end
