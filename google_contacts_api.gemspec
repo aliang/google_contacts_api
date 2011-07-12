@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{google_contacts_api}
-  s.version = "0.2.3"
+  s.version = "0.2.4"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alvin Liang"]
-  s.date = %q{2011-07-09}
+  s.date = %q{2011-07-12}
   s.description = %q{Lets you read from the Google Contacts API. Posting to come later. Tests to come later.}
   s.email = %q{ayliang@gmail.com}
   s.extra_rdoc_files = [
