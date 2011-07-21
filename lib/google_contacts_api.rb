@@ -7,3 +7,7 @@ require 'google_contacts_api/contact_set'
 require 'google_contacts_api/result'
 require 'google_contacts_api/group'
 require 'google_contacts_api/contact'
+
+module GoogleContactsApi
+  VERSION = 0.2.4
+end
