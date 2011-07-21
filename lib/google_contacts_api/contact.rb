@@ -72,5 +72,11 @@ module GoogleContactsApi
         nil # no emails at all
       end
     end
+    
+    # Returns all instant messaging addresses for the contact.
+    # Doesn't yet distinguish protocols
+    def ims
+      self["gd$im"] ? self["gd$im"].map { |i| i.address } : []
+    end
   end
 end

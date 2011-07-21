@@ -164,6 +164,13 @@ describe "GoogleContactsApi" do
       @contact3 = contact_no_primary_email_json_hash
       @contact3.primary_email.should be_nil
     end
+    it "should return all instant messaging accounts" do
+      @contact.ims.should == ["contact1@example.com"]
+    end
+    it "should return an empty array if there are no instant messaging accounts" do
+      @contact2 = contact_no_emails_json_hash
+      @contact2.ims.should == []
+    end
   end
   
   describe "Group" do
