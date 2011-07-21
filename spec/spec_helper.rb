@@ -5,6 +5,8 @@ require 'json'
 require 'hashie'
 require 'google_contacts_api'
 
+puts "Testing version #{GoogleContactsApi::VERSION}"
+
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 # Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}

@@ -155,21 +155,21 @@ describe "GoogleContactsApi" do
       @contact.primary_email.should == "contact1@example.com"
     end
     it "should return an empty array if there are no e-mail addresses" do
-      @contact = contact_no_emails_json_hash
+      @contact = GoogleContactsApi::Contact.new(contact_no_emails_json_hash)
       @contact.emails.should == []
     end
     it "should return nil if there is no primary e-mail address" do
-      @contact2 = contact_no_emails_json_hash
+      @contact2 = GoogleContactsApi::Contact.new(contact_no_emails_json_hash)
       @contact2.primary_email.should be_nil
-      @contact3 = contact_no_primary_email_json_hash
+      @contact3 = GoogleContactsApi::Contact.new(contact_no_primary_email_json_hash)
       @contact3.primary_email.should be_nil
     end
     it "should return all instant messaging accounts" do
       @contact.ims.should == ["contact1@example.com"]
     end
     it "should return an empty array if there are no instant messaging accounts" do
-      @contact2 = contact_no_emails_json_hash
-      @contact2.ims.should == []
+      @contact = GoogleContactsApi::Contact.new(contact_no_emails_json_hash)
+      @contact.ims.should == []
     end
   end
   

@@ -115,7 +115,7 @@
             }],
 						"gd$im": [{
 								"address": "contact1@example.com",
-								"protocol": "http://schemas.google.com/g/2005#GOOGLE_TALK",
+								"protocol": "http://schemas.google.com/g/2005#GOOGLE_TAL",
 								"rel": "http://schemas.google.com/g/2005#other"
 						}]
         },
