@@ -1,6 +1,8 @@
 require 'active_support/core_ext'
 
 module GoogleContactsApi
+  class UnauthorizedError < StandardError; end
+  
   class Api
     # keep separate in case of new auth method
     BASE_URL = "https://www.google.com/m8/feeds/"
@@ -15,9 +17,14 @@ module GoogleContactsApi
     # For get, post, put, delete, always use JSON, it's simpler
     # and lets us use Hashie::Mash. Note that in the JSON conversion from XML,
     # ":" is replaced with $, element content is keyed with $t
+    # Raise UnauthorizedError if not authorized.
     def get(link, params = {}, headers = {})
       params["alt"] = "json"
-      @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
+      result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
+      # For the full HTML we're matching against, see the spec
+      # TODO: This could be pretty fragile.
+      raise UnauthorizedError if result.include?("Token invalid - Invalid AuthSub token.") && result.include?("Error 401")
+      result
     end
 
     # Post request to specified link, with query params
