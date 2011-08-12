@@ -3,6 +3,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
 require 'json'
 require 'hashie'
+require 'net/http'
 require 'google_contacts_api'
 
 puts "Testing version #{GoogleContactsApi::VERSION}"

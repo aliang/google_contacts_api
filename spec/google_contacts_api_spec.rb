@@ -35,7 +35,7 @@ describe "GoogleContactsApi" do
         </HTML>
       ERROR_HTML
       error_html.strip!
-      oauth.stub(:get).and_return(error_html)
+      oauth.stub(:get).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
       api = GoogleContactsApi::Api.new(oauth)
       lambda { api.get("any url",
         {"param" => "param"},

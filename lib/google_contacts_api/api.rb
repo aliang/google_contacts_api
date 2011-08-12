@@ -1,7 +1,8 @@
 require 'active_support/core_ext'
 
 module GoogleContactsApi
-  class UnauthorizedError < StandardError; end
+  class ApiError < StandardError; end
+  class UnauthorizedError < ApiError; end
   
   class Api
     # keep separate in case of new auth method
@@ -23,7 +24,8 @@ module GoogleContactsApi
       result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
       # For the full HTML we're matching against, see the spec
       # TODO: This could be pretty fragile.
-      raise UnauthorizedError if result.include?("Token invalid - Invalid AuthSub token.") && result.include?("Error 401")
+      raise UnauthorizedError if result.is_a?(Net::HTTPUnauthorized)
+      # raise UnauthorizedError if result.include?("Token invalid - Invalid AuthSub token.") && result.include?("Error 401")
       result
     end
 
