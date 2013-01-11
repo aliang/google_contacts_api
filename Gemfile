@@ -18,4 +18,5 @@ end
 group :development do
   gem "bundler"
   gem "jeweler"
+  gem "travis-lint"
 end
