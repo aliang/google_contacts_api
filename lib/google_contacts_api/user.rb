@@ -16,11 +16,15 @@ module GoogleContactsApi
       # alt, q, max-results, start-index, updated-min,
       # orderby, showdeleted, requirealldeleted, sortorder
       params["max-results"] = 100000 unless params.key?("max-results")
+
+      # Set the version, for some reason the header is not effective on its own?
+      params["v"] = 2
+
       url = "groups/default/full"
       # TODO: So weird thing, version 3 doesn't return system groups
       # When it does, uncomment this line and use it to request instead
       # response = @api.get(url, params)
-      response = @api.get(url, params, {"GData-Version" => "2"})
+      response = @api.get(url, params)
 
       case GoogleContactsApi::Api.parse_response_code(response)
       when 401; raise
