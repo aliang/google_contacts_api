@@ -1,10 +1,10 @@
 # google_contacts_api
 
-An unofficial Google Contacts API for ruby. Might not be stable (but probably is). In active usage at [thirsst.com](http://thirsst.com/). (Shameless plug: We help you manage your RSS and group bookmarking!)
+An unofficial Google Contacts API for ruby. Might not be stable (but probably is).
 
 ## Usage
 
-You need to provide an OAuth client, with access token, from an OAuth access library to this library. I've tested it with OAuth::AccessToken from the [oauth-ruby](https://github.com/oauth/oauth-ruby) gem. I'm guessing there would be a few small changes in implementation details of the GoogleContactsApi::Api class if you use another library, mostly to change how the base get/post/put/delete methods work.
+You need to provide an OAuth client, with access token, from an OAuth access library to this library. I've tested it with OAuth::AccessToken from the [oauth-ruby](https://github.com/oauth/oauth-ruby) gem and an OAuth2::AccessToken from the [oauth2](https://github.com/intridea/oauth2) gem. I'm guessing there would be a few small changes in implementation details of the GoogleContactsApi::Api class if you use another library, mostly to change how the base get/post/put/delete methods work.
 
 Then you can instantiate a GoogleContactsApi::Api object for direct posting and parsing, or a
 GoogleContactsApi::User object for easier stuff.
@@ -37,10 +37,10 @@ I welcome patches and pull requests, see the guidelines below (handily auto-gene
 by jeweler).
 
 * Any missing tests! (using RSpec, please)
-* Read more contact information (structured name, address, phone, ...)
+* Read more contact information (structured name, address, ...)
 * Get single contacts and groups
 * Posting/putting/deleting groups, contacts and their photos. This might require XML?
-* Test other OAuth libraries ([oauth2](https://github.com/intridea/oauth2) is next on my list). Does Google support OAuth 2.0 for contacts?
+* Adapter layer for different OAuth libraries? I'm not sure there are any other widely used libraries though
 * Support ClientLogin (maybe not, since Google's old library covers it)
 
 ## Contributing to google_contacts_api
@@ -56,3 +56,5 @@ by jeweler).
 ## Copyright
 
 Copyright (c) 2011 Alvin Liang. See LICENSE.txt for further details.
+
+Some code based on a few bugfixes in lfittl and fraudpointer forks.
