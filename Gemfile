@@ -10,8 +10,9 @@ gem "hashie"
 # Include everything needed to run rake, tests, features, etc.
 group :development do
   gem "shoulda"
-  gem "bundler", "~> 1.0.0"
-  gem "jeweler", "~> 1.5.2"
-  gem "rcov"
+  gem "bundler"
+  gem "jeweler"
+  gem "simplecov"
   gem "rspec"
+  gem "rdoc"
 end
