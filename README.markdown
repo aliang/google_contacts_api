@@ -4,7 +4,7 @@ An unofficial Google Contacts API for ruby. Might not be stable (but probably is
 
 ## Do the tests pass?
 
-[![Build Status](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME].png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
+[![Build Status](https://travis-ci.org/aliang/google_contacts_api.png)](https://travis-ci.org/aliang/google_contacts_api)
 
 ## Usage
 
