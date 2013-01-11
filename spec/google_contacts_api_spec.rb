@@ -43,14 +43,17 @@ describe "GoogleContactsApi" do
     end
     
     describe "parsing response code" do
+      before(:all) do
+        @Oauth = Struct.new(:code)
+        @Oauth2 = Struct.new(:status)
+      end
       it "should parse something that looks like an oauth gem response" do
-        Response = Struct.new(:code)
-        GoogleContactsApi::Api.parse_response_code(Response.new("401")).should == 401
+        GoogleContactsApi::Api.parse_response_code(@Oauth.new("401")).should == 401
       end
       
       it "should parse something that looks like an oauth2 gem response" do
-        Response = Struct.new(:status)
-        GoogleContactsApi::Api.parse_response_code(Response.new("401")).should == 401
+        Resp = Struct.new(:status)
+        GoogleContactsApi::Api.parse_response_code(@Oauth2.new("401")).should == 401
       end
     end
   end
