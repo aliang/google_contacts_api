@@ -57,6 +57,11 @@ module GoogleContactsApi
       _link = self["link"].find { |l| l.rel == "edit" }
       _link ? _link.href : nil
     end
+
+    # Returns all phone numbers for the contact
+    def phone_numbers
+      self["gd$phoneNumber"] ? self["gd$phoneNumber"].map { |e| e['$t'] } : []
+    end
     
     # Returns all email addresses for the contact
     def emails

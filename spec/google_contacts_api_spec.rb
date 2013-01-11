@@ -169,6 +169,8 @@ describe "GoogleContactsApi" do
       @oauth.should_receive("get").with(@contact.photo_link)
       @contact.photo
     end
+    # TODO: there isn't any phone number in here
+    pending "should return all phone numbers"
     it "should return all e-mail addresses" do
       @contact.emails.should == ["contact1@example.com"]
     end
