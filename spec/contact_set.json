@@ -113,11 +113,11 @@
                 "address": "contact1@example.com",
                 "primary": "true"
             }],
-						"gd$im": [{
-								"address": "contact1@example.com",
-								"protocol": "http://schemas.google.com/g/2005#GOOGLE_TAL",
-								"rel": "http://schemas.google.com/g/2005#other"
-						}]
+            "gd$im": [{
+                "address": "contact1@example.com",
+                "protocol": "http://schemas.google.com/g/2005#GOOGLE_TAL",
+                "rel": "http://schemas.google.com/g/2005#other"
+            }]
         },
         {
             "gd$etag": "\"QX8_ejVSLip7ImA9WB5UF0QCQAQ.\"",
