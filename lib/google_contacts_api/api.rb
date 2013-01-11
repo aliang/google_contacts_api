@@ -52,5 +52,11 @@ module GoogleContactsApi
       params["alt"] = "json"
       @oauth.delete("#{BASE_URL}#{link}?#{params.to_query}", headers)
     end
+    
+    # Parse the response code
+    # Needed because of difference between oauth and oauth2 gems
+    def self.parse_response_code(response)
+      (defined?(response.code) ? response.code : response.status).to_i
+    end
   end
 end

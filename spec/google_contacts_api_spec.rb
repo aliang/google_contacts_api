@@ -41,6 +41,18 @@ describe "GoogleContactsApi" do
         {"param" => "param"},
         {"header" => "header"}) }.should raise_error(GoogleContactsApi::UnauthorizedError)
     end
+    
+    describe "parsing response code" do
+      it "should parse something that looks like an oauth gem response" do
+        Response = Struct.new(:code)
+        GoogleContactsApi::Api.parse_response_code(Response.new("401")).should == 401
+      end
+      
+      it "should parse something that looks like an oauth2 gem response" do
+        Response = Struct.new(:status)
+        GoogleContactsApi::Api.parse_response_code(Response.new("401")).should == 401
+      end
+    end
   end
   
   describe "User" do
