@@ -2,6 +2,10 @@
 
 An unofficial Google Contacts API for ruby. Might not be stable (but probably is).
 
+## Do the tests pass?
+
+[![Build Status](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME].png)](https://travis-ci.org/[YOUR_GITHUB_USERNAME]/[YOUR_PROJECT_NAME])
+
 ## Usage
 
 You need to provide an OAuth client, with access token, from an OAuth access library to this library. I've tested it with OAuth::AccessToken from the [oauth-ruby](https://github.com/oauth/oauth-ruby) gem and an OAuth2::AccessToken from the [oauth2](https://github.com/intridea/oauth2) gem. I'm guessing there would be a few small changes in implementation details of the GoogleContactsApi::Api class if you use another library, mostly to change how the base get/post/put/delete methods work.
