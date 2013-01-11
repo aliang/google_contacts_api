@@ -16,18 +16,19 @@ RSpec.configure do |config|
   config.mock_framework = :rspec
 end
 
-def contact_set_json
-  f = File.open("#{File.dirname(__FILE__)}/contact_set.json")
+def contact_set_json_from_file(filename)
+  f = File.open(File.join(File.dirname(__FILE__), filename))
   json = f.read
   f.close
   json
 end
 
+def contact_set_json
+  contact_set_json_from_file("contact_set.json")
+end
+
 def group_set_json
-  f = File.open("#{File.dirname(__FILE__)}/group_set.json")
-  json = f.read
-  f.close
-  json
+  contact_set_json_from_file("group_set.json")
 end
 
 def contact_json_hash
