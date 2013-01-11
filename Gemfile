@@ -8,11 +8,14 @@ gem "hashie"
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
-group :development do
+group :test, :development do
   gem "shoulda"
-  gem "bundler"
-  gem "jeweler"
   gem "simplecov"
   gem "rspec"
   gem "rdoc"
+end
+
+group :development do
+  gem "bundler"
+  gem "jeweler"
 end
