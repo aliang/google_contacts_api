@@ -31,6 +31,10 @@ def group_set_json
   contact_set_json_from_file("group_set.json")
 end
 
+def empty_contact_set_json
+  contact_set_json_from_file("empty_contact_set.json")
+end
+
 def contact_json_hash
   Hashie::Mash.new(JSON.parse(contact_set_json)).feed.entry.first
 end

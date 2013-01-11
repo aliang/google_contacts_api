@@ -82,27 +82,35 @@ describe "GoogleContactsApi" do
   end
   
   describe "ContactSet" do
-    before(:all) do
-      @contact_set_json = contact_set_json
-      @contact_set = GoogleContactsApi::ContactSet.new(@contact_set_json)
-    end
+    describe "with entries" do
+      before(:all) do
+        @contact_set_json = contact_set_json
+        @contact_set = GoogleContactsApi::ContactSet.new(@contact_set_json)
+      end
 
-    it "should return the right starting index" do
-      @contact_set.start_index.should == 1
+      it "should return the right starting index" do
+        @contact_set.start_index.should == 1
+      end
+      it "should return the right number of results per page" do
+        @contact_set.items_per_page.should == 25
+      end
+      it "should return the right number of total results" do
+        @contact_set.total_results.should == 500
+      end
+      it "should tell me if there are more results" do
+        # yeah this is an awkward assertion and matcher
+        @contact_set.should be_has_more
+        @contact_set.has_more?.should == true
+      end
+      it "should parse results into Contacts" do
+        @contact_set.to_a.first.should be_instance_of(GoogleContactsApi::Contact)
+      end
     end
-    it "should return the right number of results per page" do
-      @contact_set.items_per_page.should == 25
-    end
-    it "should return the right number of total results" do
-      @contact_set.total_results.should == 500
-    end
-    it "should tell me if there are more results" do
-      # yeah this is an awkward assertion and matcher
-      @contact_set.should be_has_more
-      @contact_set.has_more?.should == true
-    end
-    it "should parse results into Contacts" do
-      @contact_set.to_a.first.should be_instance_of(GoogleContactsApi::Contact)
+    it "should parse nil results into an empty array" do
+      @empty_contact_set_json = empty_contact_set_json
+      @empty_contact_set = GoogleContactsApi::ContactSet.new(@empty_contact_set_json)
+      @empty_contact_set.total_results.should == 0
+      @empty_contact_set.instance_variable_get("@results").should == []
     end
   end
   
