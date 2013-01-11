@@ -71,7 +71,7 @@ describe "GoogleContactsApi" do
     end
     # Should hit the right URLs and return the right stuff
     it "should be able to get groups including system groups" do
-      @user.api.should_receive(:get).with("groups/default/full", hash_including(v: 2))
+      @user.api.should_receive(:get).with("groups/default/full", hash_including(:v => 2))
       @user.groups.should == "group set"
     end
     it "should be able to get contacts" do
