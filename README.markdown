@@ -59,6 +59,6 @@ by jeweler).
 
 ## Copyright
 
-Copyright (c) 2011 Alvin Liang. See LICENSE.txt for further details.
+Copyright (c) 2011-13 Alvin Liang. See LICENSE.txt for further details.
 
 Some code based on a few bugfixes in lfittl and fraudpointer forks.
