@@ -59,7 +59,6 @@ describe "GoogleContactsApi" do
       end
       
       it "should parse something that looks like an oauth2 gem response" do
-        Resp = Struct.new(:status)
         GoogleContactsApi::Api.parse_response_code(@Oauth2.new(401)).should == 401
       end
     end
