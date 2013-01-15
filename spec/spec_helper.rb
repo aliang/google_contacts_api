@@ -16,7 +16,7 @@ RSpec.configure do |config|
   config.mock_framework = :rspec
 end
 
-def contact_set_json_from_file(filename)
+def load_file(filename)
   f = File.open(File.join(File.dirname(__FILE__), filename))
   json = f.read
   f.close
@@ -24,15 +24,15 @@ def contact_set_json_from_file(filename)
 end
 
 def contact_set_json
-  contact_set_json_from_file("contact_set.json")
+  load_file("contact_set.json")
 end
 
 def group_set_json
-  contact_set_json_from_file("group_set.json")
+  load_file("group_set.json")
 end
 
 def empty_contact_set_json
-  contact_set_json_from_file("empty_contact_set.json")
+  load_file("empty_contact_set.json")
 end
 
 def contact_json_hash
