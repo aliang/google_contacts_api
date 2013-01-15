@@ -21,11 +21,15 @@ module GoogleContactsApi
     # Raise UnauthorizedError if not authorized.
     def get(link, params = {}, headers = {})
       params["alt"] = "json"
-      result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
-      # For the full HTML we're matching against, see the spec
-      # TODO: This could be pretty fragile.
+      begin
+        result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
+      rescue => e
+        # TODO: OAuth 2.0 will raise a real error
+        raise e
+      end
+      
+      # OAuth 1.0 uses Net::HTTP internally
       raise UnauthorizedError if result.is_a?(Net::HTTPUnauthorized)
-      # raise UnauthorizedError if result.include?("Token invalid - Invalid AuthSub token.") && result.include?("Error 401")
       result
     end
 

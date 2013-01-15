@@ -23,18 +23,7 @@ describe "GoogleContactsApi" do
     # Not sure how to test, you'd need a revoked token.
     it "should raise UnauthorizedError if token or request is invalid" do
       oauth = double("oauth")
-      error_html = <<-ERROR_HTML
-        <HTML>
-        <HEAD>
-        <TITLE>Token invalid - Invalid AuthSub token.</TITLE>
-        </HEAD>
-        <BODY BGCOLOR="#FFFFFF" TEXT="#000000">
-        <H1>Token invalid - Invalid AuthSub token.</H1>
-        <H2>Error 401</H2>
-        </BODY>
-        </HTML>
-      ERROR_HTML
-      error_html.strip!
+      error_html = load_file(File.join('errors', 'auth_sub_401.html'))
       oauth.stub(:get).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
       api = GoogleContactsApi::Api.new(oauth)
       lambda { api.get("any url",
