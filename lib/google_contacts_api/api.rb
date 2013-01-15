@@ -25,6 +25,7 @@ module GoogleContactsApi
         result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
       rescue => e
         # TODO: OAuth 2.0 will raise a real error
+        raise UnauthorizedError if defined?(e.response) && self.class.parse_response_code(e.response) == 401
         raise e
       end
       

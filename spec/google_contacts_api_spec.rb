@@ -1,5 +1,13 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
+class MockOAuth2Error < StandardError
+  attr_accessor :response
+  
+  def initialize(response)
+    @response = response
+  end
+end
+
 describe "GoogleContactsApi" do
   describe "Api" do
     before(:each) do
@@ -21,10 +29,20 @@ describe "GoogleContactsApi" do
     pending "should perform a put request using oauth"
     pending "should perform a delete request using oauth"
     # Not sure how to test, you'd need a revoked token.
-    it "should raise UnauthorizedError if token or request is invalid" do
+    it "should raise UnauthorizedError if OAuth 1.0 returns unauthorized" do
       oauth = double("oauth")
       error_html = load_file(File.join('errors', 'auth_sub_401.html'))
       oauth.stub(:get).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
+      api = GoogleContactsApi::Api.new(oauth)
+      lambda { api.get("any url",
+        {"param" => "param"},
+        {"header" => "header"}) }.should raise_error(GoogleContactsApi::UnauthorizedError)
+    end
+    
+    it "should raise UnauthorizedError if OAuth 2.0 returns unauthorized" do
+      oauth = double("oauth2")
+      oauth2_response = Struct.new(:status)
+      oauth.stub(:get).and_raise(MockOAuth2Error.new(oauth2_response.new(401)))
       api = GoogleContactsApi::Api.new(oauth)
       lambda { api.get("any url",
         {"param" => "param"},
@@ -42,7 +60,7 @@ describe "GoogleContactsApi" do
       
       it "should parse something that looks like an oauth2 gem response" do
         Resp = Struct.new(:status)
-        GoogleContactsApi::Api.parse_response_code(@Oauth2.new("401")).should == 401
+        GoogleContactsApi::Api.parse_response_code(@Oauth2.new(401)).should == 401
       end
     end
   end
