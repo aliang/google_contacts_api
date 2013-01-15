@@ -9,5 +9,5 @@ require 'google_contacts_api/group'
 require 'google_contacts_api/contact'
 
 module GoogleContactsApi
-  VERSION = "0.2.7"
+  VERSION = "0.3.3"
 end
