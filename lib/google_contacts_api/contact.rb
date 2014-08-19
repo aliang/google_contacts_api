@@ -83,5 +83,67 @@ module GoogleContactsApi
     def ims
       self["gd$im"] ? self["gd$im"].map { |i| i.address } : []
     end
+
+    def nested_t_field_or_nil(level1, level2)
+      if self[level1]
+        self[level1][level2] ? self[level1][level2]['$t']: nil
+      end
+    end
+    def given_name
+      nested_t_field_or_nil 'gd$name', 'gd$givenName'
+    end
+    def family_name
+      nested_t_field_or_nil 'gd$name', 'gd$familyName'
+    end
+    def full_name
+      nested_t_field_or_nil 'gd$name', 'gd$fullName'
+    end
+
+    def relations
+      self['gContact$relation'] ? self['gContact$relation'] : []
+    end
+    def spouse
+      spouse_rel = relations.find {|r| r.rel = 'spouse'}
+      spouse_rel['$t'] if spouse_rel
+    end
+
+    def addresses
+      self['gd$structuredPostalAddress'] ? self['gd$structuredPostalAddress'].map(&method(:format_address)) : []
+    end
+    def phone_numbers_full
+      self["gd$phoneNumber"] ? self["gd$phoneNumber"].map(&method(:format_phone_number)) : []
+    end
+    def emails_full
+      self["gd$email"] ? self["gd$email"].map(&method(:format_email)) : []
+    end
+
+  private
+    def format_address(unformatted)
+      formatted = {}
+      formatted[:rel] = unformatted['rel'] ? unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '') : 'work'
+      unformatted.delete 'rel'
+      unformatted.each do |key, value|
+        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t']
+      end
+      formatted
+    end
+
+    def format_email_or_phone(unformatted)
+      formatted = {}
+      unformatted.each do |key, value|
+        formatted[key.underscore.to_sym] = value ? value.gsub('http://schemas.google.com/g/2005#', '') : value
+      end
+      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
+      formatted
+    end
+
+    def format_phone_number(unformatted)
+      unformatted[:number] = unformatted['$t']
+      unformatted.delete '$t'
+      format_email_or_phone unformatted
+    end
+    def format_email(unformatted)
+      format_email_or_phone unformatted
+    end
   end
 end

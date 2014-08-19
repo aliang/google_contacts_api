@@ -14,6 +14,16 @@ puts "Testing version #{GoogleContactsApi::VERSION}"
 
 RSpec.configure do |config|
   config.mock_framework = :rspec
+
+  config.mock_with :rspec do |mocks|
+    mocks.syntax = :should
+  end
+
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+
+  config.raise_errors_for_deprecations!
 end
 
 def load_file(filename)
