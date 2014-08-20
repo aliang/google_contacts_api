@@ -98,6 +98,15 @@ module GoogleContactsApi
     def full_name
       nested_t_field_or_nil 'gd$name', 'gd$fullName'
     end
+    def additional_name
+      nested_t_field_or_nil 'gd$name', 'gd$additionalName'
+    end
+    def name_prefix
+      nested_t_field_or_nil 'gd$name', 'gd$namePrefix'
+    end
+    def name_suffix
+      nested_t_field_or_nil 'gd$name', 'gd$nameSuffix'
+    end
 
     def relations
       self['gContact$relation'] ? self['gContact$relation'] : []
