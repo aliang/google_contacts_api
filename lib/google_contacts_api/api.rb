@@ -21,6 +21,7 @@ module GoogleContactsApi
     # Raise UnauthorizedError if not authorized.
     def get(link, params = {}, headers = {})
       params["alt"] = "json"
+      params['v'] = '3' unless params['v']
       begin
         result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
       rescue => e
