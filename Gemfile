@@ -11,7 +11,7 @@ gem "hashie"
 group :test, :development do
   gem "shoulda"
   gem "simplecov"
-  gem "rspec"
+  gem "rspec", "~> 3.0"
   gem "rdoc"
 end
 
