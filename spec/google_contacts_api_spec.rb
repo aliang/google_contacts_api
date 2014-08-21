@@ -323,6 +323,7 @@ describe "GoogleContactsApi" do
             },
             {
               'rel' => 'http://schemas.google.com/g/2005#home',
+              'primary' => 'true',
               'gd$country' => { '$t' => 'United States of America' },
               'gd$formattedAddress' => { '$t' => "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America" },
               'gd$city' => { '$t' => 'Anywhere' },
@@ -386,6 +387,7 @@ describe "GoogleContactsApi" do
         formatted_addresses = [
           {
               :rel => 'work',
+              :primary => false,
               :country => 'United States of America',
               :formatted_address => "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
               :city => 'Somwhere',
@@ -395,6 +397,7 @@ describe "GoogleContactsApi" do
           },
           {
               :rel => 'home',
+              :primary => true,
               :country => 'United States of America',
               :formatted_address => "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
               :city => 'Anywhere',

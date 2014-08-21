@@ -141,6 +141,8 @@ module GoogleContactsApi
       formatted = {}
       formatted[:rel] = unformatted['rel'] ? unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '') : 'work'
       unformatted.delete 'rel'
+      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
+      unformatted.delete 'primary'
       unformatted.each do |key, value|
         formatted[key.sub('gd$', '').underscore.to_sym] = value['$t']
       end
@@ -149,10 +151,11 @@ module GoogleContactsApi
 
     def format_email_or_phone(unformatted)
       formatted = {}
+      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
+      unformatted.delete 'primary'
       unformatted.each do |key, value|
         formatted[key.underscore.to_sym] = value ? value.gsub('http://schemas.google.com/g/2005#', '') : value
       end
-      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
       formatted
     end
 
