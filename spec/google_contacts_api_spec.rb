@@ -12,17 +12,17 @@ describe "GoogleContactsApi" do
   describe "Api" do
     before(:each) do
       @oauth = double("oauth")
-      @oauth.stub(:get).and_return("get response")
+      allow(@oauth).to receive(:get).and_return("get response")
       @api = GoogleContactsApi::Api.new(@oauth)
     end
 
     it "should perform a get request using oauth returning json" do
       # expectation should come before execution
-      @oauth.should_receive(:get).with(
+      expect(@oauth).to receive(:get).with(
         GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param", {"header" => "header"})
-      @api.get("any_url",
+      expect(@api.get("any_url",
         {"param" => "param"},
-        {"header" => "header"}).should == ("get response")
+        {"header" => "header"})).to eq("get response")
     end
     # Not implemented yet
     pending "should perform a post request using oauth"
@@ -32,21 +32,21 @@ describe "GoogleContactsApi" do
     it "should raise UnauthorizedError if OAuth 1.0 returns unauthorized" do
       oauth = double("oauth")
       error_html = load_file(File.join('errors', 'auth_sub_401.html'))
-      oauth.stub(:get).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
+      allow(oauth).to receive(:get).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
       api = GoogleContactsApi::Api.new(oauth)
-      lambda { api.get("any url",
+      expect { api.get("any url",
         {"param" => "param"},
-        {"header" => "header"}) }.should raise_error(GoogleContactsApi::UnauthorizedError)
+        {"header" => "header"}) }.to raise_error(GoogleContactsApi::UnauthorizedError)
     end
     
     it "should raise UnauthorizedError if OAuth 2.0 returns unauthorized" do
       oauth = double("oauth2")
       oauth2_response = Struct.new(:status)
-      oauth.stub(:get).and_raise(MockOAuth2Error.new(oauth2_response.new(401)))
+      allow(oauth).to receive(:get).and_raise(MockOAuth2Error.new(oauth2_response.new(401)))
       api = GoogleContactsApi::Api.new(oauth)
-      lambda { api.get("any url",
+      expect { api.get("any url",
         {"param" => "param"},
-        {"header" => "header"}) }.should raise_error(GoogleContactsApi::UnauthorizedError)
+        {"header" => "header"}) }.to raise_error(GoogleContactsApi::UnauthorizedError)
     end
     
     describe "parsing response code" do
@@ -55,11 +55,11 @@ describe "GoogleContactsApi" do
         @Oauth2 = Struct.new(:status)
       end
       it "should parse something that looks like an oauth gem response" do
-        GoogleContactsApi::Api.parse_response_code(@Oauth.new("401")).should == 401
+        expect(GoogleContactsApi::Api.parse_response_code(@Oauth.new("401"))).to eq(401)
       end
       
       it "should parse something that looks like an oauth2 gem response" do
-        GoogleContactsApi::Api.parse_response_code(@Oauth2.new(401)).should == 401
+        expect(GoogleContactsApi::Api.parse_response_code(@Oauth2.new(401))).to eq(401)
       end
     end
   end
@@ -68,21 +68,21 @@ describe "GoogleContactsApi" do
     before(:each) do
       @oauth = double("oauth")
       @user = GoogleContactsApi::User.new(@oauth)
-      @user.api.stub(:get).and_return(Hashie::Mash.new({
+      allow(@user.api).to receive(:get).and_return(Hashie::Mash.new({
         "body" => "some response", # could use example response here
         "code" => 200
       }))
-      GoogleContactsApi::GroupSet.stub(:new).and_return("group set")
-      GoogleContactsApi::ContactSet.stub(:new).and_return("contact set")
+      allow(GoogleContactsApi::GroupSet).to receive(:new).and_return("group set")
+      allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
     end
     # Should hit the right URLs and return the right stuff
     it "should be able to get groups including system groups" do
-      @user.api.should_receive(:get).with("groups/default/full", hash_including(:v => 2))
-      @user.groups.should == "group set"
+      expect(@user.api).to receive(:get).with("groups/default/full", hash_including(:v => 2))
+      expect(@user.groups).to eq("group set")
     end
     it "should be able to get contacts" do
-      @user.api.should_receive(:get).with("contacts/default/full", anything)
-      @user.contacts.should == "contact set"
+      expect(@user.api).to receive(:get).with("contacts/default/full", anything)
+      expect(@user.contacts).to eq("contact set")
     end
   end
   
@@ -98,28 +98,28 @@ describe "GoogleContactsApi" do
       end
 
       it "should return the right starting index" do
-        @contact_set.start_index.should == 1
+        expect(@contact_set.start_index).to eq(1)
       end
       it "should return the right number of results per page" do
-        @contact_set.items_per_page.should == 25
+        expect(@contact_set.items_per_page).to eq(25)
       end
       it "should return the right number of total results" do
-        @contact_set.total_results.should == 500
+        expect(@contact_set.total_results).to eq(500)
       end
       it "should tell me if there are more results" do
         # yeah this is an awkward assertion and matcher
-        @contact_set.should be_has_more
-        @contact_set.has_more?.should == true
+        expect(@contact_set).to be_has_more
+        expect(@contact_set.has_more?).to eq(true)
       end
       it "should parse results into Contacts" do
-        @contact_set.to_a.first.should be_instance_of(GoogleContactsApi::Contact)
+        expect(@contact_set.to_a.first).to be_instance_of(GoogleContactsApi::Contact)
       end
     end
     it "should parse nil results into an empty array" do
       @empty_contact_set_json = empty_contact_set_json
       @empty_contact_set = GoogleContactsApi::ContactSet.new(@empty_contact_set_json)
-      @empty_contact_set.total_results.should == 0
-      @empty_contact_set.instance_variable_get("@results").should == []
+      expect(@empty_contact_set.total_results).to eq(0)
+      expect(@empty_contact_set.instance_variable_get("@results")).to eq([])
     end
   end
   
@@ -130,21 +130,21 @@ describe "GoogleContactsApi" do
     end
 
     it "should return the right starting index" do
-      @group_set.start_index.should == 1
+      expect(@group_set.start_index).to eq(1)
     end
     it "should return the right number of results per page" do
-      @group_set.items_per_page.should == 25
+      expect(@group_set.items_per_page).to eq(25)
     end
     it "should return the right number of total results" do
-      @group_set.total_results.should == 5
+      expect(@group_set.total_results).to eq(5)
     end
     it "should tell me if there are more results" do
       # yeah this is an awkward assertion and matcher
-      @group_set.should_not be_has_more
-      @group_set.has_more?.should == false
+      expect(@group_set).not_to be_has_more
+      expect(@group_set.has_more?).to eq(false)
     end
     it "should parse results into Groups" do
-      @group_set.to_a.first.should be_instance_of(GoogleContactsApi::Group)
+      expect(@group_set.to_a.first).to be_instance_of(GoogleContactsApi::Group)
     end
   end
   
@@ -159,69 +159,69 @@ describe "GoogleContactsApi" do
     end
     # ok, these tests are kind of silly
     it "should return the right title" do
-      @contact.title.should == "Contact 1"
+      expect(@contact.title).to eq("Contact 1")
     end
     it "should return the right id" do
-      @contact.id.should == "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/0"
+      expect(@contact.id).to eq("http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/0")
     end
     it "should return the right content" do
       # TODO: Nothing in source, oops
-      @contact.content.should == nil
+      expect(@contact.content).to eq(nil)
     end
     it "should return the right updated time" do
       # different representation slightly
-      @contact.updated.to_s.should == "2011-07-07T21:02:42+00:00"
+      expect(@contact.updated.to_s).to eq("2011-07-07T21:02:42+00:00")
     end
     it "should return the right self link" do
-      @contact.self_link.should == "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0"
+      expect(@contact.self_link).to eq("https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0")
     end
     it "should return the right photo link" do
-      @contact.photo_link.should == "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/0"
+      expect(@contact.photo_link).to eq("https://www.google.com/m8/feeds/photos/media/example%40gmail.com/0")
     end
     it "should return the right edit link" do
-      @contact.edit_link.should == "https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0"
+      expect(@contact.edit_link).to eq("https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0")
     end
     it "should return the right edit photo link" do
       # TODO: there isn't one in this contact, hahah
-      @contact.edit_photo_link.should == nil
+      expect(@contact.edit_photo_link).to eq(nil)
     end
     it "should try to fetch a photo" do
       @oauth = double("oauth")
-      @oauth.stub(:get).and_return(Hashie::Mash.new({
+      allow(@oauth).to receive(:get).and_return(Hashie::Mash.new({
         "body" => "some response", # could use example response here
         "code" => 200
       }))
       # @api = GoogleContactsApi::Api.new(@oauth)
       @api = double("api")
-      @api.stub(:oauth).and_return(@oauth)
+      allow(@api).to receive(:oauth).and_return(@oauth)
       @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
-      @oauth.should_receive("get").with(@contact.photo_link)
+      expect(@oauth).to receive("get").with(@contact.photo_link)
       @contact.photo
     end
     # TODO: there isn't any phone number in here
     pending "should return all phone numbers"
     it "should return all e-mail addresses" do
-      @contact.emails.should == ["contact1@example.com"]
+      expect(@contact.emails).to eq(["contact1@example.com"])
     end
     it "should return the right primary e-mail address" do
-      @contact.primary_email.should == "contact1@example.com"
+      expect(@contact.primary_email).to eq("contact1@example.com")
     end
     it "should return an empty array if there are no e-mail addresses" do
       @contact = GoogleContactsApi::Contact.new(contact_no_emails_json_hash)
-      @contact.emails.should == []
+      expect(@contact.emails).to eq([])
     end
     it "should return nil if there is no primary e-mail address" do
       @contact2 = GoogleContactsApi::Contact.new(contact_no_emails_json_hash)
-      @contact2.primary_email.should be_nil
+      expect(@contact2.primary_email).to be_nil
       @contact3 = GoogleContactsApi::Contact.new(contact_no_primary_email_json_hash)
-      @contact3.primary_email.should be_nil
+      expect(@contact3.primary_email).to be_nil
     end
     it "should return all instant messaging accounts" do
-      @contact.ims.should == ["contact1@example.com"]
+      expect(@contact.ims).to eq(["contact1@example.com"])
     end
     it "should return an empty array if there are no instant messaging accounts" do
       @contact = GoogleContactsApi::Contact.new(contact_no_emails_json_hash)
-      @contact.ims.should == []
+      expect(@contact.ims).to eq([])
     end
   end
   
@@ -232,31 +232,31 @@ describe "GoogleContactsApi" do
     end
     # ok, these tests are kind of silly
     it "should return the right title" do
-      @group.title.should == "System Group: My Contacts"
+      expect(@group.title).to eq("System Group: My Contacts")
     end
     it "should return the right id" do
-      @group.id.should == "http://www.google.com/m8/feeds/groups/example%40gmail.com/base/6"
+      expect(@group.id).to eq("http://www.google.com/m8/feeds/groups/example%40gmail.com/base/6")
     end
     it "should return the right content" do
       # TODO: Nothing in source, oops
-      @group.content.should == "System Group: My Contacts"
+      expect(@group.content).to eq("System Group: My Contacts")
     end
     it "should return the right updated time" do
       # different representation slightly
-      @group.updated.to_s.should == "1970-01-01T00:00:00+00:00"
+      expect(@group.updated.to_s).to eq("1970-01-01T00:00:00+00:00")
     end
     it "should tell me if it's a system group" do
-      @group.should be_system_group
+      expect(@group).to be_system_group
     end
     it "should get contacts from the group and cache them" do
       @api = double("api")
-      @api.stub(:get).and_return(Hashie::Mash.new({
+      allow(@api).to receive(:get).and_return(Hashie::Mash.new({
         "body" => "some response", # could use example response here
         "code" => 200
       }))
-      GoogleContactsApi::ContactSet.stub(:new).and_return("contact set")
+      allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
       @group = GoogleContactsApi::Group.new(@contact_json_hash, nil, @api)
-      @api.should_receive("get").with(an_instance_of(String),
+      expect(@api).to receive("get").with(an_instance_of(String),
         hash_including({"group" => @group.id})).once
       @group.contacts
       @group.contacts
