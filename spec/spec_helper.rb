@@ -13,7 +13,6 @@ puts "Testing version #{GoogleContactsApi::VERSION}"
 # Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 RSpec.configure do |config|
-  config.mock_framework = :rspec
 end
 
 def load_file(filename)
