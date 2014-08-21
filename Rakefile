@@ -16,7 +16,7 @@ Jeweler::Tasks.new do |gem|
   gem.homepage = "http://github.com/aliang/google_contacts_api"
   gem.license = "MIT"
   gem.summary = %Q{Lets you read from the Google Contacts API}
-  gem.description = %Q{Lets you read from the Google Contacts API. Posting to come later. Tests to come later.}
+  gem.description = %Q{Lets you read from the Google Contacts API. Posting to come later.}
   gem.email = "ayliang@gmail.com"
   gem.authors = ["Alvin Liang"]
 end
