@@ -21,10 +21,9 @@ module GoogleContactsApi
     # ":" is replaced with $, element content is keyed with $t
     # Raise UnauthorizedError if not authorized.
     def get(link, params = {}, headers = {})
-      params["alt"] = "json"
-      params['v'] = '3' unless params['v']
+      merged_params = params_with_defaults(params)
       begin
-        result = @oauth.get("#{BASE_URL}#{link}?#{params.to_query}", headers)
+        result = @oauth.get("#{BASE_URL}#{link}?#{merged_params.to_query}", headers)
       rescue => e
         # TODO: OAuth 2.0 will raise a real error
         raise UnauthorizedError if defined?(e.response) && self.class.parse_response_code(e.response) == 401
@@ -64,6 +63,16 @@ module GoogleContactsApi
     # Needed because of difference between oauth and oauth2 gems
     def self.parse_response_code(response)
       (defined?(response.code) ? response.code : response.status).to_i
+    end
+
+    private
+
+    def params_with_defaults(params)
+      p = params.merge({
+        "alt" => "json"
+      })
+      p['v'] = '3' unless p['v']
+      p
     end
   end
 end
