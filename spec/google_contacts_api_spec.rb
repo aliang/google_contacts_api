@@ -186,13 +186,13 @@ describe "GoogleContactsApi" do
       @contact.edit_photo_link.should == nil
     end
     it "should try to fetch a photo" do
-      @oauth = mock("oauth")
+      @oauth = double("oauth")
       @oauth.stub(:get).and_return(Hashie::Mash.new({
         "body" => "some response", # could use example response here
         "code" => 200
       }))
       # @api = GoogleContactsApi::Api.new(@oauth)
-      @api = mock("api")
+      @api = double("api")
       @api.stub(:oauth).and_return(@oauth)
       @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
       @oauth.should_receive("get").with(@contact.photo_link)
@@ -249,7 +249,7 @@ describe "GoogleContactsApi" do
       @group.should be_system_group
     end
     it "should get contacts from the group and cache them" do
-      @api = mock("api")
+      @api = double("api")
       @api.stub(:get).and_return(Hashie::Mash.new({
         "body" => "some response", # could use example response here
         "code" => 200
