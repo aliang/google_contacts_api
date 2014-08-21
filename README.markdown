@@ -63,6 +63,8 @@ by jeweler).
 
 ## Copyright
 
-Copyright (c) 2011-13 Alvin Liang. See LICENSE.txt for further details.
+Copyright (c) 2011-14 Alvin Liang (aliang). See LICENSE.txt for further details.
 
 Some code based on a few bugfixes in lfittl and fraudpointer forks.
+
+Support for Google Contacts API version 3 fields by draffensperger.
