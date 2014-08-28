@@ -124,11 +124,6 @@ module GoogleContactsApi
       spouse_rel['$t'] if spouse_rel
     end
 
-    # Return an Array of Hashes representing addresses with formatted metadata.
-    def format_entities(key, format_method=:format_entity)
-      self[key] ? self[key].map(&method(format_method)) : []
-    end
-
     def addresses
       format_entities('gd$structuredPostalAddress', :format_address)
     end
@@ -150,6 +145,11 @@ module GoogleContactsApi
     end
 
   private
+    # Return an Array of Hashes representing addresses with formatted metadata.
+    def format_entities(key, format_method=:format_entity)
+      self[key] ? self[key].map(&method(format_method)) : []
+    end
+
     def format_entity(unformatted, default_rel=nil, text_key=nil)
       formatted = {}
 
