@@ -302,6 +302,22 @@ describe "GoogleContactsApi" do
       expect(@oauth).to receive("get").with(@contact.photo_link)
       @contact.photo
     end
+    it "should feat a photo with metadata" do
+      @oauth = double("oauth")
+      allow(@oauth).to receive(:get).and_return(Hashie::Mash.new({
+         "body" => "some response",
+         "code" => 200,
+         "headers" => { "content-type" => "image/jpeg" }
+       }))
+      @api = double("api")
+      allow(@api).to receive(:oauth).and_return(@oauth)
+      @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
+      expect(@oauth).to receive("get").with(@contact.photo_link)
+      expect(@contact.photo_with_metadata).to eq( { data: 'some response',
+                                                    etag: '"dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM."',
+                                                    content_type: 'image/jpeg'
+                                                  } )
+    end
     # TODO: there isn't any phone number in here
     pending "should return all phone numbers"
     it "should return all e-mail addresses" do
