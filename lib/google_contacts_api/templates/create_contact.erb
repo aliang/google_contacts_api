@@ -1,0 +1,35 @@
+<atom:entry xmlns:atom='http://www.w3.org/2005/Atom'
+            xmlns:gd='http://schemas.google.com/g/2005'>
+  <atom:category scheme='http://schemas.google.com/g/2005#kind'
+                 term='http://schemas.google.com/contact/2008#contact'/>
+  <gd:name>
+    <gd:namePrefix><%= contact[:name_prefix] %></gd:namePrefix>
+    <gd:givenName><%= contact[:given_name] %></gd:givenName>
+    <gd:additionalName><%= contact[:additional_name] %></gd:additionalName>
+    <gd:familyName><%= contact[:family_name] %></gd:familyName>
+    <gd:nameSuffix><%= contact[:name_suffix] %></gd:nameSuffix>
+  </gd:name>
+
+  <atom:content type='text'><%= contact[:content] %></atom:content>
+
+  <% contact[:emails].each do |email| %>
+      <gd:email rel='http://schemas.google.com/g/2005#<%= email[:rel] %>'
+                primary='<%= email[:primary] %>'
+                address='<%= email[:address] %>'/>
+  <% end %>
+
+  <% contact[:phone_numbers].each do |phone| %>
+      <gd:phoneNumber rel='http://schemas.google.com/g/2005#<%= phone[:rel] %>' primary='<%= phone[:primary] %>'
+      ><%= phone[:number] %></gd:phoneNumber>
+  <% end %>
+
+  <% contact[:addresses].each do |address| %>
+      <gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#<%= address[:rel] %>' primary='<%= address[:primary] %>'>
+        <gd:city><%= address[:city] %></gd:city>
+        <gd:street><%= address[:street] %></gd:street>
+        <gd:region><%= address[:region] %></gd:region>
+        <gd:postcode><%= address[:postcode] %></gd:postcode>
+        <gd:country><%= address[:country] %></gd:country>
+      </gd:structuredPostalAddress>
+  <% end %>
+</atom:entry>

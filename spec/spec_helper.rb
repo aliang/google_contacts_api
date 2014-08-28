@@ -5,6 +5,8 @@ require 'json'
 require 'hashie'
 require 'net/http'
 require 'google_contacts_api'
+require 'active_support/core_ext/hash/conversions'
+require 'webmock/rspec'
 
 puts "Testing version #{GoogleContactsApi::Version::STRING}"
 
