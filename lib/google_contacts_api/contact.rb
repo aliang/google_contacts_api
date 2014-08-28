@@ -85,6 +85,16 @@ module GoogleContactsApi
       self["gd$im"] ? self["gd$im"].map { |i| i.address } : []
     end
 
+    def photo_with_metadata
+      photo_link_entry = self['link'].find { |l| l.rel == 'http://schemas.google.com/contacts/2008/rel#photo' }
+      return nil unless @api && photo_link_entry['gd$etag'] # etag is always specified if actual photo is present
+
+      response = @api.oauth.get(photo_link)
+      if GoogleContactsApi::Api.parse_response_code(response) == 200
+        { etag: photo_link_entry['gd$etag'], content_type: response.headers['content-type'], data: response.body }
+      end
+    end
+
     # Convenience method to return a nested $t field.
     # If the field doesn't exist, return nil
     def nested_t_field_or_nil(level1, level2)
@@ -92,6 +102,7 @@ module GoogleContactsApi
         self[level1][level2] ? self[level1][level2]['$t']: nil
       end
     end
+
     def given_name
       nested_t_field_or_nil 'gd$name', 'gd$givenName'
     end
