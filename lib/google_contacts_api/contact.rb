@@ -129,7 +129,7 @@ module GoogleContactsApi
       format_entities('gd$organization')
     end
     def websites
-      format_entities('gd$website')
+      format_entities('gContact$website')
     end
     def phone_numbers_full
       format_entities('gd$phoneNumber', :format_phone_number)
