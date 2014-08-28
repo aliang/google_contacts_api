@@ -374,7 +374,7 @@ describe "GoogleContactsApi" do
       @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
       expect(@oauth).to receive("get").with(@contact.photo_link)
       expect(@contact.photo_with_metadata).to eq( { data: 'some response',
-                                                    etag: '"dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM."',
+                                                    etag: 'dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM.',
                                                     content_type: 'image/jpeg'
                                                   } )
     end

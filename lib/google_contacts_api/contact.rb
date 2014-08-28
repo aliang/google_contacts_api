@@ -91,7 +91,11 @@ module GoogleContactsApi
 
       response = @api.oauth.get(photo_link)
       if GoogleContactsApi::Api.parse_response_code(response) == 200
-        { etag: photo_link_entry['gd$etag'], content_type: response.headers['content-type'], data: response.body }
+        {
+          etag: photo_link_entry['gd$etag'].gsub('"',''),
+          content_type: response.headers['content-type'],
+          data: response.body
+        }
       end
     end
 
