@@ -108,7 +108,10 @@ module GoogleContactsApi
       nested_t_field_or_nil 'gd$name', 'gd$nameSuffix'
     end
     def birthday
-      self['gContact$birthday'] ? self['gContact$birthday']['when'] : nil
+      if self['gContact$birthday']
+        day, month, year = self['gContact$birthday']['when'].split('-').reverse
+        { year: year == '' ? nil : year.to_i, month: month.to_i, day: day.to_i }
+      end
     end
 
     def relations

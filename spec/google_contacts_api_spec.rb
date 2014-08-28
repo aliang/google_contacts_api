@@ -343,6 +343,9 @@ describe "GoogleContactsApi" do
             'gd$familyName' => { '$t' => 'Doe' },
             'gd$fullName' => { '$t' => 'John Doe' }
           },
+          'gContact$birthday' => {
+            'when' => '1988-05-12'
+          },
           'gContact$relation' => [ { '$t' => 'Jane', 'rel' => 'spouse' } ],
           'gd$structuredPostalAddress' => [
             {
@@ -418,6 +421,14 @@ describe "GoogleContactsApi" do
         expect(@empty.spouse).to be_nil
         expect(@partly_empty.spouse).to be_nil
         expect(@contact_v3.spouse).to eq('Jane')
+      end
+
+      it 'has birthday' do
+        expect(@empty.birthday).to be_nil
+        expect(@contact_v3.birthday).to eq({ year: 1988, month: 5, day: 12 })
+
+        contact_birthday_no_year = GoogleContactsApi::Contact.new('gContact$birthday' => { 'when' => '--05-12' })
+        expect(contact_birthday_no_year.birthday).to eq({ year: nil, month: 5, day: 12 })
       end
       
       it 'has addresses' do
