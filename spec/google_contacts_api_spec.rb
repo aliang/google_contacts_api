@@ -12,23 +12,24 @@ describe "GoogleContactsApi" do
   describe "Api" do
     before(:each) do
       @oauth = double("oauth")
-      allow(@oauth).to receive(:get).and_return("get response")
       @api = GoogleContactsApi::Api.new(@oauth)
     end
 
     describe ".get" do
       it "should perform a get request using oauth returning json with version 3" do
         # expectation should come before execution
-        expect(@oauth).to receive(:get).with(
-          GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3", {"header" => "header"})
+        expect(@oauth).to receive(:request)
+          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3", {"header" => "header"})
+          .and_return('get response')
         expect(@api.get("any_url",
           {"param" => "param"},
           {"header" => "header"})).to eq("get response")
       end
 
       it "should perform a get request using oauth with the version specified" do
-        expect(@oauth).to receive(:get).with(
-          GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=2", {"header" => "header"})
+        expect(@oauth).to receive(:request)
+          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=2", {"header" => "header"})
+          .and_return('get response')
         expect(@api.get("any_url",
           {"param" => "param", "v" => "2"},
           {"header" => "header"})).to eq("get response")
@@ -43,7 +44,7 @@ describe "GoogleContactsApi" do
     it "should raise UnauthorizedError if OAuth 1.0 returns unauthorized" do
       oauth = double("oauth")
       error_html = load_file(File.join('errors', 'auth_sub_401.html'))
-      allow(oauth).to receive(:get).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
+      allow(oauth).to receive(:request).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
       api = GoogleContactsApi::Api.new(oauth)
       expect { api.get("any url",
         {"param" => "param"},
@@ -53,7 +54,7 @@ describe "GoogleContactsApi" do
     it "should raise UnauthorizedError if OAuth 2.0 returns unauthorized" do
       oauth = double("oauth2")
       oauth2_response = Struct.new(:status)
-      allow(oauth).to receive(:get).and_raise(MockOAuth2Error.new(oauth2_response.new(401)))
+      allow(oauth).to receive(:request).and_raise(MockOAuth2Error.new(oauth2_response.new(401)))
       api = GoogleContactsApi::Api.new(oauth)
       expect { api.get("any url",
         {"param" => "param"},
@@ -94,6 +95,98 @@ describe "GoogleContactsApi" do
     it "should be able to get contacts" do
       expect(@user.api).to receive(:get).with("contacts/default/full", anything)
       expect(@user.contacts).to eq("contact set")
+    end
+  end
+
+  describe 'contact creation' do
+    before do
+      @oauth = double("oauth")
+      @user = GoogleContactsApi::User.new(@oauth)
+      @contact_attrs =  {
+          :name_prefix => 'Mr',
+          :given_name => 'John',
+          :additional_name => 'Henry',
+          :family_name => 'Doe',
+          :name_suffix => 'III',
+          :emails => [
+              { :address => 'john@example.com', :primary => true, :rel => 'home' },
+              { :address => 'johnwork@example.com', :primary => false, :rel => 'work' },
+          ],
+          :phone_numbers => [
+              { :number => '(123)-111-1111', :primary => false, :rel => 'other'},
+              { :number => '(456)-111-1111', :primary => true, :rel => 'mobile'}
+          ],
+          :addresses => [
+              { :rel => 'work', :primary => false, :street => '123 Lane', :city => 'Somewhere', :region => 'IL',
+                :postcode => '12345', :country => 'United States of America'},
+              { :rel => 'home', :primary => true, :street => '456 Road', :city => 'Anywhere', :region => 'IN',
+                :postcode => '67890', :country => 'United States of America'},
+          ]
+      }
+      @contact_xml = <<-EOS
+          <atom:entry xmlns:atom='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005'>
+            <atom:category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>
+            <gd:name>
+              <gd:namePrefix>Mr</gd:namePrefix>
+              <gd:givenName>John</gd:givenName>
+              <gd:additionalName>Henry</gd:additionalName>
+              <gd:familyName>Doe</gd:familyName>
+              <gd:nameSuffix>III</gd:nameSuffix>
+            </gd:name>
+            <atom:content type='text'></atom:content>
+            <gd:email rel='http://schemas.google.com/g/2005#home' primary='true' address='john@example.com'/>
+            <gd:email rel='http://schemas.google.com/g/2005#work' primary='false' address='johnwork@example.com'/>
+            <gd:phoneNumber rel='http://schemas.google.com/g/2005#other' primary='false'>(123)-111-1111</gd:phoneNumber>
+            <gd:phoneNumber rel='http://schemas.google.com/g/2005#mobile' primary='true'>(456)-111-1111</gd:phoneNumber>
+            <gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#work' primary='false'>
+              <gd:city>Somewhere</gd:city>
+              <gd:street>123 Lane</gd:street>
+              <gd:region>IL</gd:region>
+              <gd:postcode>12345</gd:postcode>
+              <gd:country>United States of America</gd:country>
+            </gd:structuredPostalAddress>
+            <gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#home' primary='true'>
+              <gd:city>Anywhere</gd:city>
+              <gd:street>456 Road</gd:street>
+              <gd:region>IN</gd:region>
+              <gd:postcode>67890</gd:postcode>
+              <gd:country>United States of America</gd:country>
+            </gd:structuredPostalAddress>
+          </atom:entry>
+      EOS
+
+      @contact_json = <<-EOS
+        {
+            "feed": {
+                "entry": [
+                    {
+                        "gd$name": {"gd$givenName": {"$t": "John"}},
+                        "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+                    }
+                ],
+                "openSearch$totalResults": {"$t": "1"},
+                "openSearch$startIndex": {"$t": "1"},
+                "openSearch$itemsPerPage": {"$t": "1"}
+            }
+        }
+      EOS
+    end
+
+    it 'creates formats xml correctly from attributes' do
+      expect(Hash.from_xml(@user.xml_for_create_contact(@contact_attrs))).to eq(Hash.from_xml(@contact_xml))
+    end
+
+    it 'sends a request with the contact xml and returns created Contact instance' do
+      expect(@user).to receive(:xml_for_create_contact).with(@contact_attrs).and_return(@contact_xml)
+
+      expect(@oauth).to receive(:request)
+                          .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', @contact_xml, {})
+                          .and_return(double(:body => @contact_json, :status => 200))
+
+      contact = @user.create_contact(@contact_attrs)
+
+      expect(contact.given_name).to eq('John')
+      expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c')
     end
   end
 
@@ -235,7 +328,6 @@ describe "GoogleContactsApi" do
       expect(@contact.ims).to eq([])
     end
 
-    #
     describe 'Contacts API v3 fields' do
       before do
         @empty = GoogleContactsApi::Contact.new

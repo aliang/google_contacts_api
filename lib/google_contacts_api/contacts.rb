@@ -13,16 +13,34 @@ module GoogleContactsApi
       params["max-results"] = 100000 unless params.key?("max-results")
       url = "contacts/default/full"
       response = @api.get(url, params)
-      
+
+      raise_if_failed_response(response)
+      GoogleContactsApi::ContactSet.new(response.body, @api)
+    end
+
+    def raise_if_failed_response(response)
       # TODO: Define some fancy exceptions
       case GoogleContactsApi::Api.parse_response_code(response)
-      when 401; raise
-      when 403; raise
-      when 404; raise
-      when 400...500; raise
-      when 500...600; raise
+        when 401; raise
+        when 403; raise
+        when 404; raise
+        when 400...500; raise
+        when 500...600; raise
       end
-      GoogleContactsApi::ContactSet.new(response.body, @api)
+    end
+
+    def create_contact(attrs)
+      response = @api.post('default/full', xml_for_create_contact(attrs))
+      raise_if_failed_response(response)
+
+      body = response.body
+      contact_set = GoogleContactsApi::ContactSet.new(body, @api)
+      contact_set.first
+    end
+
+    def xml_for_create_contact(attrs)
+      @@contact_xml_template ||= File.new(File.dirname(__FILE__) + '/templates/create_contact.erb').read
+      ERB.new(@@contact_xml_template).result(OpenStruct.new(:contact => attrs).instance_eval { binding })
     end
   end
 end
