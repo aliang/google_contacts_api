@@ -107,6 +107,9 @@ module GoogleContactsApi
     def name_suffix
       nested_t_field_or_nil 'gd$name', 'gd$nameSuffix'
     end
+    def birthday
+      self['gContact$birthday'] ? self['gContact$birthday']['when'] : nil
+    end
 
     def relations
       self['gContact$relation'] ? self['gContact$relation'] : []
@@ -116,46 +119,57 @@ module GoogleContactsApi
       spouse_rel['$t'] if spouse_rel
     end
 
+    def format_entities(key, format_method=:format_entity)
+      self[key] ? self[key].map(&method(format_method)) : []
+    end
     def addresses
-      self['gd$structuredPostalAddress'] ? self['gd$structuredPostalAddress'].map(&method(:format_address)) : []
+      format_entities('gd$structuredPostalAddress', :format_address)
+    end
+    def organizations
+      format_entities('gd$organization')
+    end
+    def websites
+      format_entities('gd$website')
     end
     def phone_numbers_full
-      self["gd$phoneNumber"] ? self["gd$phoneNumber"].map(&method(:format_phone_number)) : []
+      format_entities('gd$phoneNumber', :format_phone_number)
     end
     def emails_full
-      self["gd$email"] ? self["gd$email"].map(&method(:format_email)) : []
+      format_entities('gd$email')
     end
 
   private
-    def format_address(unformatted)
+    def format_entity(unformatted, default_rel=nil, text_key=nil)
       formatted = {}
-      formatted[:rel] = unformatted['rel'] ? unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '') : 'work'
-      unformatted.delete 'rel'
+
       formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
       unformatted.delete 'primary'
-      unformatted.each do |key, value|
-        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t']
+
+      if unformatted['rel']
+        formatted[:rel] = unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '')
+        unformatted.delete 'rel'
+      elsif default_rel
+        formatted[:rel] = default_rel
       end
+
+      if text_key
+        formatted[text_key] = unformatted['$t']
+        unformatted.delete '$t'
+      end
+
+      unformatted.each do |key, value|
+        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t'] ? value['$t'] : value
+      end
+
       formatted
     end
 
-    def format_email_or_phone(unformatted)
-      formatted = {}
-      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
-      unformatted.delete 'primary'
-      unformatted.each do |key, value|
-        formatted[key.underscore.to_sym] = value ? value.gsub('http://schemas.google.com/g/2005#', '') : value
-      end
-      formatted
+    def format_address(unformatted)
+      return format_entity(unformatted, 'work')
     end
 
     def format_phone_number(unformatted)
-      unformatted[:number] = unformatted['$t']
-      unformatted.delete '$t'
-      format_email_or_phone unformatted
-    end
-    def format_email(unformatted)
-      format_email_or_phone unformatted
+      format_entity unformatted, nil, :number
     end
   end
 end

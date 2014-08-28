@@ -377,6 +377,13 @@ describe "GoogleContactsApi" do
               '$t' => '(123) 334-5158',
               'rel' => 'http://schemas.google.com/g/2005#mobile'
             }
+          ],
+          'gd$organization' => [
+            {
+              'gd$orgTitle' => { '$t' => 'Worker Person' },
+              'gd$orgName' => { '$t' => 'Example, Inc' },
+              'rel' => 'http://schemas.google.com/g/2005#other'
+            }
           ]
         )
       end
@@ -448,6 +455,20 @@ describe "GoogleContactsApi" do
       it 'has full emails' do
         expect(@empty.emails_full).to eq([])
         expect(@contact_v3.emails_full).to eq([ { :primary => true, :address => 'johnsmith@example.com', :rel => 'other' } ])
+      end
+
+      it 'has organizations' do
+        expect(@empty.organizations).to eq([])
+
+        formatted_organizations = [
+            {
+                :primary => false,
+                :rel => 'other',
+                :org_title => 'Worker Person',
+                :org_name => 'Example, Inc'
+            }
+        ]
+        expect(@contact_v3.organizations).to eq(formatted_organizations)
       end
     end
   end
