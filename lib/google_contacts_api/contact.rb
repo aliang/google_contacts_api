@@ -134,7 +134,7 @@ module GoogleContactsApi
       format_entities('gd$organization')
     end
     def websites
-      format_entities('gd$website')
+      format_entities('gContact$website')
     end
 
     # Return an Array of Hashes representing phone numbers with formatted metadata.
