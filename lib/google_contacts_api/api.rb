@@ -31,11 +31,14 @@ module GoogleContactsApi
     # and lets us use Hashie::Mash. Note that in the JSON conversion from XML,
     # ":" is replaced with $, element content is keyed with $t
     # Raise UnauthorizedError if not authorized.
-    def request(http_method, link, params, *arguments)
+    def request(http_method, link, params, body = '', headers = {})
       begin
         merged_params = params_with_defaults(params)
         path = "#{BASE_URL}#{link}?#{merged_params.to_query}"
-        result = @oauth.request(http_method, path, *arguments)
+        opts = {}
+        opts[:body] = body if body != '' && !body.nil?
+        opts[:headers] = headers if headers != {} && !headers.nil?
+        result = @oauth.request(http_method, path, opts)
       rescue => e
         # TODO: OAuth 2.0 will raise a real error
         raise UnauthorizedError if defined?(e.response) && self.class.parse_response_code(e.response) == 401
