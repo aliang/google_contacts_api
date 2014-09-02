@@ -19,7 +19,7 @@ describe "GoogleContactsApi" do
       it "should perform a get request using oauth returning json with version 3" do
         # expectation should come before execution
         expect(@oauth).to receive(:request)
-          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3", {"header" => "header"})
+          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3", headers: {"header" => "header"})
           .and_return('get response')
         expect(@api.get("any_url",
           {"param" => "param"},
@@ -28,7 +28,7 @@ describe "GoogleContactsApi" do
 
       it "should perform a get request using oauth with the version specified" do
         expect(@oauth).to receive(:request)
-          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=2", {"header" => "header"})
+          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=2", headers: {"header" => "header"})
           .and_return('get response')
         expect(@api.get("any_url",
           {"param" => "param", "v" => "2"},
@@ -36,8 +36,15 @@ describe "GoogleContactsApi" do
       end
     end
 
+    it "should perform a post request using oauth" do
+      expect(@oauth).to receive(:request)
+                        .with(:post, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3",
+                              body: 'body', headers: {"header" => "header"})
+                        .and_return('get response')
+      expect(@api.post("any_url", 'body', {"param" => "param"}, {"header" => "header"})).to eq("get response")
+    end
+
     # Not implemented yet
-    pending "should perform a post request using oauth"
     pending "should perform a put request using oauth"
     pending "should perform a delete request using oauth"
     # Not sure how to test, you'd need a revoked token.
@@ -89,7 +96,7 @@ describe "GoogleContactsApi" do
     end
     # Should hit the right URLs and return the right stuff
     it "should be able to get groups including system groups" do
-      expect(@user.api).to receive(:get).with("groups/default/full", hash_including(:v => 2))
+      expect(@user.api).to receive(:get).with("groups/default/full", hash_including(v: 2))
       expect(@user.groups).to eq("group set")
     end
     it "should be able to get contacts" do
@@ -103,56 +110,63 @@ describe "GoogleContactsApi" do
       @oauth = double("oauth")
       @user = GoogleContactsApi::User.new(@oauth)
       @contact_attrs =  {
-          :name_prefix => 'Mr',
-          :given_name => 'John',
-          :additional_name => 'Henry',
-          :family_name => 'Doe',
-          :name_suffix => 'III',
-          :emails => [
-              { :address => 'john@example.com', :primary => true, :rel => 'home' },
-              { :address => 'johnwork@example.com', :primary => false, :rel => 'work' },
-          ],
-          :phone_numbers => [
-              { :number => '(123)-111-1111', :primary => false, :rel => 'other'},
-              { :number => '(456)-111-1111', :primary => true, :rel => 'mobile'}
-          ],
-          :addresses => [
-              { :rel => 'work', :primary => false, :street => '123 Lane', :city => 'Somewhere', :region => 'IL',
-                :postcode => '12345', :country => 'United States of America'},
-              { :rel => 'home', :primary => true, :street => '456 Road', :city => 'Anywhere', :region => 'IN',
-                :postcode => '67890', :country => 'United States of America'},
-          ]
+        name_prefix: 'Mr',
+        given_name: 'John',
+        additional_name: 'Henry',
+        family_name: 'Doe',
+        name_suffix: 'III',
+        content: 'this is content',
+        emails: [
+          { address: 'john@example.com', primary: true, rel: 'home' },
+          { address: 'johnwork@example.com', primary: false, rel: 'work' },
+        ],
+        phone_numbers: [
+          { number: '(123)-111-1111', primary: false, rel: 'other'},
+          { number: '(456)-111-1111', primary: true, rel: 'mobile'}
+        ],
+        addresses: [
+          { rel: 'work', primary: false, street: '123 Lane', city: 'Somewhere', region: 'IL',
+            postcode: '12345', country: 'United States of America'},
+          { rel: 'home', primary: true, street: '456 Road', city: 'Anywhere', region: 'IN',
+            postcode: '67890', country: 'United States of America'},
+        ],
+        websites: [
+          { rel: 'blog', primary: true, href: 'blog.example.com' },
+          { rel: 'home-page', href: 'www.example.com' }
+        ]
       }
       @contact_xml = <<-EOS
-          <atom:entry xmlns:atom='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005'>
-            <atom:category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/contact/2008#contact'/>
-            <gd:name>
-              <gd:namePrefix>Mr</gd:namePrefix>
-              <gd:givenName>John</gd:givenName>
-              <gd:additionalName>Henry</gd:additionalName>
-              <gd:familyName>Doe</gd:familyName>
-              <gd:nameSuffix>III</gd:nameSuffix>
-            </gd:name>
-            <atom:content type='text'></atom:content>
-            <gd:email rel='http://schemas.google.com/g/2005#home' primary='true' address='john@example.com'/>
-            <gd:email rel='http://schemas.google.com/g/2005#work' primary='false' address='johnwork@example.com'/>
-            <gd:phoneNumber rel='http://schemas.google.com/g/2005#other' primary='false'>(123)-111-1111</gd:phoneNumber>
-            <gd:phoneNumber rel='http://schemas.google.com/g/2005#mobile' primary='true'>(456)-111-1111</gd:phoneNumber>
-            <gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#work' primary='false'>
-              <gd:city>Somewhere</gd:city>
-              <gd:street>123 Lane</gd:street>
-              <gd:region>IL</gd:region>
-              <gd:postcode>12345</gd:postcode>
-              <gd:country>United States of America</gd:country>
-            </gd:structuredPostalAddress>
-            <gd:structuredPostalAddress rel='http://schemas.google.com/g/2005#home' primary='true'>
-              <gd:city>Anywhere</gd:city>
-              <gd:street>456 Road</gd:street>
-              <gd:region>IN</gd:region>
-              <gd:postcode>67890</gd:postcode>
-              <gd:country>United States of America</gd:country>
-            </gd:structuredPostalAddress>
-          </atom:entry>
+        <atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005" xmlns:gContact="http://schemas.google.com/contact/2008">
+          <atom:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
+          <gd:name>
+            <gd:namePrefix>Mr</gd:namePrefix>
+            <gd:givenName>John</gd:givenName>
+            <gd:additionalName>Henry</gd:additionalName>
+            <gd:familyName>Doe</gd:familyName>
+            <gd:nameSuffix>III</gd:nameSuffix>
+          </gd:name>
+          <atom:content type="text">this is content</atom:content>
+          <gd:email rel="http://schemas.google.com/g/2005#home" primary="true" address="john@example.com"/>
+          <gd:email rel="http://schemas.google.com/g/2005#work" address="johnwork@example.com"/>
+          <gd:phoneNumber rel="http://schemas.google.com/g/2005#other">(123)-111-1111</gd:phoneNumber>
+          <gd:phoneNumber rel="http://schemas.google.com/g/2005#mobile" primary="true">(456)-111-1111</gd:phoneNumber>
+          <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#work">
+            <gd:city>Somewhere</gd:city>
+            <gd:street>123 Lane</gd:street>
+            <gd:region>IL</gd:region>
+            <gd:postcode>12345</gd:postcode>
+            <gd:country>United States of America</gd:country>
+          </gd:structuredPostalAddress>
+          <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#home" primary="true">
+            <gd:city>Anywhere</gd:city>
+            <gd:street>456 Road</gd:street>
+            <gd:region>IN</gd:region>
+            <gd:postcode>67890</gd:postcode>
+            <gd:country>United States of America</gd:country>
+          </gd:structuredPostalAddress>
+          <gContact:website href="blog.example.com" rel="blog" primary="true"/>
+          <gContact:website href="www.example.com" rel="home-page"/>
+        </atom:entry>
       EOS
 
       @contact_json = <<-EOS
@@ -180,13 +194,27 @@ describe "GoogleContactsApi" do
       expect(@user).to receive(:xml_for_create_contact).with(@contact_attrs).and_return(@contact_xml)
 
       expect(@oauth).to receive(:request)
-                          .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', @contact_xml, {})
-                          .and_return(double(:body => @contact_json, :status => 200))
+                          .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', body: @contact_xml)
+                          .and_return(double(body: @contact_json, status: 200))
 
       contact = @user.create_contact(@contact_attrs)
 
       expect(contact.given_name).to eq('John')
       expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c')
+    end
+
+    it 'works without emails, phone numbers, addresses and websites specified and handles special characters' do
+      attrs =  { given_name: '<Jo&hn>', family_name: 'Doe' }
+      xml = <<-EOS
+        <atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005" xmlns:gContact="http://schemas.google.com/contact/2008">
+          <atom:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
+          <gd:name>
+            <gd:givenName>&lt;Jo&amp;hn&gt;</gd:givenName>
+            <gd:familyName>Doe</gd:familyName>
+          </gd:name>
+        </atom:entry>
+      EOS
+      expect(Hash.from_xml(@user.xml_for_create_contact(attrs))).to eq(Hash.from_xml(xml))
     end
   end
 
@@ -318,8 +346,7 @@ describe "GoogleContactsApi" do
                                                     content_type: 'image/jpeg'
                                                   } )
     end
-    # TODO: there isn't any phone number in here
-    pending "should return all phone numbers"
+
     it "should return all e-mail addresses" do
       expect(@contact.emails).to eq(["contact1@example.com"])
     end
@@ -452,24 +479,24 @@ describe "GoogleContactsApi" do
 
         formatted_addresses = [
           {
-              :rel => 'work',
-              :primary => false,
-              :country => 'United States of America',
-              :formatted_address => "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
-              :city => 'Somwhere',
-              :street => '2345 Long Dr. #232',
-              :region => 'IL',
-              :postcode => '12345'
+              rel: 'work',
+              primary: false,
+              country: 'United States of America',
+              formatted_address: "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
+              city: 'Somwhere',
+              street: '2345 Long Dr. #232',
+              region: 'IL',
+              postcode: '12345'
           },
           {
-              :rel => 'home',
-              :primary => true,
-              :country => 'United States of America',
-              :formatted_address => "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
-              :city => 'Anywhere',
-              :street => '123 Far Ln.',
-              :region => 'MO',
-              :postcode => '67891'
+              rel: 'home',
+              primary: true,
+              country: 'United States of America',
+              formatted_address: "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
+              city: 'Anywhere',
+              street: '123 Far Ln.',
+              region: 'MO',
+              postcode: '67891'
           }
         ]
         expect(@contact_v3.addresses).to eq(formatted_addresses)
@@ -477,11 +504,11 @@ describe "GoogleContactsApi" do
 
       it 'has full phone numbers' do
         expect(@empty.phone_numbers_full).to eq([])
-        expect(@contact_v3.phone_numbers_full).to eq([ { :primary => true, :number => '(123) 334-5158', :rel => 'mobile' } ])
+        expect(@contact_v3.phone_numbers_full).to eq([ { primary: true, number: '(123) 334-5158', rel: 'mobile' } ])
       end
       it 'has full emails' do
         expect(@empty.emails_full).to eq([])
-        expect(@contact_v3.emails_full).to eq([ { :primary => true, :address => 'johnsmith@example.com', :rel => 'other' } ])
+        expect(@contact_v3.emails_full).to eq([ { primary: true, address: 'johnsmith@example.com', rel: 'other' } ])
       end
 
       it 'has organizations' do
@@ -489,10 +516,10 @@ describe "GoogleContactsApi" do
 
         formatted_organizations = [
             {
-                :primary => false,
-                :rel => 'other',
-                :org_title => 'Worker Person',
-                :org_name => 'Example, Inc'
+                primary: false,
+                rel: 'other',
+                org_title: 'Worker Person',
+                org_name: 'Example, Inc'
             }
         ]
         expect(@contact_v3.organizations).to eq(formatted_organizations)

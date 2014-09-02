@@ -39,8 +39,8 @@ module GoogleContactsApi
     end
 
     def xml_for_create_contact(attrs)
-      @@contact_xml_template ||= File.new(File.dirname(__FILE__) + '/templates/create_contact.erb').read
-      ERB.new(@@contact_xml_template).result(OpenStruct.new(:contact => attrs).instance_eval { binding })
+      @@contact_xml_template ||= File.new(File.dirname(__FILE__) + '/templates/create_contact.xml.erb').read
+      ERB.new(@@contact_xml_template).result(OpenStruct.new(contact: attrs).instance_eval { binding })
     end
   end
 end

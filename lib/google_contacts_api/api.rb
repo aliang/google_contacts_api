@@ -19,10 +19,11 @@ module GoogleContactsApi
 
     # Get request to specified link, with query params
     def get(link, params = {}, headers = {})
-      request(:get, link, params, headers)
+      request(:get, link, params, '', headers)
     end
 
     # Post request to specified link, with query params
+    # Not tested with oauth gem, only oauth2
     def post(link, body = '', params = {}, headers = {})
       request(:post, link, params, body, headers)
     end
