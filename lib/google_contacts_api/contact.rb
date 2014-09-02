@@ -152,7 +152,32 @@ module GoogleContactsApi
       format_entities('gd$email')
     end
 
+    def etag
+      self['gd$etag'] ? self['gd$etag']['$t'].gsub('"','') : nil
+    end
+
+    def update(changes)
+      attrs = attrs_for_update(changes)
+      xml = xml_for_update(attrs)
+    end
+    
   private
+    def attrs_for_update(changes)
+      fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content, :emails,
+                :phone_numbers, :addresses, :websites]
+      Hash[fields.map { |f| [ f, changes.has_key?(f) ? changes[f] : value_for_field(f) ] } ]
+    end
+
+    def value_for_field(field)
+      method_exceptions = {
+          phone_numbers: :phone_numbers_full,
+          emails: :emails_full
+      }
+      method = method_exceptions.hash_key?(field) ? method_exceptions[field] : field
+      send(method)
+    end
+
+
     def format_entities(key, format_method=:format_entity)
       self[key] ? self[key].map(&method(format_method)) : []
     end
