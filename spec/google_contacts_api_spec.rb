@@ -44,9 +44,23 @@ describe "GoogleContactsApi" do
       expect(@api.post("any_url", 'body', {"param" => "param"}, {"header" => "header"})).to eq("get response")
     end
 
-    # Not implemented yet
-    pending "should perform a put request using oauth"
-    pending "should perform a delete request using oauth"
+    it "should perform a put request using oauth" do
+      expect(@oauth).to receive(:request)
+                        .with(:put, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3",
+                              body: 'body', headers: {"header" => "header"})
+                        .and_return('get response')
+      expect(@api.put("any_url", 'body', {"param" => "param"}, {"header" => "header"})).to eq("get response")
+    end
+
+    it "should perform a delete request using oauth" do
+      expect(@oauth).to receive(:request)
+                        .with(:delete, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3",
+                              headers: {"header" => "header"})
+                        .and_return('get response')
+      expect(@api.delete("any_url", {"param" => "param"}, {"header" => "header"})).to eq("get response")
+    end
+
+
     # Not sure how to test, you'd need a revoked token.
     it "should raise UnauthorizedError if OAuth 1.0 returns unauthorized" do
       oauth = double("oauth")
@@ -162,6 +176,22 @@ describe "GoogleContactsApi" do
         expect(contacts).to eq("contact set")
       end
     end
+    it 'gets a contact from an id url' do
+      json = <<-EOS
+        {
+          "entry": [
+            {
+              "gd$name": {"gd$givenName": {"$t": "John"}},
+              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+            }
+          ]
+        }
+      EOS
+      expect(@user.api).to receive(:get).with('contacts/test.user%40example.com/base/6b70f8bb0372c')
+                                        .and_return(double(body: json, status: 200))
+      contact = @user.get_contact('http://www.google.com/m8/feeds/contacts/test.user%40example.com/base/6b70f8bb0372c')
+      expect(contact.given_name).to eq('John')
+    end
   end
 
   describe 'contact creation' do
@@ -269,6 +299,73 @@ describe "GoogleContactsApi" do
         </atom:entry>
       EOS
       expect(Hash.from_xml(@user.xml_for_create_contact(attrs))).to eq(Hash.from_xml(xml))
+    end
+  end
+
+  describe 'updating a contact' do
+    before do
+      @oauth = double("oauth")
+      @user = GoogleContactsApi::User.new(@oauth)
+      parsed_json = {
+        'gd$name' => {'gd$givenName' => {'$t' => 'John'}},
+        'id' => {'$t' => 'http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c'},
+        'gd$etag' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."'
+      }
+      @contact = GoogleContactsApi::Contact.new(parsed_json, nil, @user.api)
+
+      @update_attrs = { family_name: 'Doe' }
+
+      @augmented_update_attrs = {
+          name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
+          content: nil, emails: [], phone_numbers: [], addresses: [], websites: [],
+          updated: '2014-09-01T16:25:34.010Z', etag: '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
+          id: 'http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c'
+      }
+
+      @update_xml = @contact_xml = <<-EOS
+        <entry gd:etag="&quot;SXk6cDdXKit7I2A9Wh9VFUgORgE.&quot;">
+          <id>http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c</id>
+          <updated>2014-09-01T16:25:34.010Z</updated>
+          <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
+          <gd:name>
+            <gd:givenName>John</gd:givenName>
+            <gd:familyName>Doe</gd:familyName>
+          </gd:name>
+        </entry>
+      EOS
+
+      @contact_json = <<-EOS
+        {
+          "entry": [
+            {
+              "gd$name": {
+                "gd$givenName": {"$t": "John"},
+                "gd$familyName": {"$t": "Doe"}
+              },
+              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+            }
+          ]
+        }
+      EOS
+    end
+
+    it 'formats xml correctly from attributes' do
+      expect(@contact.xml_for_update(@augmented_update_attrs)).to be_equivalent_to(@update_xml)
+    end
+
+    it 'sends an api update request' do
+      expect(@contact).to receive(:xml_for_update).with(@augmented_update_attrs).and_return(@update_xml)
+
+      expect(GoogleContactsApi::Api).to receive(:format_time_for_xml).with(anything).and_return('2014-09-01T16:25:34.010Z')
+
+      expect(@oauth).to receive(:request)
+                        .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c?alt=json&v=3',
+                              body: @contact_xml, headers: { 'If-Match' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."' })
+                        .and_return(double(body: @contact_json, status: 200))
+
+      @contact.send_update(@update_attrs)
+      expect(@contact.given_name).to eq('John')
+      expect(@contact.family_name).to eq('Doe')
     end
   end
 

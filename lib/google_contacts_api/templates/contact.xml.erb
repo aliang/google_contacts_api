@@ -7,7 +7,7 @@
 <% else %>
 <entry gd:etag=<%= contact[:etag].encode(xml: :attr) %>>
  <id><%= contact[:id].encode(xml: :text) %></id>
- <updated>2008-02-28T18:47:02.303Z</updated>
+ <updated><%= contact[:updated].encode(xml: :text) %></updated>
  <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
 <% end %>
 
@@ -53,7 +53,7 @@
     <% end %>
 
 <% if action != :create  %>
-  </entry>
+</entry>
 <% else %>
-  </atom:entry>
+</atom:entry>
 <% end %>

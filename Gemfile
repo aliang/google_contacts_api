@@ -15,6 +15,7 @@ group :test, :development do
   gem "rdoc"
   gem "webmock"
   gem "oauth2"
+  gem "equivalent-xml"
 end
 
 group :development do
