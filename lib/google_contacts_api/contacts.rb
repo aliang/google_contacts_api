@@ -23,7 +23,7 @@ module GoogleContactsApi
     end
 
     def get_contact(id_url)
-      contact_from_response(@api.get(id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api.BASE_URL, '')))
+      contact_from_response(@api.get(id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')))
     end
 
     def create_contact(attrs)
@@ -48,8 +48,8 @@ module GoogleContactsApi
     end
 
     def xml_for_create_contact(attrs)
-      @@contact_xml_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
-      ERB.new(@@contact_xml_template).result(OpenStruct.new(contact: attrs, action: :create).instance_eval { binding })
+      @@new_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
+      ERB.new(@@new_contact_template).result(OpenStruct.new(contact: attrs, action: :create).instance_eval { binding })
     end
   end
 end

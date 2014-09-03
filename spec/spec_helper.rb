@@ -7,6 +7,8 @@ require 'net/http'
 require 'google_contacts_api'
 require 'active_support/core_ext/hash/conversions'
 require 'webmock/rspec'
+require 'rspec/matchers'
+require 'equivalent-xml'
 
 puts "Testing version #{GoogleContactsApi::VERSION}"
 

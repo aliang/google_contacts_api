@@ -28,6 +28,11 @@ module GoogleContactsApi
       request(:post, link, params, body, headers)
     end
 
+    # Not tested with oauth gem, only oauth2
+    def put(link, body = '', params = {}, headers = {})
+      request(:put, link, params, body, headers)
+    end
+
     # For get, post, put, delete, always use JSON, it's simpler
     # and lets us use Hashie::Mash. Note that in the JSON conversion from XML,
     # ":" is replaced with $, element content is keyed with $t
@@ -51,26 +56,20 @@ module GoogleContactsApi
       result
     end
 
-    # Put request to specified link, with query params
-    # Not tried yet
-    def put(link, params = {}, headers = {})
-      raise NotImplementedError
-      params["alt"] = "json"
-      @oauth.put("#{BASE_URL}#{link}?#{params.to_query}", headers)
-    end
-
     # Delete request to specified link, with query params
     # Not tried yet
     def delete(link, params = {}, headers = {})
-      raise NotImplementedError
-      params["alt"] = "json"
-      @oauth.delete("#{BASE_URL}#{link}?#{params.to_query}", headers)
+      request(:delete, link, params, '', headers)
     end
     
     # Parse the response code
     # Needed because of difference between oauth and oauth2 gems
     def self.parse_response_code(response)
       (defined?(response.code) ? response.code : response.status).to_i
+    end
+
+    def self.format_time_for_xml(time)
+      time.utc.strftime '%Y-%m-%dT%H:%M:%S.%3NZ'
     end
 
     private

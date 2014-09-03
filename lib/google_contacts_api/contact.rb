@@ -153,27 +153,54 @@ module GoogleContactsApi
     end
 
     def etag
-      self['gd$etag'] ? self['gd$etag']['$t'].gsub('"','') : nil
+      self['gd$etag']
     end
 
-    def update(changes)
+    def send_update(changes)
       attrs = attrs_for_update(changes)
+      attrs[:updated] = GoogleContactsApi::Api.format_time_for_xml(Time.now)
+      attrs[:etag] = etag
+      attrs[:id] = id
+
       xml = xml_for_update(attrs)
+      url = id.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')
+      response = @api.put(url, xml, {}, { 'If-Match' => etag })
+      code = GoogleContactsApi::Api.parse_response_code(response)
+
+      if code == 200
+        reload_from_data(JSON.parse(response.body)['entry'][0])
+      elsif code == 412
+        # Contacts API gives HTTP 412 Precondition Failed if contact has been edited since you attempted the edit
+        # See https://developers.google.com/google-apps/contacts/v3/
+        raise 'HTTP 214: Contact Modified Since Load'
+      else
+        raise code
+      end
+    end
+
+    def reload_from_data(parsed_data)
+      keys.each { |k| delete(k) }
+      deep_update(parsed_data)
+    end
+
+    def xml_for_update(attrs)
+      @@edit_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
+      ERB.new(@@edit_contact_template).result(OpenStruct.new(contact: attrs, action: :update).instance_eval { binding })
     end
     
   private
     def attrs_for_update(changes)
-      fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content, :emails,
-                :phone_numbers, :addresses, :websites]
+      fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
+                :emails, :phone_numbers, :addresses, :websites]
       Hash[fields.map { |f| [ f, changes.has_key?(f) ? changes[f] : value_for_field(f) ] } ]
     end
 
     def value_for_field(field)
       method_exceptions = {
-          phone_numbers: :phone_numbers_full,
-          emails: :emails_full
+        phone_numbers: :phone_numbers_full,
+        emails: :emails_full
       }
-      method = method_exceptions.hash_key?(field) ? method_exceptions[field] : field
+      method = method_exceptions.has_key?(field) ? method_exceptions[field] : field
       send(method)
     end
 
