@@ -156,7 +156,13 @@ module GoogleContactsApi
       self['gd$etag']
     end
 
-    def send_update(changes)
+    def prep_update(changes)
+      @changes ||= {}
+      @changes.merge!(changes)
+    end
+
+    def send_update(changes=nil)
+      changes ||= @changes
       attrs = attrs_for_update(changes)
       attrs[:updated] = GoogleContactsApi::Api.format_time_for_xml(Time.now)
       attrs[:etag] = etag

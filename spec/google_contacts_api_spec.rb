@@ -265,7 +265,7 @@ describe "GoogleContactsApi" do
 
       @augmented_update_attrs = {
           name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
-          content: nil, emails: [], phone_numbers: [], addresses: [], websites: [], organizations: [],
+          content: nil, emails: [], phone_numbers: [], addresses: [], organizations: [], websites: [],
           updated: '2014-09-01T16:25:34.010Z', etag: '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
           id: 'http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c'
       }
@@ -301,7 +301,7 @@ describe "GoogleContactsApi" do
       expect(@contact.xml_for_update(@augmented_update_attrs)).to be_equivalent_to(@update_xml)
     end
 
-    it 'sends an api update request' do
+    def mocks_for_contact_update
       expect(@contact).to receive(:xml_for_update).with(@augmented_update_attrs).and_return(@update_xml)
 
       expect(GoogleContactsApi::Api).to receive(:format_time_for_xml).with(anything).and_return('2014-09-01T16:25:34.010Z')
@@ -310,8 +310,21 @@ describe "GoogleContactsApi" do
                         .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c?alt=json&v=3',
                               body: @contact_xml, headers: { 'If-Match' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."' })
                         .and_return(double(body: @contact_json, status: 200))
+    end
+
+    it 'sends an api update request' do
+      mocks_for_contact_update
 
       @contact.send_update(@update_attrs)
+      expect(@contact.given_name).to eq('John')
+      expect(@contact.family_name).to eq('Doe')
+    end
+
+    it 'supports prep update and send update' do
+      mocks_for_contact_update
+
+      @contact.prep_update(@update_attrs)
+      @contact.send_update
       expect(@contact.given_name).to eq('John')
       expect(@contact.family_name).to eq('Doe')
     end
