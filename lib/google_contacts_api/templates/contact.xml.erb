@@ -44,6 +44,14 @@
       </gd:structuredPostalAddress>
     <% end %>
 
+    <% (contact[:organizations] || []).each do |org| %>
+       <gd:organization rel="http://schemas.google.com/g/2005#<%= org[:rel] %>"
+                <%= org[:primary] ? 'primary="true"' : '' %>>
+          <gd:orgName><%= org[:org_name].encode(xml: :text) %></gd:orgName>
+          <gd:orgTitle><%= org[:org_title].encode(xml: :text) %></gd:orgTitle>
+       </gd:organization>
+    <% end %>
+
     <% (contact[:websites] || []).each do |website| %>
         <gContact:website
             href=<%= website[:href].encode(xml: :attr) %>

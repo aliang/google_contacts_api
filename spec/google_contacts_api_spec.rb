@@ -163,6 +163,9 @@ describe "GoogleContactsApi" do
         websites: [
           { rel: 'blog', primary: true, href: 'blog.example.com' },
           { rel: 'home-page', href: 'www.example.com' }
+        ],
+        organizations: [
+          { org_name: 'Example, Inc', org_title: 'Manager', rel: 'other', primary: true }
         ]
       }
       @contact_xml = <<-EOS
@@ -194,6 +197,10 @@ describe "GoogleContactsApi" do
             <gd:postcode>67890</gd:postcode>
             <gd:country>United States of America</gd:country>
           </gd:structuredPostalAddress>
+          <gd:organization rel="http://schemas.google.com/g/2005#other" primary="true">
+            <gd:orgName>Example, Inc</gd:orgName>
+            <gd:orgTitle>Manager</gd:orgTitle>
+          </gd:organization>
           <gContact:website href="blog.example.com" rel="blog" primary="true"/>
           <gContact:website href="www.example.com" rel="home-page"/>
         </atom:entry>
@@ -258,7 +265,7 @@ describe "GoogleContactsApi" do
 
       @augmented_update_attrs = {
           name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
-          content: nil, emails: [], phone_numbers: [], addresses: [], websites: [],
+          content: nil, emails: [], phone_numbers: [], addresses: [], websites: [], organizations: [],
           updated: '2014-09-01T16:25:34.010Z', etag: '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
           id: 'http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c'
       }
