@@ -203,7 +203,7 @@ module GoogleContactsApi
   private
     def attrs_for_update(changes)
       fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
-                :emails, :phone_numbers, :addresses, :websites]
+                :emails, :phone_numbers, :addresses, :organizations, :websites]
       Hash[fields.map { |f| [ f, changes.has_key?(f) ? changes[f] : value_for_field(f) ] } ]
     end
 
