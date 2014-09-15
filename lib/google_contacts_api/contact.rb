@@ -161,6 +161,10 @@ module GoogleContactsApi
       @changes.merge!(changes)
     end
 
+    def prepped_changes
+      @changes ||= {}
+    end
+
     def send_update(changes=nil)
       changes ||= @changes
       attrs = attrs_for_update(changes)
