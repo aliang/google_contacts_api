@@ -197,7 +197,11 @@ module GoogleContactsApi
       @@edit_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
       ERB.new(@@edit_contact_template).result(OpenStruct.new(contact: attrs, action: :update).instance_eval { binding })
     end
-    
+
+    def formatted_attrs
+      attrs_for_update({})
+    end
+
   private
     def attrs_for_update(changes)
       fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
