@@ -301,6 +301,11 @@ describe "GoogleContactsApi" do
       expect(@contact.xml_for_update(@augmented_update_attrs)).to be_equivalent_to(@update_xml)
     end
 
+    it 'does not send request if there are no changes' do
+      expect(@oauth).to receive(:request).exactly(0).times
+      @contact.send_update
+    end
+
     def mocks_for_contact_update
       expect(@contact).to receive(:xml_for_update).with(@augmented_update_attrs).and_return(@update_xml)
 
@@ -324,6 +329,7 @@ describe "GoogleContactsApi" do
       mocks_for_contact_update
 
       @contact.prep_update(@update_attrs)
+      expect(@contact.prepped_changes).to eq(@update_attrs)
       @contact.send_update
       expect(@contact.given_name).to eq('John')
       expect(@contact.family_name).to eq('Doe')
@@ -635,6 +641,23 @@ describe "GoogleContactsApi" do
             }
         ]
         expect(@contact_v3.organizations).to eq(formatted_organizations)
+      end
+
+      it 'has formatted attributes' do
+        formatted_attrs = {
+          name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
+          content: nil, emails: [{primary: true, rel: 'other', address: 'johnsmith@example.com'}],
+          phone_numbers: [{primary: true, rel: 'mobile', number: '(123) 334-5158'}],
+          addresses: [{primary: false, rel: 'work', country: 'United States of America',
+                       formatted_address: "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
+                       city: 'Somwhere', street: '2345 Long Dr. #232', region: 'IL', postcode: '12345'},
+                      {primary: true, rel: 'home', country: 'United States of America',
+                       formatted_address: "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
+                       city: 'Anywhere', street: '123 Far Ln.', region: 'MO', postcode: '67891'}],
+          organizations: [{primary: false, rel: 'other', org_title: 'Worker Person', org_name: 'Example, Inc'}],
+          websites: []
+        }
+        expect(@contact_v3.formatted_attrs).to eq(formatted_attrs)
       end
     end
   end
