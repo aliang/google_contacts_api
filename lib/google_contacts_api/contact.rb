@@ -179,6 +179,7 @@ module GoogleContactsApi
 
     def send_update(changes=nil)
       changes ||= @changes
+      return unless changes
       attrs = attrs_for_update(changes)
       attrs[:updated] = GoogleContactsApi::Api.format_time_for_xml(Time.now)
       attrs[:etag] = etag
