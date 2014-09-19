@@ -1,9 +1,5 @@
 module GoogleContactsApi
   # Represents a single contact.
-  # Methods we could implement:
-  # :categories, (:content again), :links, (:title again), :email
-  # :extended_properties, :deleted, :im, :name,
-  # :organizations, :phone_numbers, :structured_postal_addresses, :where
   class Contact < GoogleContactsApi::Result
     # Returns the array of links, as link is an array for Hashie.
     def links
@@ -36,14 +32,14 @@ module GoogleContactsApi
       response = @api.oauth.get(photo_link)
 
       case GoogleContactsApi::Api.parse_response_code(response)
-      # maybe return a placeholder instead of nil
-      when 400; return nil
-      when 401; return nil
-      when 403; return nil
-      when 404; return nil
-      when 400...500; return nil
-      when 500...600; return nil
-      else; return response.body
+        # maybe return a placeholder instead of nil
+        when 400; return nil
+        when 401; return nil
+        when 403; return nil
+        when 404; return nil
+        when 400...500; return nil
+        when 500...600; return nil
+        else; return response.body
       end
     end
 
@@ -92,9 +88,9 @@ module GoogleContactsApi
       response = @api.oauth.get(photo_link)
       if GoogleContactsApi::Api.parse_response_code(response) == 200
         {
-          etag: photo_link_entry['gd$etag'].gsub('"',''),
-          content_type: response.headers['content-type'],
-          data: response.body
+            etag: photo_link_entry['gd$etag'].gsub('"',''),
+            content_type: response.headers['content-type'],
+            data: response.body
         }
       end
     end
@@ -215,7 +211,7 @@ module GoogleContactsApi
       attrs_for_update({})
     end
 
-  private
+    private
     def attrs_for_update(changes)
       fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
                 :emails, :phone_numbers, :addresses, :organizations, :websites]
@@ -224,8 +220,8 @@ module GoogleContactsApi
 
     def value_for_field(field)
       method_exceptions = {
-        phone_numbers: :phone_numbers_full,
-        emails: :emails_full
+          phone_numbers: :phone_numbers_full,
+          emails: :emails_full
       }
       method = method_exceptions.has_key?(field) ? method_exceptions[field] : field
       send(method)
@@ -237,28 +233,16 @@ module GoogleContactsApi
     end
 
     def format_entity(unformatted, default_rel=nil, text_key=nil)
-      formatted = {}
-
-      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
-      unformatted.delete 'primary'
-
-      if unformatted['rel']
-        formatted[:rel] = unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '')
-        unformatted.delete 'rel'
-      elsif default_rel
-        formatted[:rel] = default_rel
-      end
-
-      if text_key
-        formatted[text_key] = unformatted['$t']
-        unformatted.delete '$t'
-      end
-
-      unformatted.each do |key, value|
-        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t'] ? value['$t'] : value
-      end
-
-      formatted
+      Hash[unformatted.map { |key, value|
+        case key
+          when 'primary'
+            [:primary, value == 'true']
+          when 'rel'
+            [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
+          else
+            [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
+        end
+      }]
     end
 
     def format_address(unformatted)
