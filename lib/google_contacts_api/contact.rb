@@ -225,16 +225,21 @@ module GoogleContactsApi
     end
 
     def format_entity(unformatted, default_rel=nil, text_key=nil)
-      Hash[unformatted.map { |key, value|
+      attrs = Hash[unformatted.map { |key, value|
         case key
-          when 'primary'
-            [:primary, value == 'true']
-          when 'rel'
-            [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
-          else
-            [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
+        when 'primary'
+          [:primary, value == 'true']
+        when 'rel'
+          [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
+        when '$t'
+          [text_key || key.underscore.to_sym, value]
+        else
+          [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
         end
       }]
+      attrs[:rel] ||= default_rel
+      attrs[:primary] = false if attrs[:primary].nil?
+      attrs
     end
 
     def format_address(unformatted)

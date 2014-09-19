@@ -633,12 +633,12 @@ describe "GoogleContactsApi" do
         expect(@empty.organizations).to eq([])
 
         formatted_organizations = [
-            {
-                primary: false,
-                rel: 'other',
-                org_title: 'Worker Person',
-                org_name: 'Example, Inc'
-            }
+          {
+            org_title: 'Worker Person',
+            org_name: 'Example, Inc',
+            primary: false,
+            rel: 'other'
+          }
         ]
         expect(@contact_v3.organizations).to eq(formatted_organizations)
       end
