@@ -3,55 +3,55 @@ module GoogleContactsApi
     # :categories, (:content again), :links, (:title again), :email
     # :extended_properties, :deleted, :im, :name,
     # :organizations, :phone_numbers, :structured_postal_addresses, :where
-    
+
     # Returns the array of links, as link is an array for Hashie.
     def links
       self["link"].map { |l| l.href }
     end
-    
+
     # Returns link to get this contact
     def self_link
       _link = self["link"].find { |l| l.rel == "self" }
       _link ? _link.href : nil
     end
-    
+
     # Returns alternative, possibly off-Google home page link
     def alternate_link
       _link = self["link"].find { |l| l.rel == "alternate" }
       _link ? _link.href : nil
     end
-    
+
     # Returns link for photo
     # (still need authentication to get the photo data, though)
     def photo_link
       _link = self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#photo" }
       _link ? _link.href : nil
     end
-    
+
     # Returns binary data for the photo. You can probably
     # use it in a data-uri. This is in PNG format.
     def photo
       return nil unless @api && photo_link
       response = @api.oauth.get(photo_link)
-      
+
       case GoogleContactsApi::Api.parse_response_code(response)
-      # maybe return a placeholder instead of nil
-      when 400; return nil
-      when 401; return nil
-      when 403; return nil
-      when 404; return nil
-      when 400...500; return nil
-      when 500...600; return nil
-      else; return response.body
+        # maybe return a placeholder instead of nil
+        when 400; return nil
+        when 401; return nil
+        when 403; return nil
+        when 404; return nil
+        when 400...500; return nil
+        when 500...600; return nil
+        else; return response.body
       end
     end
-    
+
     # Returns link to add/replace the photo
     def edit_photo_link
       _link = self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#edit_photo" }
       _link ? _link.href : nil
     end
-    
+
     # Returns link to edit the contact
     def edit_link
       _link = self["link"].find { |l| l.rel == "edit" }
@@ -62,12 +62,12 @@ module GoogleContactsApi
     def phone_numbers
       self["gd$phoneNumber"] ? self["gd$phoneNumber"].map { |e| e['$t'] } : []
     end
-    
+
     # Returns all email addresses for the contact
     def emails
       self["gd$email"] ? self["gd$email"].map { |e| e.address } : []
     end
-    
+
     # Returns primary email for the contact
     def primary_email
       if self["gd$email"]
@@ -77,7 +77,7 @@ module GoogleContactsApi
         nil # no emails at all
       end
     end
-    
+
     # Returns all instant messaging addresses for the contact.
     # Doesn't yet distinguish protocols
     def ims
@@ -91,9 +91,9 @@ module GoogleContactsApi
       response = @api.oauth.get(photo_link)
       if GoogleContactsApi::Api.parse_response_code(response) == 200
         {
-          etag: photo_link_entry['gd$etag'].gsub('"',''),
-          content_type: response.headers['content-type'],
-          data: response.body
+            etag: photo_link_entry['gd$etag'].gsub('"',''),
+            content_type: response.headers['content-type'],
+            data: response.body
         }
       end
     end
@@ -203,7 +203,7 @@ module GoogleContactsApi
       attrs_for_update({})
     end
 
-  private
+    private
     def attrs_for_update(changes)
       fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
                 :emails, :phone_numbers, :addresses, :organizations, :websites]
@@ -212,8 +212,8 @@ module GoogleContactsApi
 
     def value_for_field(field)
       method_exceptions = {
-        phone_numbers: :phone_numbers_full,
-        emails: :emails_full
+          phone_numbers: :phone_numbers_full,
+          emails: :emails_full
       }
       method = method_exceptions.has_key?(field) ? method_exceptions[field] : field
       send(method)
@@ -225,28 +225,16 @@ module GoogleContactsApi
     end
 
     def format_entity(unformatted, default_rel=nil, text_key=nil)
-      formatted = {}
-
-      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
-      unformatted.delete 'primary'
-
-      if unformatted['rel']
-        formatted[:rel] = unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '')
-        unformatted.delete 'rel'
-      elsif default_rel
-        formatted[:rel] = default_rel
-      end
-
-      if text_key
-        formatted[text_key] = unformatted['$t']
-        unformatted.delete '$t'
-      end
-
-      unformatted.each do |key, value|
-        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t'] ? value['$t'] : value
-      end
-
-      formatted
+      Hash[unformatted.map { |key, value|
+        case key
+          when 'primary'
+            [:primary, value == 'true']
+          when 'rel'
+            [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
+          else
+            [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
+        end
+      }]
     end
 
     def format_address(unformatted)
