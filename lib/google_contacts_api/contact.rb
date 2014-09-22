@@ -283,7 +283,7 @@ module GoogleContactsApi
       attrs = Hash[unformatted.map { |key, value|
         case key
         when 'primary'
-          [:primary, value == 'true']
+          [:primary, value == true || value == 'true']
         when 'rel'
           [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
         when '$t'
