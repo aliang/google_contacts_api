@@ -23,11 +23,11 @@ module GoogleContactsApi
     end
 
     def get_contact(id_url)
-      contact_from_response(@api.get(id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')))
+      GoogleContactsApi::Contact.find(id_url, @api)
     end
 
     def create_contact(attrs)
-      contact_from_response(@api.post('default/full', xml_for_create_contact(attrs)))
+      GoogleContactsApi::Contact.create(attrs, @api)
     end
 
     def raise_if_failed_response(response)
@@ -39,17 +39,6 @@ module GoogleContactsApi
         when 400...500; raise
         when 500...600; raise
       end
-    end
-
-    def contact_from_response(response)
-      raise_if_failed_response(response)
-      parsed = Hashie::Mash.new(JSON.parse(response.body))
-      GoogleContactsApi::Contact.new(parsed.entry[0], nil, @api)
-    end
-
-    def xml_for_create_contact(attrs)
-      @@new_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
-      ERB.new(@@new_contact_template).result(OpenStruct.new(contact: attrs, action: :create).instance_eval { binding })
     end
   end
 end

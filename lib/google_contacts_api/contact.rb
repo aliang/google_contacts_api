@@ -156,13 +156,33 @@ module GoogleContactsApi
       self['gd$etag']
     end
 
-    def prep_update(changes)
+    def formatted_attrs
+      attrs_for_update({})
+    end
+
+    def prep_changes(changes)
       @changes ||= {}
       @changes.merge!(changes)
     end
 
     def prepped_changes
       @changes ||= {}
+    end
+
+    def create_or_update(changes=nil)
+      if id
+        send_update(changes)
+      else
+        send_create(changes)
+      end
+    end
+
+    def self.find(id_url, api)
+      contact_from_response(api.get(id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')), api)
+    end
+
+    def self.create(attrs, api)
+      contact_from_response(call_api_create(attrs, api), api)
     end
 
     def send_update(changes=nil)
@@ -175,23 +195,20 @@ module GoogleContactsApi
 
       xml = xml_for_update(attrs)
       url = id.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')
-      response = @api.put(url, xml, {}, { 'If-Match' => etag })
-      code = GoogleContactsApi::Api.parse_response_code(response)
 
-      if code == 200
-        reload_from_data(JSON.parse(response.body)['entry'][0])
-      elsif code == 412
-        # Contacts API gives HTTP 412 Precondition Failed if contact has been edited since you attempted the edit
-        # See https://developers.google.com/google-apps/contacts/v3/
-        raise 'HTTP 214: Contact Modified Since Load'
-      else
-        raise code
-      end
+      response = @api.put(url, xml, {}, { 'If-Match' => etag })
+      reload_from_data(Contact.parse_response(response))
     end
 
-    def reload_from_data(parsed_data)
-      keys.each { |k| delete(k) }
-      deep_update(parsed_data)
+    def send_create(changes=nil)
+      changes ||= @changes
+      return unless changes
+      reload_from_data(Contact.parse_response(Contact.call_api_create(attrs_for_update(changes), @api)))
+    end
+
+    def self.xml_for_create(attrs)
+      @@new_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
+      ERB.new(@@new_contact_template).result(OpenStruct.new(contact: attrs, action: :create).instance_eval { binding })
     end
 
     def xml_for_update(attrs)
@@ -199,11 +216,42 @@ module GoogleContactsApi
       ERB.new(@@edit_contact_template).result(OpenStruct.new(contact: attrs, action: :update).instance_eval { binding })
     end
 
-    def formatted_attrs
-      attrs_for_update({})
+    def self.call_api_create(attrs, api)
+      api.post('default/full', xml_for_create(attrs))
+    end
+
+    def self.contact_from_response(response, api)
+      self.new(parse_response(response), nil, api)
+    end
+
+    def self.parse_response(response)
+      raise_if_failed_response(response)
+      Hashie::Mash.new(JSON.parse(response.body)).entry[0]
+    end
+
+    def self.raise_if_failed_response(response)
+      # TODO: Define some fancy exceptions
+      case GoogleContactsApi::Api.parse_response_code(response)
+        when 401; raise
+        when 403; raise
+        when 404; raise
+
+        # Contacts API gives HTTP 412 Precondition Failed if contact has been edited since you attempted the edit
+        # See https://developers.google.com/google-apps/contacts/v3/
+        when 412; raise 'HTTP 412: Contact Modified Since Load'
+
+        when 400...500; raise
+        when 500...600; raise
+      end
     end
 
     private
+
+    def reload_from_data(parsed_data)
+      keys.each { |k| delete(k) }
+      deep_update(parsed_data)
+    end
+
     def attrs_for_update(changes)
       fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
                 :emails, :phone_numbers, :addresses, :organizations, :websites]
@@ -218,7 +266,6 @@ module GoogleContactsApi
       method = method_exceptions.has_key?(field) ? method_exceptions[field] : field
       send(method)
     end
-
 
     def format_entities(key, format_method=:format_entity)
       self[key] ? self[key].map(&method(format_method)) : []
