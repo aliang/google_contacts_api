@@ -198,6 +198,7 @@ describe "GoogleContactsApi" do
     before do
       @oauth = double("oauth")
       @user = GoogleContactsApi::User.new(@oauth)
+      @api = @user.api
       @contact_attrs =  {
         name_prefix: 'Mr',
         given_name: 'John',
@@ -278,11 +279,11 @@ describe "GoogleContactsApi" do
     end
 
     it 'creates formats xml correctly from attributes' do
-      expect(Hash.from_xml(@user.xml_for_create_contact(@contact_attrs))).to eq(Hash.from_xml(@contact_xml))
+      expect(Hash.from_xml(GoogleContactsApi::Contact.xml_for_create(@contact_attrs))).to eq(Hash.from_xml(@contact_xml))
     end
 
     it 'sends a request with the contact xml and returns created Contact instance' do
-      expect(@user).to receive(:xml_for_create_contact).with(@contact_attrs).and_return(@contact_xml)
+      expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
 
       expect(@oauth).to receive(:request)
                           .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', body: @contact_xml)
@@ -305,7 +306,23 @@ describe "GoogleContactsApi" do
           </gd:name>
         </atom:entry>
       EOS
-      expect(Hash.from_xml(@user.xml_for_create_contact(attrs))).to eq(Hash.from_xml(xml))
+      expect(Hash.from_xml(GoogleContactsApi::Contact.xml_for_create(attrs))).to eq(Hash.from_xml(xml))
+    end
+
+    it 'allows first a new then an update_or_create to create a new contact' do
+      contact = GoogleContactsApi::Contact.new(nil, nil, @api)
+      contact.prep_changes(@contact_attrs)
+
+      expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
+
+      expect(@oauth).to receive(:request)
+                        .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', body: @contact_xml)
+                        .and_return(double(body: @contact_json, status: 200))
+
+      contact.create_or_update
+
+      expect(contact.given_name).to eq('John')
+      expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c')
     end
   end
 
@@ -387,9 +404,19 @@ describe "GoogleContactsApi" do
     it 'supports prep update and send update' do
       mocks_for_contact_update
 
-      @contact.prep_update(@update_attrs)
+      @contact.prep_changes(@update_attrs)
       expect(@contact.prepped_changes).to eq(@update_attrs)
       @contact.send_update
+      expect(@contact.given_name).to eq('John')
+      expect(@contact.family_name).to eq('Doe')
+    end
+
+    it 'supports prep update and create_or_update' do
+      mocks_for_contact_update
+
+      @contact.prep_changes(@update_attrs)
+      expect(@contact.prepped_changes).to eq(@update_attrs)
+      @contact.create_or_update
       expect(@contact.given_name).to eq('John')
       expect(@contact.family_name).to eq('Doe')
     end
