@@ -28,14 +28,19 @@ oauth_access_token_for_user
 
 google_contacts_user = GoogleContactsApi::User.new(oauth_access_token_for_user)
 contacts = google_contacts_user.contacts
+# => <GoogleContactsApi::ContactSet: @start_index=1, @items_per_page=100000, @total_results=638>
 groups = google_contacts_user.groups
+# => <GoogleContactsApi::GroupSet: @start_index=1, @items_per_page=100000, @total_results=8>
 
 # group methods
 group = groups.first
+# => <GoogleContactsApi::Group: System Group: My Contacts>
 group.contacts
+# => <GoogleContactsApi::ContactSet: @start_index=1, @items_per_page=100000, @total_results=20>
 
 # contact methods
 contact = contacts.first
+# => <GoogleContactsApi::Contact: Alvin>
 contact.photo
 contact.title
 contact.id
@@ -43,7 +48,9 @@ contact.primary_email
 contact.emails
 ```
 
-In addition, Contacts and Groups are subclasses of [Hashie::Mash](https://github.com/intridea/hashie), so you can access any of the underlying data directly. Note that data is retrieved using Google's JSON API so the equivalent content of an XML element from the XML API is stored under the key "$t".
+`ContactSet` and `GroupSet` both implement `Enumberable`.
+
+In addition, `Contact` and `Group` are subclasses of [Hashie::Mash](https://github.com/intridea/hashie), so you can access any of the underlying data directly (for example, if Google returns new data [in their API](https://developers.google.com/google-apps/contacts/v3/)). Note that data is retrieved using Google's JSON API so the equivalent content of an XML element from the XML API is stored under the key "$t".
 
 The easiest way to see the convenience methods I've provided is to look at the RSpec tests.
 
