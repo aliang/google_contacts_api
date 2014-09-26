@@ -6,7 +6,7 @@ require 'hashie'
 require 'net/http'
 require 'google_contacts_api'
 
-puts "Testing version #{GoogleContactsApi::VERSION}"
+puts "Testing version #{GoogleContactsApi::Version::STRING}"
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
