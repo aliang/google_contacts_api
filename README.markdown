@@ -31,11 +31,11 @@ contacts = google_contacts_user.contacts
 groups = google_contacts_user.groups
 
 # group methods
-group = groups[0]
+group = groups.first
 group.contacts
 
 # contact methods
-contact = contacts[0]
+contact = contacts.first
 contact.photo
 contact.title
 contact.id
