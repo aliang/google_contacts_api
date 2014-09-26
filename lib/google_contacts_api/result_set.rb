@@ -18,8 +18,10 @@ module GoogleContactsApi
       @results = []
     end
     
-    # Yields to block for each result
+    # Yields to block for each result.
+    # Returns an Enumerator if no block is passed.
     def each
+      return to_enum(:each) unless block_given?
       @results.each { |x| yield x }
     end
     
