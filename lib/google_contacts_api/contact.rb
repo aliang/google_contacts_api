@@ -9,32 +9,32 @@ module GoogleContactsApi
     def links
       self["link"].map { |l| l.href }
     end
-    
+
     # Returns link to get this contact
     def self_link
       _link = self["link"].find { |l| l.rel == "self" }
       _link ? _link.href : nil
     end
-    
+
     # Returns alternative, possibly off-Google home page link
     def alternate_link
       _link = self["link"].find { |l| l.rel == "alternate" }
       _link ? _link.href : nil
     end
-    
+
     # Returns link for photo
     # (still need authentication to get the photo data, though)
     def photo_link
       _link = self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#photo" }
       _link ? _link.href : nil
     end
-    
+
     # Returns binary data for the photo. You can probably
     # use it in a data-uri. This is in PNG format.
     def photo
       return nil unless @api && photo_link
       response = @api.oauth.get(photo_link)
-      
+
       case GoogleContactsApi::Api.parse_response_code(response)
       # maybe return a placeholder instead of nil
       when 400; return nil
@@ -46,13 +46,13 @@ module GoogleContactsApi
       else; return response.body
       end
     end
-    
+
     # Returns link to add/replace the photo
     def edit_photo_link
       _link = self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#edit_photo" }
       _link ? _link.href : nil
     end
-    
+
     # Returns link to edit the contact
     def edit_link
       _link = self["link"].find { |l| l.rel == "edit" }
@@ -63,12 +63,12 @@ module GoogleContactsApi
     def phone_numbers
       self["gd$phoneNumber"] ? self["gd$phoneNumber"].map { |e| e['$t'] } : []
     end
-    
+
     # Returns all email addresses for the contact
     def emails
       self["gd$email"] ? self["gd$email"].map { |e| e.address } : []
     end
-    
+
     # Returns primary email for the contact
     def primary_email
       if self["gd$email"]
@@ -78,7 +78,7 @@ module GoogleContactsApi
         nil # no emails at all
       end
     end
-    
+
     # Returns all instant messaging addresses for the contact.
     # Doesn't yet distinguish protocols
     def ims
@@ -128,7 +128,7 @@ module GoogleContactsApi
     def phone_numbers_full
       self["gd$phoneNumber"] ? self["gd$phoneNumber"].map(&method(:format_phone_number)) : []
     end
-    
+
     # Return an Array of Hashes representing emails with formatted metadata.
     def emails_full
       self["gd$email"] ? self["gd$email"].map(&method(:format_email)) : []
