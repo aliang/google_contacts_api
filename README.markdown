@@ -12,9 +12,12 @@ Right now upgrading should just work, barring any bugs in my implementation. In 
 
 ## Usage
 
-You need to provide an OAuth::AccessToken from the [oauth-ruby](https://github.com/oauth/oauth-ruby) gem or an OAuth2::AccessToken from the [oauth2](https://github.com/intridea/oauth2) gem. See their respective documentation for details.
+You need to pass to the `GoogleContactsApi::User` constructor one of the following two objects:
 
-(I'm guessing there would be a few small changes in implementation details of the GoogleContactsApi::Api class if you use another library, mostly to change how the base get/post/put/delete methods work.)
+* an OAuth::AccessToken from the [oauth-ruby](https://github.com/oauth/oauth-ruby) gem
+* an OAuth2::AccessToken from the [oauth2](https://github.com/intridea/oauth2) gem
+
+See their respective documentation for details on how to get this object. (I'm guessing there would be a few changes in implementation details of the GoogleContactsApi::Api class if you use another OAuth library, mostly to change how the base get/post/put/delete methods work.)
 
 Then you can instantiate a GoogleContactsApi::Api object for direct posting and parsing, or a
 GoogleContactsApi::User object for easier stuff.
