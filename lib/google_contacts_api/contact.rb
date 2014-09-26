@@ -1,9 +1,10 @@
 module GoogleContactsApi
+  # Represents a single contact.
+  # Methods we could implement:
+  # :categories, (:content again), :links, (:title again), :email
+  # :extended_properties, :deleted, :im, :name,
+  # :organizations, :phone_numbers, :structured_postal_addresses, :where
   class Contact < GoogleContactsApi::Result
-    # :categories, (:content again), :links, (:title again), :email
-    # :extended_properties, :deleted, :im, :name,
-    # :organizations, :phone_numbers, :structured_postal_addresses, :where
-    
     # Returns the array of links, as link is an array for Hashie.
     def links
       self["link"].map { |l| l.href }
@@ -84,6 +85,8 @@ module GoogleContactsApi
       self["gd$im"] ? self["gd$im"].map { |i| i.address } : []
     end
 
+    # Convenience method to return a nested $t field.
+    # If the field doesn't exist, return nil
     def nested_t_field_or_nil(level1, level2)
       if self[level1]
         self[level1][level2] ? self[level1][level2]['$t']: nil
@@ -116,12 +119,17 @@ module GoogleContactsApi
       spouse_rel['$t'] if spouse_rel
     end
 
+    # Return an Array of Hashes representing addresses with formatted metadata.
     def addresses
       self['gd$structuredPostalAddress'] ? self['gd$structuredPostalAddress'].map(&method(:format_address)) : []
     end
+
+    # Return an Array of Hashes representing phone numbers with formatted metadata.
     def phone_numbers_full
       self["gd$phoneNumber"] ? self["gd$phoneNumber"].map(&method(:format_phone_number)) : []
     end
+    
+    # Return an Array of Hashes representing emails with formatted metadata.
     def emails_full
       self["gd$email"] ? self["gd$email"].map(&method(:format_email)) : []
     end

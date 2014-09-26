@@ -1,3 +1,4 @@
+# Module that implements a method to get contacts for a user or group
 module GoogleContactsApi
   module Contacts
     # Retrieve the contacts for this user or group

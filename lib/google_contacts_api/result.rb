@@ -1,16 +1,12 @@
 require 'hashie'
 
 module GoogleContactsApi
-  # Base class for Group and Contact
+  # Base class for Group and Contact.
+  # In the JSON responses, ":" from the equivalent XML response is replaced
+  # with a "$", while element content is instead keyed with "$t".
   class Result < Hashie::Mash
-    # Note that the title is really just the (full) name
-    # ":" replaced with $, element content is keyed with $t
-    
-    # These are the accessors we can write
-    # :id, :title, :updated, :content
-    
     attr_reader :api
-    # Populate from a single result Hash/Hashie
+    # Initialize a Result from a single result's Hash/Hashie
     def initialize(source_hash = nil, default = nil, api = nil, &blk)
       @api = api if api
       super(source_hash, default, &blk)
@@ -25,7 +21,9 @@ module GoogleContactsApi
       _id = self["id"]
       _id ? _id["$t"] : nil
     end
-    
+
+    # For Contacts, returns the (full) name.
+    # For Groups, returns the name of the group.
     def title
       _title = self["title"]
       _title ? _title["$t"] : nil

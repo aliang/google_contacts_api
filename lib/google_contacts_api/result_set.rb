@@ -1,7 +1,8 @@
 require 'json'
 
 module GoogleContactsApi
-  # Base class for GroupSet and ContactSet
+  # Base class for GroupSet and ContactSet that generically represents
+  # a set of results.
   class ResultSet
     include Enumerable
     attr_reader :api

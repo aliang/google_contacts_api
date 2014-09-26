@@ -1,6 +1,7 @@
 module GoogleContactsApi
+  # Represents a set of contacts.
   class ContactSet < GoogleContactsApi::ResultSet
-    # Populate from a response that contains contacts
+    # Initialize a ContactSet from an API response body that contains contacts data
     def initialize(response_body, api = nil)
       super
       if @parsed.nil? || @parsed.feed.nil? || @parsed.feed.entry.nil?
