@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = "google_contacts_api"
-  s.version = "0.4.1"
+  s.version = "0.4.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Alvin Liang"]
@@ -35,6 +35,7 @@ Gem::Specification.new do |s|
     "lib/google_contacts_api/result.rb",
     "lib/google_contacts_api/result_set.rb",
     "lib/google_contacts_api/user.rb",
+    "lib/google_contacts_api/version.rb",
     "spec/contact_set.json",
     "spec/empty_contact_set.json",
     "spec/errors/auth_sub_401.html",
