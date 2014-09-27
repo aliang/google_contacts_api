@@ -109,7 +109,7 @@ describe "GoogleContactsApi" do
     }
     describe ".get_groups" do
       it "should get the groups using the internal @api object" do
-        expect(api).to receive(:get).with("groups/default/full", hash_including(:v => 2)).and_return(Hashie::Mash.new({
+        expect(api).to receive(:get).with("groups/default/full", kind_of(Hash)).and_return(Hashie::Mash.new({
           "body" => "some response", # could use example response here
           "code" => 200
         }))

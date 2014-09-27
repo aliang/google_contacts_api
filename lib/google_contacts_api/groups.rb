@@ -10,11 +10,6 @@ module GoogleContactsApi
       # orderby, showdeleted, requirealldeleted, sortorder
       params["max-results"] = 100000 unless params.key?("max-results")
 
-      # Set the version, for some reason the header is not effective on its own?
-      # TODO: So weird thing, version 3 doesn't return system groups.
-      # When it does, just remove this line
-      params["v"] = 2
-
       url = "groups/default/full"
       response = @api.get(url, params)
 
