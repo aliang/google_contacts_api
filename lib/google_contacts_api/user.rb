@@ -1,52 +1,35 @@
 module GoogleContactsApi
   class User
     include GoogleContactsApi::Contacts
+    include GoogleContactsApi::Groups
     
     attr_reader :api
     def initialize(oauth)
       @api = GoogleContactsApi::Api.new(oauth)
     end
 
-    # Return the contacts in this group and cache them.
+    # Return the contacts for this user and cache them.
     def contacts(params = {})
       # contacts in this group
       @contacts ||= get_contacts(params)
     end
 
-    # Return the contacts in this group, retrieving them again from the server.
+    # Return the contacts for this user, retrieving them again from the server.
     def contacts!(params = {})
       # contacts in this group
       @contacts = nil
       contacts
     end
 
-    # Retrieve the groups for this user.
+    # Return the groups for this user and cache them.
     def groups(params = {})
-      params = params.with_indifferent_access
-      # compose params into a string
-      # See http://code.google.com/apis/contacts/docs/3.0/reference.html#Parameters
-      # alt, q, max-results, start-index, updated-min,
-      # orderby, showdeleted, requirealldeleted, sortorder
-      params["max-results"] = 100000 unless params.key?("max-results")
+      @groups ||= get_groups(params)
+    end
 
-      # Set the version, for some reason the header is not effective on its own?
-      params["v"] = 2
-
-      url = "groups/default/full"
-      # TODO: So weird thing, version 3 doesn't return system groups
-      # When it does, uncomment this line and use it to request instead
-      # response = @api.get(url, params)
-      response = @api.get(url, params)
-
-      case GoogleContactsApi::Api.parse_response_code(response)
-      # TODO: Better handle 401, 403, 404
-      when 401; raise
-      when 403; raise
-      when 404; raise
-      when 400...500; raise
-      when 500...600; raise
-      end
-      GoogleContactsApi::GroupSet.new(response.body, @api)
+    # Return the groups for this user, retrieving them again from the server.
+    def groups!(params = {})
+      @groups = nil
+      groups
     end
   end
 end

@@ -97,6 +97,28 @@ describe "GoogleContactsApi" do
     end
   end
 
+  describe GoogleContactsApi::Groups do
+    let(:api) { double("api") }
+    let(:test_class) {
+      Class.new do
+        include GoogleContactsApi::Groups
+        def initialize(api)
+          @api = api
+        end
+      end
+    }
+    describe ".get_groups" do
+      it "should get the groups using the internal @api object" do
+        expect(api).to receive(:get).with("groups/default/full", anything).and_return(Hashie::Mash.new({
+          "body" => "some response", # could use example response here
+          "code" => 200
+        }))
+        allow(GoogleContactsApi::GroupSet).to receive(:new).and_return("group set")
+        expect(test_class.new(api).get_groups).to eq("group set")
+      end
+    end
+  end
+
   describe "User" do
     before(:each) do
       @oauth = double("oauth")
