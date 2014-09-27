@@ -114,6 +114,8 @@ module GoogleContactsApi
     def relations
       self['gContact$relation'] ? self['gContact$relation'] : []
     end
+
+    # Returns the spouse of the contact. (Assumes there's only one.)
     def spouse
       spouse_rel = relations.find {|r| r.rel = 'spouse'}
       spouse_rel['$t'] if spouse_rel
