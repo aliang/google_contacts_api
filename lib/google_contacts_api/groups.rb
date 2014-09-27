@@ -11,12 +11,11 @@ module GoogleContactsApi
       params["max-results"] = 100000 unless params.key?("max-results")
 
       # Set the version, for some reason the header is not effective on its own?
+      # TODO: So weird thing, version 3 doesn't return system groups.
+      # When it does, just remove this line
       params["v"] = 2
 
       url = "groups/default/full"
-      # TODO: So weird thing, version 3 doesn't return system groups
-      # When it does, uncomment this line and use it to request instead
-      # response = @api.get(url, params)
       response = @api.get(url, params)
 
       case GoogleContactsApi::Api.parse_response_code(response)
