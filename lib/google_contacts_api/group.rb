@@ -11,13 +11,14 @@ module GoogleContactsApi
     # Return the contacts in this group and cache them.
     def contacts(params = {})
       # contacts in this group
-      @contacts ||= super({"group" => self.id}.merge(params))
+      @contacts ||= get_contacts({"group" => self.id}.merge(params))
     end
 
     # Return the contacts in this group, retrieving them again from the server.
     def contacts!(params = {})
       # contacts in this group
-      @contacts = super({"group" => self.id}.merge(params))
+      @contacts = nil
+      contacts
     end
 
     # Returns the array of links, as link is an array for Hashie.

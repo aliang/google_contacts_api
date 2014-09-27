@@ -417,7 +417,7 @@ describe "GoogleContactsApi" do
     end
   end
 
-  describe "Group" do
+  describe GoogleContactsApi::Group do
     before(:all) do
       @group_json_hash = group_json_hash
       @group = GoogleContactsApi::Group.new(group_json_hash)
@@ -440,18 +440,39 @@ describe "GoogleContactsApi" do
     it "should tell me if it's a system group" do
       expect(@group).to be_system_group
     end
-    it "should get contacts from the group and cache them" do
-      @api = double("api")
-      allow(@api).to receive(:get).and_return(Hashie::Mash.new({
-        "body" => "some response", # could use example response here
-        "code" => 200
-      }))
-      allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
-      @group = GoogleContactsApi::Group.new(@contact_json_hash, nil, @api)
-      expect(@api).to receive("get").with(an_instance_of(String),
-        hash_including({"group" => @group.id})).once
-      @group.contacts
-      @group.contacts
+    describe ".contacts" do
+      before(:each) do
+        @api = double("api")
+        @group = GoogleContactsApi::Group.new(@contact_json_hash, nil, @api)
+        allow(@group).to receive(:id).and_return("group id")
+      end
+      it "should be able to get contacts" do
+        expect(@group).to receive(:get_contacts).with(hash_including({"group" => "group id"})).and_return("contact set")
+        expect(@group.contacts).to eq("contact set")
+      end
+      it "should use the contact cache for subsequent access" do
+        expect(@group).to receive(:get_contacts).with(hash_including({"group" => "group id"})).and_return("contact set").once
+        @group.contacts
+        contacts = @group.contacts
+        expect(contacts).to eq("contact set")
+      end
+    end
+    describe ".contacts!" do
+      before(:each) do
+        @api = double("api")
+        @group = GoogleContactsApi::Group.new(@contact_json_hash, nil, @api)
+        allow(@group).to receive(:id).and_return("group id")
+      end
+      it "should be able to get contacts" do
+        expect(@group).to receive(:get_contacts).with(hash_including({"group" => "group id"})).and_return("contact set")
+        expect(@group.contacts!).to eq("contact set")
+      end
+      it "should use the contact cache for subsequent access" do
+        expect(@group).to receive(:get_contacts).with(hash_including({"group" => "group id"})).and_return("contact set").twice
+        @group.contacts
+        contacts = @group.contacts!
+        expect(contacts).to eq("contact set")
+      end
     end
   end
 end
