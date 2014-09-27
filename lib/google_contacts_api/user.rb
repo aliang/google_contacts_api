@@ -7,6 +7,19 @@ module GoogleContactsApi
       @api = GoogleContactsApi::Api.new(oauth)
     end
 
+    # Return the contacts in this group and cache them.
+    def contacts(params = {})
+      # contacts in this group
+      @contacts ||= get_contacts(params)
+    end
+
+    # Return the contacts in this group, retrieving them again from the server.
+    def contacts!(params = {})
+      # contacts in this group
+      @contacts = nil
+      contacts
+    end
+
     # Retrieve the groups for this user.
     def groups(params = {})
       params = params.with_indifferent_access

@@ -2,7 +2,7 @@
 module GoogleContactsApi
   module Contacts
     # Retrieve the contacts for this user or group
-    def contacts(params = {})
+    def get_contacts(params = {})
       # TODO: Should return empty ContactSet (haven't implemented one yet)
       return [] unless @api
       params = params.with_indifferent_access

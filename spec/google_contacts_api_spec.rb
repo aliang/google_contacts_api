@@ -75,6 +75,28 @@ describe "GoogleContactsApi" do
     end
   end
 
+  describe GoogleContactsApi::Contacts do
+    let(:api) { double("api") }
+    let(:test_class) {
+      Class.new do
+        include GoogleContactsApi::Contacts
+        def initialize(api)
+          @api = api
+        end
+      end
+    }
+    describe ".get_contacts" do
+      it "should get the contacts using the internal @api object" do
+        expect(api).to receive(:get).with("contacts/default/full", anything).and_return(Hashie::Mash.new({
+          "body" => "some response", # could use example response here
+          "code" => 200
+        }))
+        allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
+        expect(test_class.new(api).get_contacts).to eq("contact set")
+      end
+    end
+  end
+
   describe "User" do
     before(:each) do
       @oauth = double("oauth")
@@ -91,9 +113,29 @@ describe "GoogleContactsApi" do
       expect(@user.api).to receive(:get).with("groups/default/full", hash_including(:v => 2))
       expect(@user.groups).to eq("group set")
     end
-    it "should be able to get contacts" do
-      expect(@user.api).to receive(:get).with("contacts/default/full", anything)
-      expect(@user.contacts).to eq("contact set")
+    describe ".contacts" do
+      it "should be able to get contacts" do
+        expect(@user.api).to receive(:get).with("contacts/default/full", anything)
+        expect(@user.contacts).to eq("contact set")
+      end
+      it "should use the contact cache for subsequent access" do
+        expect(@user.api).to receive(:get).with("contacts/default/full", anything).once
+        @user.contacts
+        contacts = @user.contacts
+        expect(contacts).to eq("contact set")
+      end
+    end
+    describe ".contacts!" do
+      it "should be able to get contacts" do
+        expect(@user.api).to receive(:get).with("contacts/default/full", anything)
+        expect(@user.contacts!).to eq("contact set")
+      end
+      it "should reload the contacts" do
+        expect(@user.api).to receive(:get).with("contacts/default/full", anything).twice
+        @user.contacts
+        contacts = @user.contacts!
+        expect(contacts).to eq("contact set")
+      end
     end
   end
 
