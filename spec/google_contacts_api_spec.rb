@@ -87,7 +87,7 @@ describe "GoogleContactsApi" do
     }
     describe ".get_contacts" do
       it "should get the contacts using the internal @api object" do
-        expect(api).to receive(:get).with("contacts/default/full", anything).and_return(Hashie::Mash.new({
+        expect(api).to receive(:get).with("contacts/default/full", kind_of(Hash)).and_return(Hashie::Mash.new({
           "body" => "some response", # could use example response here
           "code" => 200
         }))
