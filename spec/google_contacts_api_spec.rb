@@ -157,7 +157,8 @@ describe "GoogleContactsApi" do
   end
 
   describe "ResultSet" do
-    # no testing, it's just an implementation detail to use inheritance
+    pending ".each"
+    pending ".has_more?"
   end
 
   describe "ContactSet" do
