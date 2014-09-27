@@ -109,7 +109,7 @@ describe "GoogleContactsApi" do
     }
     describe ".get_groups" do
       it "should get the groups using the internal @api object" do
-        expect(api).to receive(:get).with("groups/default/full", anything).and_return(Hashie::Mash.new({
+        expect(api).to receive(:get).with("groups/default/full", hash_including(:v => 2)).and_return(Hashie::Mash.new({
           "body" => "some response", # could use example response here
           "code" => 200
         }))
@@ -119,43 +119,38 @@ describe "GoogleContactsApi" do
     end
   end
 
-  describe "User" do
-    before(:each) do
-      @oauth = double("oauth")
-      @user = GoogleContactsApi::User.new(@oauth)
-      allow(@user.api).to receive(:get).and_return(Hashie::Mash.new({
-        "body" => "some response", # could use example response here
-        "code" => 200
-      }))
-      allow(GoogleContactsApi::GroupSet).to receive(:new).and_return("group set")
-      allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
-    end
+  describe GoogleContactsApi::User do
+    let(:oauth) { double ("oauth") }
+    let(:user) { GoogleContactsApi::User.new(@oauth) }
+
     # Should hit the right URLs and return the right stuff
-    it "should be able to get groups including system groups" do
-      expect(@user.api).to receive(:get).with("groups/default/full", hash_including(:v => 2))
-      expect(@user.groups).to eq("group set")
+    describe ".groups" do
+      it "should be able to get groups including system groups" do
+        expect(user).to receive(:get_groups).and_return("group set")
+        expect(user.groups).to eq("group set")
+      end
     end
     describe ".contacts" do
       it "should be able to get contacts" do
-        expect(@user.api).to receive(:get).with("contacts/default/full", anything)
-        expect(@user.contacts).to eq("contact set")
+        expect(user).to receive(:get_contacts).and_return("contact set")
+        expect(user.contacts).to eq("contact set")
       end
       it "should use the contact cache for subsequent access" do
-        expect(@user.api).to receive(:get).with("contacts/default/full", anything).once
-        @user.contacts
-        contacts = @user.contacts
+        expect(user).to receive(:get_contacts).and_return("contact set").once
+        user.contacts
+        contacts = user.contacts
         expect(contacts).to eq("contact set")
       end
     end
     describe ".contacts!" do
       it "should be able to get contacts" do
-        expect(@user.api).to receive(:get).with("contacts/default/full", anything)
-        expect(@user.contacts!).to eq("contact set")
+        expect(user).to receive(:get_contacts).and_return("contact set")
+        expect(user.contacts!).to eq("contact set")
       end
       it "should reload the contacts" do
-        expect(@user.api).to receive(:get).with("contacts/default/full", anything).twice
-        @user.contacts
-        contacts = @user.contacts!
+        expect(user).to receive(:get_contacts).and_return("contact set").twice
+        user.contacts
+        contacts = user.contacts!
         expect(contacts).to eq("contact set")
       end
     end
