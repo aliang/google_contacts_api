@@ -236,7 +236,8 @@ describe "GoogleContactsApi" do
       expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
 
       expect(@oauth).to receive(:request)
-                          .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3', body: @contact_xml)
+                          .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3',
+                                body: @contact_xml, headers: { 'Content-Type' => 'application/atom+xml' })
                           .and_return(double(body: @contact_json, status: 200))
 
       contact = @user.create_contact(@contact_attrs)
@@ -266,7 +267,8 @@ describe "GoogleContactsApi" do
       expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
 
       expect(@oauth).to receive(:request)
-                        .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3', body: @contact_xml)
+                        .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3',
+                              body: @contact_xml, headers: { 'Content-Type' => 'application/atom+xml' })
                         .and_return(double(body: @contact_json, status: 200))
 
       contact.create_or_update
@@ -339,7 +341,8 @@ describe "GoogleContactsApi" do
 
       expect(@oauth).to receive(:request)
                         .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c?alt=json&v=3',
-                              body: @contact_xml, headers: { 'If-Match' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."' })
+                              body: @contact_xml, headers: { 'If-Match' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
+                                                             'Content-Type' => 'application/atom+xml' })
                         .and_return(double(body: @contact_json, status: 200))
     end
 
