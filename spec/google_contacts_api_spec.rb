@@ -371,15 +371,13 @@ describe "GoogleContactsApi" do
 
       @contact_json = <<-EOS
         {
-          "entry": [
-            {
-              "gd$name": {
-                "gd$givenName": {"$t": "John"},
-                "gd$familyName": {"$t": "Doe"}
-              },
-              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
-            }
-          ]
+          "entry": {
+            "gd$name": {
+              "gd$givenName": {"$t": "John"},
+              "gd$familyName": {"$t": "Doe"}
+            },
+            "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+          }
         }
       EOS
     end
