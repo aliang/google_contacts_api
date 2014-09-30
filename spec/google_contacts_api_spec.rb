@@ -236,7 +236,7 @@ describe "GoogleContactsApi" do
       expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
 
       expect(@oauth).to receive(:request)
-                          .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', body: @contact_xml)
+                          .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3', body: @contact_xml)
                           .and_return(double(body: @contact_json, status: 200))
 
       contact = @user.create_contact(@contact_attrs)
@@ -266,7 +266,7 @@ describe "GoogleContactsApi" do
       expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
 
       expect(@oauth).to receive(:request)
-                        .with(:post, 'https://www.google.com/m8/feeds/default/full?alt=json&v=3', body: @contact_xml)
+                        .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3', body: @contact_xml)
                         .and_return(double(body: @contact_json, status: 200))
 
       contact.create_or_update

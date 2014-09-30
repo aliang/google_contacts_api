@@ -217,7 +217,7 @@ module GoogleContactsApi
     end
 
     def self.call_api_create(attrs, api)
-      api.post('default/full', xml_for_create(attrs))
+      api.post('contacts/default/full', xml_for_create(attrs))
     end
 
     def self.contact_from_response(response, api)
