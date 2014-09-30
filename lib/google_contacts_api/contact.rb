@@ -204,7 +204,7 @@ module GoogleContactsApi
       xml = xml_for_update(attrs)
       url = id.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')
 
-      response = @api.put(url, xml, {}, { 'If-Match' => etag })
+      response = @api.put(url, xml, {}, 'If-Match' => etag, 'Content-Type' => 'application/atom+xml')
       reload_from_data(Contact.parse_response(response))
     end
 
@@ -225,7 +225,7 @@ module GoogleContactsApi
     end
 
     def self.call_api_create(attrs, api)
-      api.post('contacts/default/full', xml_for_create(attrs))
+      api.post('contacts/default/full', xml_for_create(attrs), {}, 'Content-Type' => 'application/atom+xml')
     end
 
     def self.contact_from_response(response, api)
