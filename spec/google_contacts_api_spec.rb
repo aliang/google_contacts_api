@@ -117,6 +117,15 @@ describe "GoogleContactsApi" do
       expect(@user.api).to receive(:get).with("contacts/default/full", anything)
       expect(@user.contacts).to eq("contact set")
     end
+    it 'gets contacts via query' do
+      expect(@user.api).to receive(:get).with('contacts/default/full', 'q' => 'query', 'max-results' => 100000)
+      expect(@user.query_contacts('query')).to eq("contact set")
+    end
+    it 'gets contacts via contacts_updated_min' do
+      expect(@user.api).to receive(:get).with('contacts/default/full',
+                                              'updated_min' => '2014-08-31T00:02:02.000Z', 'max-results' => 100000)
+      expect(@user.contacts_updated_min(Time.new(2014, 8, 31, 2, 2, 2, '+02:00'))).to eq("contact set")
+    end
     it 'gets a contact from an id url' do
       json = <<-EOS
         {

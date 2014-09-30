@@ -18,6 +18,10 @@ module GoogleContactsApi
       GoogleContactsApi::ContactSet.new(response.body, @api)
     end
 
+    def contacts_updated_min(updated_min)
+      contacts(updated_min: GoogleContactsApi::Api.format_time_for_xml(updated_min))
+    end
+
     def query_contacts(query)
       contacts(q: query)
     end
