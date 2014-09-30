@@ -44,7 +44,15 @@ module GoogleContactsApi
         opts = {}
         opts[:body] = body if body != '' && !body.nil?
         opts[:headers] = headers if headers != {} && !headers.nil?
+
         result = @oauth.request(http_method, path, opts)
+
+        begin
+          STDERR.puts "OAuth request: #{http_method} #{path} #{opts}"
+          STDERR.puts "OAuth response code: #{result.status}"
+          STDERR.puts "OAuth response body: #{result.body}"
+        rescue
+        end
       rescue => e
         # TODO: OAuth 2.0 will raise a real error
         raise UnauthorizedError if defined?(e.response) && self.class.parse_response_code(e.response) == 401

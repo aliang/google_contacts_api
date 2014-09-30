@@ -22,40 +22,40 @@
     <%= contact[:content] ? "<atom:content>#{contact[:content].encode(xml: :text)}</atom:content>" : '' %>
 
     <% (contact[:emails] || []).each do |email| %>
-      <gd:email rel="http://schemas.google.com/g/2005#<%= email[:rel] %>"
+      <gd:email <%= email[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ email[:rel] }\"" : '' %>
                 <%= email[:primary] ? 'primary="true"' : '' %>
-                address=<%= email[:address].encode(xml: :attr) %>/>
+                address=<%= email[:address].to_s.encode(xml: :attr) %>/>
     <% end %>
 
     <% (contact[:phone_numbers] || []).each do |phone| %>
-      <gd:phoneNumber rel="http://schemas.google.com/g/2005#<%= phone[:rel] %>"
+      <gd:phoneNumber <%= phone[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ phone[:rel] }\"" : '' %>
                       <%= phone[:primary] ? 'primary="true"' : '' %>
-      ><%= phone[:number].encode(xml: :text) %></gd:phoneNumber>
+      ><%= phone[:number].to_s.encode(xml: :text) %></gd:phoneNumber>
     <% end %>
 
     <% (contact[:addresses] || []).each do |address| %>
-      <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#<%= address[:rel] %>"
+      <gd:structuredPostalAddress <%= address[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ address[:rel] }\"" : '' %>
              <%= address[:primary] ? 'primary="true"' : '' %>>
-        <gd:city><%= address[:city].encode(xml: :text) %></gd:city>
-        <gd:street><%= address[:street].encode(xml: :text) %></gd:street>
-        <gd:region><%= address[:region].encode(xml: :text) %></gd:region>
-        <gd:postcode><%= address[:postcode].encode(xml: :text) %></gd:postcode>
-        <gd:country><%= address[:country].encode(xml: :text) %></gd:country>
+        <gd:city><%= address[:city].to_s.encode(xml: :text) %></gd:city>
+        <gd:street><%= address[:street].to_s.encode(xml: :text) %></gd:street>
+        <gd:region><%= address[:region].to_s.encode(xml: :text) %></gd:region>
+        <gd:postcode><%= address[:postcode].to_s.encode(xml: :text) %></gd:postcode>
+        <gd:country><%= address[:country].to_s.encode(xml: :text) %></gd:country>
       </gd:structuredPostalAddress>
     <% end %>
 
     <% (contact[:organizations] || []).each do |org| %>
-       <gd:organization rel="http://schemas.google.com/g/2005#<%= org[:rel] %>"
+       <gd:organization <%= org[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ org[:rel] }\"" : '' %>
                 <%= org[:primary] ? 'primary="true"' : '' %>>
-          <gd:orgName><%= org[:org_name].encode(xml: :text) %></gd:orgName>
-          <gd:orgTitle><%= org[:org_title].encode(xml: :text) %></gd:orgTitle>
+          <gd:orgName><%= org[:org_name].to_s.encode(xml: :text) %></gd:orgName>
+          <gd:orgTitle><%= org[:org_title].to_s.encode(xml: :text) %></gd:orgTitle>
        </gd:organization>
     <% end %>
 
     <% (contact[:websites] || []).each do |website| %>
         <gContact:website
-            href=<%= website[:href].encode(xml: :attr) %>
-            rel=<%= website[:rel].encode(xml: :attr) %>
+            href=<%= website[:href].to_s.encode(xml: :attr) %>
+            <%= website[:rel] ?  "rel=#{website[:rel].encode(xml: :attr)}" : '' %>
             <%= website[:primary] ? 'primary="true"' : '' %>
         />
     <% end %>
