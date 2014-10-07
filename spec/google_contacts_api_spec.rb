@@ -8,6 +8,7 @@ class MockOAuth2Error < StandardError
   end
 end
 
+
 describe "GoogleContactsApi" do
   describe "Api" do
     before(:each) do
@@ -299,7 +300,7 @@ describe "GoogleContactsApi" do
       }
 
       @update_xml = @contact_xml = <<-EOS
-        <entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005"
+        <entry xmlns="http://www.w3.org/2005/Atom" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005"
                gd:etag="&quot;SXk6cDdXKit7I2A9Wh9VFUgORgE.&quot;">
           <id>http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c</id>
           <updated>2014-09-01T16:25:34.010Z</updated>
