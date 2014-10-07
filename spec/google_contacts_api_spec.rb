@@ -698,6 +698,47 @@ describe "GoogleContactsApi" do
         }
         expect(@contact_v3.formatted_attrs).to eq(formatted_attrs)
       end
+
+      describe 'format_address country' do
+        before do
+          @address = {
+            'gd$country' => { '$t' => 'United States of America' },
+            'gd$city' => { '$t' => 'Anywhere' },
+            'gd$street' => { '$t' => '123 Big Rd' },
+            'gd$region' => { '$t' => 'MO' },
+            'gd$postcode' => { '$t' => '56789' }
+          }
+        end
+
+        it 'formats a simple string country correctly' do
+          expect(@contact_v3.format_address(@address)[:country]).to eq('United States of America')
+        end
+
+        it 'selects country text value when both code and text are present' do
+          @address['gd$country'] = { 'code' => 'US', '$t' => 'United States of America' }
+          expect(@contact_v3.format_address(@address)[:country]).to eq('United States of America')
+        end
+
+        it 'selects the country code if the country text is blank' do
+          @address['gd$country'] = { 'code' => 'US', '$t' => '' }
+          expect(@contact_v3.format_address(@address)[:country]).to eq('US')
+        end
+
+        it 'selects the country code if the country text is missing' do
+          @address['gd$country'] = { 'code' => 'US' }
+          expect(@contact_v3.format_address(@address)[:country]).to eq('US')
+        end
+
+        it 'returns nil if both are blank' do
+          @address['gd$country'] = { }
+          expect(@contact_v3.format_address(@address)[:country]).to be_nil
+        end
+
+        it 'returns nil if gd$country is missing' do
+          @address.delete('gd$country')
+          expect(@contact_v3.format_address(@address)[:country]).to be_nil
+        end
+      end
     end
   end
 
