@@ -254,7 +254,7 @@ module GoogleContactsApi
       end
     end
 
-    private
+    # Helper functions below, but not private for sake of easier testing
 
     def reload_from_data(parsed_data)
       keys.each { |k| delete(k) }
@@ -299,7 +299,14 @@ module GoogleContactsApi
     end
 
     def format_address(unformatted)
-      return format_entity(unformatted, 'work')
+      address = format_entity(unformatted, 'work')
+      address[:country] = format_country(unformatted['gd$country'])
+      address
+    end
+
+    def format_country(country)
+      return nil unless country
+      country['$t'].nil? || country['$t'] == '' ? country['code'] : country['$t']
     end
 
     def format_phone_number(unformatted)
