@@ -6,57 +6,57 @@
                  term="http://schemas.google.com/contact/2008#contact"/>
 <% else %>
 <entry xmlns="http://www.w3.org/2005/Atom" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005"
-       gd:etag=<%= contact[:etag].gsub("\v","\n").encode(xml: :attr) %>>
- <id><%= contact[:id].gsub("\v","\n").encode(xml: :text) %></id>
- <updated><%= contact[:updated].gsub("\v","\n").encode(xml: :text) %></updated>
+       gd:etag=<%= encode(contact[:etag], :attr) %>>
+ <id><%= encode(contact[:id], :text) %></id>
+ <updated><%= encode(contact[:updated], :text) %></updated>
  <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
 <% end %>
 
     <gd:name>
-        <%= contact[:name_prefix] ? "<gd:namePrefix>#{contact[:name_prefix].gsub("\v","\n").encode(xml: :text)}</gd:namePrefix>" : '' %>
-        <%= contact[:given_name] ? "<gd:givenName>#{contact[:given_name].gsub("\v","\n").encode(xml: :text)}</gd:givenName>" : '' %>
-        <%= contact[:additional_name] ? "<gd:additionalName>#{contact[:additional_name].gsub("\v","\n").encode(xml: :text)}</gd:additionalName>" : '' %>
-        <%= contact[:family_name] ? "<gd:familyName>#{contact[:family_name].gsub("\v","\n").encode(xml: :text)}</gd:familyName>" : '' %>
-        <%= contact[:name_suffix] ? "<gd:nameSuffix>#{contact[:name_suffix].gsub("\v","\n").encode(xml: :text)}</gd:nameSuffix>" : '' %>
+        <%= contact[:name_prefix] ? "<gd:namePrefix>#{ encode(contact[:name_prefix], :text) }</gd:namePrefix>" : '' %>
+        <%= contact[:given_name] ? "<gd:givenName>#{ encode(contact[:given_name], :text) }</gd:givenName>" : '' %>
+        <%= contact[:additional_name] ? "<gd:additionalName>#{ encode(contact[:additional_name], :text) }</gd:additionalName>" : '' %>
+        <%= contact[:family_name] ? "<gd:familyName>#{encode(contact[:family_name], :text)}</gd:familyName>" : '' %>
+        <%= contact[:name_suffix] ? "<gd:nameSuffix>#{encode(contact[:name_suffix], :text)}</gd:nameSuffix>" : '' %>
     </gd:name>
 
-    <%= contact[:content] ? "<atom:content>#{contact[:content].gsub("\v","\n").encode(xml: :text)}</atom:content>" : '' %>
+    <%= contact[:content] ? "<atom:content>#{encode(contact[:content], :text)}</atom:content>" : '' %>
 
     <% (contact[:emails] || []).each do |email| %>
       <gd:email <%= email[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ email[:rel] }\"" : '' %>
                 <%= email[:primary] ? 'primary="true"' : '' %>
-                address=<%= email[:address].to_s.gsub("\v","\n").encode(xml: :attr) %>/>
+                address=<%= encode(email[:address], :attr) %>/>
     <% end %>
 
     <% (contact[:phone_numbers] || []).each do |phone| %>
       <gd:phoneNumber <%= phone[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ phone[:rel] }\"" : '' %>
                       <%= phone[:primary] ? 'primary="true"' : '' %>
-      ><%= phone[:number].to_s.gsub("\v","\n").encode(xml: :text) %></gd:phoneNumber>
+      ><%= encode(phone[:number], :text) %></gd:phoneNumber>
     <% end %>
 
     <% (contact[:addresses] || []).each do |address| %>
       <gd:structuredPostalAddress <%= address[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ address[:rel] }\"" : '' %>
              <%= address[:primary] ? 'primary="true"' : '' %>>
-        <gd:city><%= address[:city].to_s.gsub("\v","\n").encode(xml: :text) %></gd:city>
-        <gd:street><%= address[:street].to_s.gsub("\v","\n").encode(xml: :text) %></gd:street>
-        <gd:region><%= address[:region].to_s.gsub("\v","\n").encode(xml: :text) %></gd:region>
-        <gd:postcode><%= address[:postcode].to_s.gsub("\v","\n").encode(xml: :text) %></gd:postcode>
-        <gd:country><%= address[:country].to_s.gsub("\v","\n").encode(xml: :text) %></gd:country>
+        <gd:city><%= encode(address[:city], :text) %></gd:city>
+        <gd:street><%= encode(address[:street], :text) %></gd:street>
+        <gd:region><%= encode(address[:region], :text) %></gd:region>
+        <gd:postcode><%= encode(address[:postcode], :text) %></gd:postcode>
+        <gd:country><%= encode(address[:country], :text) %></gd:country>
       </gd:structuredPostalAddress>
     <% end %>
 
     <% (contact[:organizations] || []).each do |org| %>
        <gd:organization <%= org[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ org[:rel] }\"" : '' %>
                 <%= org[:primary] ? 'primary="true"' : '' %>>
-          <gd:orgName><%= org[:org_name].to_s.gsub("\v","\n").encode(xml: :text) %></gd:orgName>
-          <gd:orgTitle><%= org[:org_title].to_s.gsub("\v","\n").encode(xml: :text) %></gd:orgTitle>
+          <gd:orgName><%= encode(org[:org_name], :text) %></gd:orgName>
+          <gd:orgTitle><%= encode(org[:org_title], :text) %></gd:orgTitle>
        </gd:organization>
     <% end %>
 
     <% (contact[:websites] || []).each do |website| %>
         <gContact:website
-            href=<%= website[:href].to_s.gsub("\v","\n").encode(xml: :attr) %>
-            <%= website[:rel] ?  "rel=#{website[:rel].gsub("\v","\n").encode(xml: :attr)}" : '' %>
+            href=<%= encode(website[:href], :attr) %>
+            <%= website[:rel] ?  "rel=#{encode(website[:rel], :attr)}" : '' %>
             <%= website[:primary] ? 'primary="true"' : '' %>
         />
     <% end %>
