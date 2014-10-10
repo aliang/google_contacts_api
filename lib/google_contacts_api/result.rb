@@ -5,8 +5,9 @@ module GoogleContactsApi
   # In the JSON responses, ":" from the equivalent XML response is replaced
   # with a "$", while element content is instead keyed with "$t".
   class Result < Hashie::Mash
-    attr_reader :api
-    # Initialize a Result from a single result's Hash/Hashie
+    attr_accessor :api
+
+    # Populate from a single result Hash/Hashie
     def initialize(source_hash = nil, default = nil, api = nil, &blk)
       @api = api if api
       super(source_hash, default, &blk)
@@ -22,6 +23,8 @@ module GoogleContactsApi
       _id ? _id["$t"] : nil
     end
 
+    # Note that the title is really just the (full) name
+    # ":" replaced with $, element content is keyed with $t
     # For Contacts, returns the (full) name.
     # For Groups, returns the name of the group.
     def title
