@@ -247,14 +247,15 @@ describe "GoogleContactsApi" do
       expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c')
     end
 
-    it 'works without emails, phone numbers, addresses and websites specified and handles special characters' do
-      attrs =  { given_name: '<Jo&hn>', family_name: 'Doe' }
+    it 'works without emails, phone numbers, addresses and websites specified and handles special characters and \v' do
+      attrs =  { given_name: '<Jo&hn>', family_name: "Vertical Tab Replaced With Newline:\v" }
       xml = <<-EOS
         <atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005" xmlns:gContact="http://schemas.google.com/contact/2008">
           <atom:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
           <gd:name>
             <gd:givenName>&lt;Jo&amp;hn&gt;</gd:givenName>
-            <gd:familyName>Doe</gd:familyName>
+            <gd:familyName>Vertical Tab Replaced With Newline:
+</gd:familyName>
           </gd:name>
         </atom:entry>
       EOS

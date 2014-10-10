@@ -206,14 +206,26 @@ module GoogleContactsApi
       reload_from_data(Contact.parse_response(Contact.call_api_create(attrs_for_update(changes), @api)))
     end
 
+    def self.encode(value, xml_format)
+      value.to_s.gsub("\v", "\n").encode(xml: xml_format)
+    end
+
+    def self.evaluate_template(template, contact, action)
+      #context = OpenStruct.new(contact: contact_attrs, action: :action,
+      #                         encode: (value, xml_format) -> { encode(value, xml_format) } )
+      #ERB.new(template).result(context.instance_eval { binding })
+      encode = lambda { |value, xml_format| Contact.encode(value, xml_format) }
+      ERB.new(template).result(binding)
+    end
+
     def self.xml_for_create(attrs)
       @@new_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
-      ERB.new(@@new_contact_template).result(OpenStruct.new(contact: attrs, action: :create).instance_eval { binding })
+      Contact.evaluate_template(@@new_contact_template, attrs, :create)
     end
 
     def xml_for_update(attrs)
       @@edit_contact_template ||= File.new(File.dirname(__FILE__) + '/templates/contact.xml.erb').read
-      ERB.new(@@edit_contact_template).result(OpenStruct.new(contact: attrs, action: :update).instance_eval { binding })
+      Contact.evaluate_template(@@edit_contact_template, attrs, :update)
     end
 
     def self.call_api_create(attrs, api)
