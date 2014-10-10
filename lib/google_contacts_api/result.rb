@@ -9,7 +9,7 @@ module GoogleContactsApi
     # These are the accessors we can write
     # :id, :title, :updated, :content
     
-    attr_reader :api
+    attr_accessor :api
     # Populate from a single result Hash/Hashie
     def initialize(source_hash = nil, default = nil, api = nil, &blk)
       @api = api if api
