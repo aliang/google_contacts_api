@@ -138,6 +138,27 @@ module GoogleContactsApi
       spouse_rel['$t'] if spouse_rel
     end
 
+    def group_membership_info
+      if self['gContact$groupMembershipInfo']
+        self['gContact$groupMembershipInfo'].map(&method(:format_group_membership))
+      else
+        []
+      end
+    end
+    def format_group_membership(membership)
+      { deleted: membership['deleted'] == 'true', href: membership['href'] }
+    end
+    def group_memberships
+      group_membership_info.select { |info| !info[:deleted] }.map { |info| info[:href] }
+    end
+    def deleted_group_memberships
+      group_membership_info.select { |info| info[:deleted] }.map { |info| info[:href] }
+    end
+    def prep_add_to_group(group)
+      prep_changes(group_memberships: group_memberships.push(group.id).to_set.to_a,
+                   deleted_group_memberships: deleted_group_memberships.reject { |deleted| deleted == group.id  })
+    end
+
     # Return an Array of Hashes representing addresses with formatted metadata.
     def addresses
       format_entities('gd$structuredPostalAddress', :format_address)
@@ -219,9 +240,6 @@ module GoogleContactsApi
     end
 
     def self.evaluate_template(template, contact, action)
-      #context = OpenStruct.new(contact: contact_attrs, action: :action,
-      #                         encode: (value, xml_format) -> { encode(value, xml_format) } )
-      #ERB.new(template).result(context.instance_eval { binding })
       encode = lambda { |value, xml_format| Contact.encode(value, xml_format) }
       ERB.new(template).result(binding)
     end
@@ -275,7 +293,7 @@ module GoogleContactsApi
 
     def attrs_for_update(changes)
       fields = [:name_prefix, :given_name, :additional_name, :family_name, :name_suffix, :content,
-                :emails, :phone_numbers, :addresses, :organizations, :websites]
+                :emails, :phone_numbers, :addresses, :organizations, :websites, :group_memberships, :deleted_group_memberships]
       Hash[fields.map { |f| [ f, changes.has_key?(f) ? changes[f] : value_for_field(f) ] } ]
     end
 

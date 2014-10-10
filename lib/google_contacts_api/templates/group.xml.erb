@@ -1,0 +1,7 @@
+<% if action == :create  %>
+    <atom:entry xmlns:gd="http://schemas.google.com/g/2005" xmlns:atom="http://www.w3.org/2005/Atom">
+      <atom:category scheme="http://schemas.google.com/g/2005#kind"
+        term="http://schemas.google.com/contact/2008#group"/>
+      <atom:title type="text"><%= group_attrs[:title].to_s.gsub("\v", "\n").encode(xml: :text) %></atom:title>
+    </atom:entry>
+<% end %>
