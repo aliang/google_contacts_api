@@ -133,7 +133,7 @@ describe "GoogleContactsApi" do
           "entry": [
             {
               "gd$name": {"gd$givenName": {"$t": "John"}},
-              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c"}
             }
           ]
         }
@@ -177,7 +177,9 @@ describe "GoogleContactsApi" do
         ],
         organizations: [
           { org_name: 'Example, Inc', org_title: 'Manager', rel: 'other', primary: true }
-        ]
+        ],
+        group_memberships: [],
+        deleted_group_memberships: []
       }
       @contact_xml = <<-EOS
         <atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005" xmlns:gContact="http://schemas.google.com/contact/2008">
@@ -222,29 +224,11 @@ describe "GoogleContactsApi" do
           "entry": [
             {
               "gd$name": {"gd$givenName": {"$t": "John"}},
-              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+              "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c"}
             }
           ]
         }
       EOS
-    end
-
-    it 'creates formats xml correctly from attributes' do
-      expect(Hash.from_xml(GoogleContactsApi::Contact.xml_for_create(@contact_attrs))).to eq(Hash.from_xml(@contact_xml))
-    end
-
-    it 'sends a request with the contact xml and returns created Contact instance' do
-      expect(GoogleContactsApi::Contact).to receive(:xml_for_create).with(@contact_attrs).and_return(@contact_xml)
-
-      expect(@oauth).to receive(:request)
-                          .with(:post, 'https://www.google.com/m8/feeds/contacts/default/full?alt=json&v=3',
-                                body: @contact_xml, headers: { 'Content-Type' => 'application/atom+xml' })
-                          .and_return(double(body: @contact_json, status: 200))
-
-      contact = @user.create_contact(@contact_attrs)
-
-      expect(contact.given_name).to eq('John')
-      expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c')
     end
 
     it 'works without emails, phone numbers, addresses and websites specified and handles special characters and \v' do
@@ -276,7 +260,50 @@ describe "GoogleContactsApi" do
       contact.create_or_update
 
       expect(contact.given_name).to eq('John')
-      expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c')
+      expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c')
+    end
+  end
+
+  describe 'group creation' do
+    before do
+      @oauth = double("oauth")
+      @user = GoogleContactsApi::User.new(@oauth)
+      @api = @user.api
+      @group_attrs =  { title: 'test' }
+      @group_xml = <<-EOS
+          <atom:entry xmlns:gd="http://schemas.google.com/g/2005" xmlns:atom="http://www.w3.org/2005/Atom">
+            <atom:category scheme="http://schemas.google.com/g/2005#kind"
+              term="http://schemas.google.com/contact/2008#group"/>
+            <atom:title type="text">test</atom:title>
+          </atom:entry>
+      EOS
+
+      @group_json = <<-EOS
+          {
+            "entry": {
+                "title": {"$t": "test"},
+                "id": {"$t": "http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/7389"}
+              }
+          }
+      EOS
+    end
+
+    it 'creates formats xml correctly from attributes' do
+      expect(Hash.from_xml(GoogleContactsApi::Group.xml_for_create(@group_attrs))).to eq(Hash.from_xml(@group_xml))
+    end
+
+    it 'sends a request with the group xml and returns created Group instance' do
+      expect(GoogleContactsApi::Group).to receive(:xml_for_create).with(@group_attrs).and_return(@group_xml)
+
+      expect(@oauth).to receive(:request)
+                        .with(:post, 'https://www.google.com/m8/feeds/groups/default/full?alt=json&v=3',
+                              body: @group_xml, headers: { 'Content-Type' => 'application/atom+xml' })
+                        .and_return(double(body: @group_json, status: 200))
+
+      group = GoogleContactsApi::Group.create(@group_attrs, @api)
+
+      expect(group.title).to eq('test')
+      expect(group.id).to eq('http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/7389')
     end
   end
 
@@ -286,7 +313,7 @@ describe "GoogleContactsApi" do
       @user = GoogleContactsApi::User.new(@oauth)
       parsed_json = {
         'gd$name' => {'gd$givenName' => {'$t' => 'John'}},
-        'id' => {'$t' => 'http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c'},
+        'id' => {'$t' => 'http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c'},
         'gd$etag' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."'
       }
       @contact = GoogleContactsApi::Contact.new(parsed_json, nil, @user.api)
@@ -296,14 +323,15 @@ describe "GoogleContactsApi" do
       @augmented_update_attrs = {
           name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
           content: nil, emails: [], phone_numbers: [], addresses: [], organizations: [], websites: [],
+          group_memberships: [], deleted_group_memberships: [],
           updated: '2014-09-01T16:25:34.010Z', etag: '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
-          id: 'http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c'
+          id: 'http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c'
       }
 
       @update_xml = @contact_xml = <<-EOS
         <entry xmlns="http://www.w3.org/2005/Atom" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005"
                gd:etag="&quot;SXk6cDdXKit7I2A9Wh9VFUgORgE.&quot;">
-          <id>http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c</id>
+          <id>http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c</id>
           <updated>2014-09-01T16:25:34.010Z</updated>
           <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
           <gd:name>
@@ -320,7 +348,7 @@ describe "GoogleContactsApi" do
               "gd$givenName": {"$t": "John"},
               "gd$familyName": {"$t": "Doe"}
             },
-            "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c"}
+            "id": {"$t": "http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c"}
           }
         }
       EOS
@@ -341,7 +369,7 @@ describe "GoogleContactsApi" do
       expect(GoogleContactsApi::Api).to receive(:format_time_for_xml).with(anything).and_return('2014-09-01T16:25:34.010Z')
 
       expect(@oauth).to receive(:request)
-                        .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40cru.org/base/6b70f8bb0372c?alt=json&v=3',
+                        .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c?alt=json&v=3',
                               body: @contact_xml, headers: { 'If-Match' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
                                                              'Content-Type' => 'application/atom+xml' })
                         .and_return(double(body: @contact_json, status: 200))
@@ -373,6 +401,32 @@ describe "GoogleContactsApi" do
       @contact.create_or_update
       expect(@contact.given_name).to eq('John')
       expect(@contact.family_name).to eq('Doe')
+    end        
+  end
+  
+  describe 'prep add to group' do
+    before do
+      user = GoogleContactsApi::User.new(double("oauth"))
+      @contact = GoogleContactsApi::Contact.new(nil, nil, user.api)
+      @contact['gContact$groupMembershipInfo'] = [
+        { 'deleted' => 'false', 'href' => 'a' },
+        { 'deleted' => 'true', 'href' => 'b' }
+      ]
+    end
+
+    it 'supports prep add to group for a group it already has' do
+      @contact.prep_add_to_group(double(id: 'a'))
+      expect(@contact.prepped_changes).to eq({ group_memberships: ['a'], deleted_group_memberships: ['b']})
+    end
+
+    it 'supports prep add to group for a group that was deleted' do
+      @contact.prep_add_to_group(double(id: 'b'))
+      expect(@contact.prepped_changes).to eq({ group_memberships: ['a', 'b'], deleted_group_memberships: []})
+    end
+
+    it 'supports prep add to group for a group that it did not have before' do
+      @contact.prep_add_to_group(double(id: 'c'))
+      expect(@contact.prepped_changes).to eq({ group_memberships: ['a', 'c'], deleted_group_memberships: ['b']})
     end
   end
 
@@ -588,6 +642,16 @@ describe "GoogleContactsApi" do
               'gd$orgName' => { '$t' => 'Example, Inc' },
               'rel' => 'http://schemas.google.com/g/2005#other'
             }
+          ],
+          'gContact$groupMembershipInfo' => [
+            {
+              'deleted' => 'false',
+              'href' => 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'
+            },
+            {
+              'deleted' => 'true',
+              'href' => 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222'
+            }
           ]
         )
       end
@@ -683,6 +747,24 @@ describe "GoogleContactsApi" do
         expect(@contact_v3.organizations).to eq(formatted_organizations)
       end
 
+      it 'has group membership info' do
+        expect(@empty.group_membership_info).to eq([])
+
+        group_membership_info = [
+          { deleted: false, href: 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111' },
+          { deleted: true, href: 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222' }
+        ]
+        expect(@contact_v3.group_membership_info).to eq(group_membership_info)
+      end
+
+      it 'has group memberships' do
+        expect(@contact_v3.group_memberships).to eq(['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'])
+      end
+
+      it 'has deleted group memberships' do
+        expect(@contact_v3.deleted_group_memberships).to eq(['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222'])
+      end
+
       it 'has formatted attributes' do
         formatted_attrs = {
           name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
@@ -695,7 +777,9 @@ describe "GoogleContactsApi" do
                        formatted_address: "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
                        city: 'Anywhere', street: '123 Far Ln.', region: 'MO', postcode: '67891'}],
           organizations: [{primary: false, rel: 'other', org_title: 'Worker Person', org_name: 'Example, Inc'}],
-          websites: []
+          websites: [],
+          group_memberships: ['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'],
+          deleted_group_memberships: ['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222']
         }
         expect(@contact_v3.formatted_attrs).to eq(formatted_attrs)
       end

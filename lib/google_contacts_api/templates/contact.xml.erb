@@ -61,6 +61,13 @@
         />
     <% end %>
 
+    <% (contact[:group_memberships] || []).each do |group_membership| %>
+        <gContact:groupMembershipInfo deleted="false" href="<%= encode(group_membership, :attr)  %>"/>
+    <% end %>
+    <% (contact[:deleted_group_memberships] || []).each do |deleted_group_membership| %>
+        <gContact:groupMembershipInfo deleted="true" href="<%= encode(deleted_group_membership, :attr)  %>"/>
+    <% end %>
+
 <% if action != :create  %>
 </entry>
 <% else %>
