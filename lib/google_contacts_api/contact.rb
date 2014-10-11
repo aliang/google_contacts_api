@@ -215,7 +215,8 @@ module GoogleContactsApi
       attrs[:id] = id
 
       xml = xml_for_update(attrs)
-      url = id.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')
+      # Needs to be sent to ../full/.. not /base/ to support group membership info
+      url = id.sub('http://', 'https://').sub('/base/', '/full/').sub(GoogleContactsApi::Api::BASE_URL, '')
 
       response = @api.put(url, xml, {}, 'If-Match' => etag, 'Content-Type' => 'application/atom+xml')
       reload_from_data(Contact.parse_response(response))
