@@ -428,7 +428,7 @@ describe "GoogleContactsApi" do
       expect(GoogleContactsApi::Api).to receive(:format_time_for_xml).with(anything).and_return('2014-09-01T16:25:34.010Z')
 
       expect(@oauth).to receive(:request)
-                        .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c?alt=json&v=3',
+                        .with(:put, 'https://www.google.com/m8/feeds/contacts/test.user%40gmail.com/full/6b70f8bb0372c?alt=json&v=3',
                               body: @contact_xml, headers: { 'If-Match' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
                                                              'Content-Type' => 'application/atom+xml' })
                         .and_return(double(body: @contact_json, status: 200))
