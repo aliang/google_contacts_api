@@ -20,7 +20,7 @@ module GoogleContactsApi
     end
 
     def contacts_updated_min(updated_min)
-      contacts(updated_min: GoogleContactsApi::Api.format_time_for_xml(updated_min))
+      contacts('updated-min' => GoogleContactsApi::Api.format_time_for_xml(updated_min))
     end
 
     def query_contacts(query)
