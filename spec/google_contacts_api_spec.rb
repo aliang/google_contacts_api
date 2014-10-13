@@ -422,6 +422,15 @@ describe "GoogleContactsApi" do
       @contact.send_update
     end
 
+    it 'shows all attributes with changes via attrs_with_changes' do
+      @contact.prep_changes(@update_attrs)
+      expect(@contact.prepped_changes).to eq(@update_attrs)
+      expect(@contact.attrs_with_changes).to eq(name_prefix: nil, given_name: 'John', additional_name: nil,
+                                                family_name: 'Doe', name_suffix: nil, content: nil, emails: [], phone_numbers: [],
+                                                addresses: [], organizations: [], websites: [], group_memberships: [],
+                                                deleted_group_memberships: [],)
+    end
+
     def mocks_for_contact_update
       expect(@contact).to receive(:xml_for_update).with(@augmented_update_attrs).and_return(@update_xml)
 
