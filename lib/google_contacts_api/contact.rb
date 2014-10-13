@@ -181,6 +181,10 @@ module GoogleContactsApi
       attrs_for_update({})
     end
 
+    def attrs_with_changes
+      attrs_for_update(prepped_changes)
+    end
+
     def prep_changes(changes)
       @changes ||= {}
       @changes.merge!(changes)
