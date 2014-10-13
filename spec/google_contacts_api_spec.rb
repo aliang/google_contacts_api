@@ -626,9 +626,7 @@ describe "GoogleContactsApi" do
               'gd$country' => { '$t' => 'United States of America' },
               'gd$formattedAddress' => { '$t' => "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America" },
               'gd$city' => { '$t' => 'Anywhere' },
-              'gd$street' => { '$t' => '123 Far Ln.' },
-              'gd$region' => { '$t' => 'MO' },
-              'gd$postcode' => { '$t' => '67891' }
+              'gd$street' => { '$t' => '123 Far Ln.' }
             }
           ],
           'gd$email' => [
@@ -709,26 +707,10 @@ describe "GoogleContactsApi" do
         expect(@empty.addresses).to eq([])
 
         formatted_addresses = [
-          {
-              rel: 'work',
-              primary: false,
-              country: 'United States of America',
-              formatted_address: "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
-              city: 'Somwhere',
-              street: '2345 Long Dr. #232',
-              region: 'IL',
-              postcode: '12345'
-          },
-          {
-              rel: 'home',
-              primary: true,
-              country: 'United States of America',
-              formatted_address: "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
-              city: 'Anywhere',
-              street: '123 Far Ln.',
-              region: 'MO',
-              postcode: '67891'
-          }
+          { rel: 'work', primary: false, country: 'United States of America', city: 'Somwhere', street: '2345 Long Dr. #232',
+            region: 'IL', postcode: '12345' },
+          { rel: 'home', primary: true, country: 'United States of America', city: 'Anywhere', street: '123 Far Ln.',
+            region: nil, postcode: nil }
         ]
         expect(@contact_v3.addresses).to eq(formatted_addresses)
       end
@@ -780,11 +762,9 @@ describe "GoogleContactsApi" do
           content: nil, emails: [{primary: true, rel: 'other', address: 'johnsmith@example.com'}],
           phone_numbers: [{primary: true, rel: 'mobile', number: '(123) 334-5158'}],
           addresses: [{primary: false, rel: 'work', country: 'United States of America',
-                       formatted_address: "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
                        city: 'Somwhere', street: '2345 Long Dr. #232', region: 'IL', postcode: '12345'},
                       {primary: true, rel: 'home', country: 'United States of America',
-                       formatted_address: "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
-                       city: 'Anywhere', street: '123 Far Ln.', region: 'MO', postcode: '67891'}],
+                       city: 'Anywhere', street: '123 Far Ln.', region: nil, postcode: nil}],
           organizations: [{primary: false, rel: 'other', org_title: 'Worker Person', org_name: 'Example, Inc'}],
           websites: [],
           group_memberships: ['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'],
