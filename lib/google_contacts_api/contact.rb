@@ -335,7 +335,12 @@ module GoogleContactsApi
 
     def format_address(unformatted)
       address = format_entity(unformatted, 'work')
+      address[:street] ||= nil
+      address[:city] ||= nil
+      address[:region] ||= nil
+      address[:postcode] ||= nil
       address[:country] = format_country(unformatted['gd$country'])
+      address.delete :formatted_address
       address
     end
 
