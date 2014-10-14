@@ -76,9 +76,8 @@ module GoogleContactsApi
     private
 
     def params_with_defaults(params)
-      p = params.merge({
-        "alt" => "json"
-      })
+      p = params || {}
+      p['alt'] = 'json' unless p['alt']
       p['v'] = '3' unless p['v']
       p
     end

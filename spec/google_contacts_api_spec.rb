@@ -181,41 +181,54 @@ describe "GoogleContactsApi" do
         group_memberships: [],
         deleted_group_memberships: []
       }
+      @contact_fields_xml = <<-EOS
+        <gd:name>
+          <gd:namePrefix>Mr</gd:namePrefix>
+          <gd:givenName>John</gd:givenName>
+          <gd:additionalName>Henry</gd:additionalName>
+          <gd:familyName>Doe</gd:familyName>
+          <gd:nameSuffix>III</gd:nameSuffix>
+        </gd:name>
+        <atom:content>this is content</atom:content>
+        <gd:email rel="http://schemas.google.com/g/2005#home" primary="true" address="john@example.com"/>
+        <gd:email rel="http://schemas.google.com/g/2005#work" address="johnwork@example.com"/>
+        <gd:phoneNumber rel="http://schemas.google.com/g/2005#other">(123)-111-1111</gd:phoneNumber>
+        <gd:phoneNumber rel="http://schemas.google.com/g/2005#mobile" primary="true">(456)-111-1111</gd:phoneNumber>
+        <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#work">
+          <gd:city>Somewhere</gd:city>
+          <gd:street>123 Lane</gd:street>
+          <gd:region>IL</gd:region>
+          <gd:postcode>12345</gd:postcode>
+          <gd:country>United States of America</gd:country>
+        </gd:structuredPostalAddress>
+        <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#home" primary="true">
+          <gd:city>Anywhere</gd:city>
+          <gd:street>456 Road</gd:street>
+          <gd:region>IN</gd:region>
+          <gd:postcode>67890</gd:postcode>
+          <gd:country>United States of America</gd:country>
+        </gd:structuredPostalAddress>
+        <gd:organization rel="http://schemas.google.com/g/2005#other" primary="true">
+          <gd:orgName>Example, Inc</gd:orgName>
+          <gd:orgTitle>Manager</gd:orgTitle>
+        </gd:organization>
+        <gContact:website href="blog.example.com" rel="blog" primary="true"/>
+        <gContact:website href="www.example.com" rel="home-page"/>
+      EOS
+
       @contact_xml = <<-EOS
         <atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005" xmlns:gContact="http://schemas.google.com/contact/2008">
           <atom:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
-          <gd:name>
-            <gd:namePrefix>Mr</gd:namePrefix>
-            <gd:givenName>John</gd:givenName>
-            <gd:additionalName>Henry</gd:additionalName>
-            <gd:familyName>Doe</gd:familyName>
-            <gd:nameSuffix>III</gd:nameSuffix>
-          </gd:name>
-          <atom:content type="text">this is content</atom:content>
-          <gd:email rel="http://schemas.google.com/g/2005#home" primary="true" address="john@example.com"/>
-          <gd:email rel="http://schemas.google.com/g/2005#work" address="johnwork@example.com"/>
-          <gd:phoneNumber rel="http://schemas.google.com/g/2005#other">(123)-111-1111</gd:phoneNumber>
-          <gd:phoneNumber rel="http://schemas.google.com/g/2005#mobile" primary="true">(456)-111-1111</gd:phoneNumber>
-          <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#work">
-            <gd:city>Somewhere</gd:city>
-            <gd:street>123 Lane</gd:street>
-            <gd:region>IL</gd:region>
-            <gd:postcode>12345</gd:postcode>
-            <gd:country>United States of America</gd:country>
-          </gd:structuredPostalAddress>
-          <gd:structuredPostalAddress rel="http://schemas.google.com/g/2005#home" primary="true">
-            <gd:city>Anywhere</gd:city>
-            <gd:street>456 Road</gd:street>
-            <gd:region>IN</gd:region>
-            <gd:postcode>67890</gd:postcode>
-            <gd:country>United States of America</gd:country>
-          </gd:structuredPostalAddress>
-          <gd:organization rel="http://schemas.google.com/g/2005#other" primary="true">
-            <gd:orgName>Example, Inc</gd:orgName>
-            <gd:orgTitle>Manager</gd:orgTitle>
-          </gd:organization>
-          <gContact:website href="blog.example.com" rel="blog" primary="true"/>
-          <gContact:website href="www.example.com" rel="home-page"/>
+          #{@contact_fields_xml}
+        </atom:entry>
+      EOS
+
+      @batch_create_xml = <<-EOS
+      <atom:entry xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005" xmlns:gContact="http://schemas.google.com/contact/2008">
+          <atom:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
+          <batch:id>batch id insert</batch:id>
+          <batch:operation type="insert"/>
+          #{@contact_fields_xml}
         </atom:entry>
       EOS
 
@@ -238,8 +251,7 @@ describe "GoogleContactsApi" do
           <atom:category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
           <gd:name>
             <gd:givenName>&lt;Jo&amp;hn&gt;</gd:givenName>
-            <gd:familyName>Vertical Tab Replaced With Newline:
-</gd:familyName>
+            <gd:familyName>Vertical Tab Replaced With Newline:\n</gd:familyName>
           </gd:name>
         </atom:entry>
       EOS
@@ -261,6 +273,28 @@ describe "GoogleContactsApi" do
 
       expect(contact.given_name).to eq('John')
       expect(contact.id).to eq('http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c')
+    end
+
+    it 'has batch_create_xml' do
+      contact = GoogleContactsApi::Contact.new(nil, nil, @api)
+      contact.prep_changes(@contact_attrs)
+      expect(contact.prepped_changes).to eq(@contact_attrs)
+      expect(contact.batch_create_xml('batch id insert')).to be_equivalent_to(@batch_create_xml)
+    end
+  end
+
+  describe 'parse_google_xml' do
+    let(:util) { GoogleContactsApi::XMLUtil }
+
+    def read_spec_file(file)
+      File.new(File.dirname(__FILE__) + '/' + file).read
+    end
+
+    it 'parses simple feed' do
+      xml = read_spec_file('google_sample_xml.xml')
+      expected_parsed_json = JSON.parse(read_spec_file('google_sample_alt_json.json'))
+      parsed = util.parse_as_if_alt_json(xml)
+      expect(parsed).to eq(expected_parsed_json)
     end
   end
 
@@ -316,6 +350,7 @@ describe "GoogleContactsApi" do
         'id' => {'$t' => 'http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c'},
         'gd$etag' => '"SXk6cDdXKit7I2A9Wh9VFUgORgE."'
       }
+
       @contact = GoogleContactsApi::Contact.new(parsed_json, nil, @user.api)
 
       @update_attrs = { family_name: 'Doe' }
@@ -341,6 +376,21 @@ describe "GoogleContactsApi" do
         </entry>
       EOS
 
+      @batch_update_xml =<<-EOS
+        <entry xmlns="http://www.w3.org/2005/Atom" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005"
+               gd:etag="&quot;SXk6cDdXKit7I2A9Wh9VFUgORgE.&quot;">
+          <id>http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c</id>
+          <updated>2014-09-01T16:25:34.010Z</updated>
+          <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
+          <batch:id>batch id update</batch:id>
+          <batch:operation type="update"/>
+          <gd:name>
+            <gd:givenName>John</gd:givenName>
+            <gd:familyName>Doe</gd:familyName>
+          </gd:name>
+        </entry>
+      EOS
+
       @contact_json = <<-EOS
         {
           "entry": {
@@ -356,6 +406,12 @@ describe "GoogleContactsApi" do
 
     it 'formats xml correctly from attributes' do
       expect(@contact.xml_for_update(@augmented_update_attrs)).to be_equivalent_to(@update_xml)
+    end
+
+    it 'has batch_update_xml' do
+      expect(GoogleContactsApi::Api).to receive(:format_time_for_xml).with(anything).and_return('2014-09-01T16:25:34.010Z')
+      @contact.prep_changes(@update_attrs)
+      expect(@contact.batch_update_xml('batch id update')).to be_equivalent_to(@batch_update_xml)
     end
 
     it 'does not send request if there are no changes' do

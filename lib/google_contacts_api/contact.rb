@@ -210,13 +210,39 @@ module GoogleContactsApi
       contact_from_response(call_api_create(attrs, api), api)
     end
 
-    def send_update(changes=nil)
+    def batch_create_or_update_xml(batch_id)
+      id ? batch_update_xml(batch_id) : batch_create_xml(batch_id)
+    end
+
+    def batch_update_xml(batch_id)
+      attrs = full_attrs_for_update
+      return unless attrs
+      attrs[:batch_id] = batch_id
+      attrs[:batch_operation] = 'update'
+      xml_for_update(attrs)
+    end
+
+    def batch_create_xml(batch_id)
+      return if prepped_changes == {}
+      attrs = attrs_for_update(prepped_changes)
+      attrs[:batch_id] = batch_id
+      attrs[:batch_operation] = 'insert'
+      Contact.xml_for_create(attrs)
+    end
+
+    def full_attrs_for_update(changes = nil)
       changes ||= @changes
       return unless changes
       attrs = attrs_for_update(changes)
       attrs[:updated] = GoogleContactsApi::Api.format_time_for_xml(Time.now)
       attrs[:etag] = etag
       attrs[:id] = id
+      attrs
+    end
+
+    def send_update(changes = nil)
+      attrs = full_attrs_for_update(changes)
+      return unless attrs
 
       xml = xml_for_update(attrs)
       # Needs to be sent to ../full/.. not /base/ to support group membership info
