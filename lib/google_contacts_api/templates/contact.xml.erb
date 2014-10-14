@@ -11,6 +11,10 @@
  <updated><%= encode(contact[:updated], :text) %></updated>
  <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
 <% end %>
+    <% if contact[:batch_id] %>
+        <batch:id><%= encode(contact[:batch_id], :text) %></batch:id>
+        <batch:operation type=<%= encode(contact[:batch_operation], :attr) %>/>
+    <% end %>
 
     <gd:name>
         <%= contact[:name_prefix] ? "<gd:namePrefix>#{ encode(contact[:name_prefix], :text) }</gd:namePrefix>" : '' %>

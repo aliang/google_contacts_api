@@ -35,6 +35,52 @@ module GoogleContactsApi
       GoogleContactsApi::Contact.create(attrs, @api)
     end
 
+    def batch_create_or_update(contacts)
+      xml = batch_xml(contacts)
+      response = @api.post('contacts/default/full/batch', xml, {'alt' => ''}, 'Content-Type' => 'application/atom+xml')
+      handle_batch_results(contacts, response.body)
+    end
+
+    def handle_batch_results(contacts, xml)
+      parsed = GoogleContactsApi::XMLUti.parse_as_if_alt_json(response.body)
+
+      response_map = {}
+      entries = parsed['feed']['entry']
+      entries.each do |entry|
+        batch_id = entry['batch$id'].to_i
+        status = entry['batch$status']
+        response_map[batch_id] = status
+
+        code = status['code'].to_i
+
+        if code == 200 || code == 201
+          contacts[batch_id].reload_from_data(entry)
+        end
+      end
+
+      responses = []
+      for index in 0 .. contacts.size - 1
+        responses << response_map[index]
+      end
+      responses
+    end
+
+    def batch_xml(contacts)
+      xml = <<-EOS
+      <feed xmlns='http://www.w3.org/2005/Atom'
+          xmlns:gContact='http://schemas.google.com/contact/2008'
+          xmlns:gd='http://schemas.google.com/g/2005'
+          xmlns:batch='http://schemas.google.com/gdata/batch'>
+      EOS
+
+      contacts.each_with_index do |contact, index|
+        contact_xml = contact.batch_create_or_update_xml(index)
+        xml += contact_xml if contact_xml
+      end
+
+      xml + '</feed>'
+    end
+
     def raise_if_failed_response(response)
       # TODO: Define some fancy exceptions
       case GoogleContactsApi::Api.parse_response_code(response)
