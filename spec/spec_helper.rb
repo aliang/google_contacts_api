@@ -26,6 +26,10 @@ def load_file(filename)
   json
 end
 
+def read_spec_file(file)
+  File.new(File.dirname(__FILE__) + '/' + file).read
+end
+
 def contact_set_json
   load_file("contact_set.json")
 end
