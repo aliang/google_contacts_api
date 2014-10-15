@@ -8,7 +8,6 @@ class MockOAuth2Error < StandardError
   end
 end
 
-
 describe "GoogleContactsApi" do
   describe "Api" do
     before(:each) do
@@ -283,18 +282,46 @@ describe "GoogleContactsApi" do
     end
   end
 
-  describe 'parse_google_xml' do
+  describe 'xml_util parse_as_if_alt_json' do
     let(:util) { GoogleContactsApi::XMLUtil }
-
-    def read_spec_file(file)
-      File.new(File.dirname(__FILE__) + '/' + file).read
-    end
 
     it 'parses simple feed' do
       xml = read_spec_file('google_sample_xml.xml')
       expected_parsed_json = JSON.parse(read_spec_file('google_sample_alt_json.json'))
       parsed = util.parse_as_if_alt_json(xml)
       expect(parsed).to eq(expected_parsed_json)
+    end
+  end
+
+  describe 'batch_create_or_update' do
+    before do
+      @user = GoogleContactsApi::User.new(double("oauth"))
+      @api = @user.api
+    end
+
+    it 'batches creation and update of contacts' do
+      contact1 = GoogleContactsApi::Contact.new({}, nil, nil)
+      contact2 = GoogleContactsApi::Contact.new({}, nil, nil)
+      contact3 = GoogleContactsApi::Contact.new({}, nil, nil)
+
+      contacts = [contact1, contact2, contact3]
+      expect(@user).to receive(:batch_xml).with(contacts).and_return('batch xml')
+
+      expect(@api).to receive(:request).with(:post, 'contacts/default/full/batch', { 'alt' => '' }, 'batch xml',
+                                             {'Content-Type' => 'application/atom+xml'})
+                      .and_return(double(body: read_spec_file('batch_response.xml'), status: 200))
+
+      responses = @user.batch_create_or_update(contacts)
+      expect(responses).to eq([
+        {code: 201, reason: 'Created'}, {code: 200, reason: 'Success'}, {code: 500, reason: 'Internal Server Error'}
+      ])
+
+      expect(contact1.given_name).to eq('John')
+      expect(contact1.family_name).to eq('Doe')
+      expect(contact1.emails_full).to eq([{:rel=>"work", :primary=>true, :address=>"john@example.com"}])
+
+      expect(contact2.given_name).to eq('Jane')
+      expect(contact2.family_name).to eq('Doe')
     end
   end
 

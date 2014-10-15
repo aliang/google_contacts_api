@@ -37,28 +37,24 @@ module GoogleContactsApi
     def batch_create_or_update(contacts)
       xml = batch_xml(contacts)
       response = @api.post('contacts/default/full/batch', xml, {'alt' => ''}, 'Content-Type' => 'application/atom+xml')
-      handle_batch_results(contacts, response.body)
-    end
 
-    def handle_batch_results(contacts, xml)
-      parsed = GoogleContactsApi::XMLUti.parse_as_if_alt_json(response.body)
+      parsed = GoogleContactsApi::XMLUtil.parse_as_if_alt_json(response.body)
 
       response_map = {}
       entries = parsed['feed']['entry']
       entries.each do |entry|
-        batch_id = entry['batch$id'].to_i
-        status = entry['batch$status']
+        batch_id = entry['batch$id']['$t'].to_i
+        status = { code: entry['batch$status']['code'].to_i, reason: entry['batch$status']['reason']  }
+
         response_map[batch_id] = status
 
-        code = status['code'].to_i
-
-        if code == 200 || code == 201
+        if [200, 201].include?(status[:code])
           contacts[batch_id].reload_from_data(entry)
         end
       end
 
       responses = []
-      for index in 0 .. contacts.size - 1
+      for index in 0 .. contacts.size-1
         responses << response_map[index]
       end
       responses
