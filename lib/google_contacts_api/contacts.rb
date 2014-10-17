@@ -37,7 +37,6 @@ module GoogleContactsApi
     def batch_create_or_update(contacts)
       xml = batch_xml(contacts)
       response = @api.post('contacts/default/full/batch', xml, {'alt' => ''}, 'Content-Type' => 'application/atom+xml')
-
       parsed = GoogleContactsApi::XMLUtil.parse_as_if_alt_json(response.body)
 
       response_map = {}

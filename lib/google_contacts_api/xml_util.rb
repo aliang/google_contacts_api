@@ -5,10 +5,11 @@ module GoogleContactsApi
     class Nokogiri::XML::Node
       def namespaced_name
         if namespace.nil? || namespace.prefix.nil? || namespace.prefix.strip.empty?
-          name
+          namespaced = name
         else
-          "#{namespace.prefix}$#{name}"
+          namespaced = "#{namespace.prefix}$#{name}"
         end
+        namespaced.sub(':', '$')
       end
     end
 
