@@ -1,5 +1,10 @@
 module GoogleContactsApi
   module Contacts
+    # Google Contacts API limits it to 100.
+    BATCH_SIZE = 100
+
+    RETRY_BATCH_DELAY_AFTER_ERROR = 30
+
     # Retrieve the contacts for this user or group
     def contacts(params = {})
       # TODO: Should return empty ContactSet (haven't implemented one yet)
@@ -34,7 +39,37 @@ module GoogleContactsApi
       GoogleContactsApi::Contact.create(attrs, @api)
     end
 
-    def batch_create_or_update(contacts)
+    def batch_create_or_update(contact, &block)
+      @batched_contacts ||= []
+      @batched_status_handlers ||= []
+
+      @batched_contacts << contact
+      @batched_status_handlers << block
+
+      send_batched_requests if @batched_contacts.size >= BATCH_SIZE
+    end
+
+    def send_batched_requests
+      return unless @batched_contacts
+      statuses = send_batch_with_retries(@batched_contacts)
+
+      statuses.each_with_index { |status, index|
+        @batched_status_handlers[index].call(status)
+      }
+      @batched_contacts = []
+      @batched_status_handlers = []
+    end
+
+    def send_batch_with_retries(contacts, num_retries = 1)
+      send_batch_create_or_update(contacts)
+    rescue  => e
+      # Google Contacts API somtimes returns temporary errors that are worth giving another try to a bit later.
+      raise e unless num_retries > 0
+      sleep(RETRY_BATCH_DELAY_AFTER_ERROR)
+      send_batch_with_retries(contacts, num_retries - 1)
+    end
+
+    def send_batch_create_or_update(contacts)
       xml = batch_xml(contacts)
       response = @api.post('contacts/default/full/batch', xml, {'alt' => ''}, 'Content-Type' => 'application/atom+xml')
       parsed = GoogleContactsApi::XMLUtil.parse_as_if_alt_json(response.body)

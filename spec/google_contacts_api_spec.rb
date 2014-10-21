@@ -293,16 +293,16 @@ describe "GoogleContactsApi" do
     end
   end
 
-  describe 'batch_create_or_update' do
+  describe 'send_batch_create_or_update' do
     before do
       @user = GoogleContactsApi::User.new(double("oauth"))
       @api = @user.api
     end
 
     it 'batches creation and update of contacts' do
-      contact1 = GoogleContactsApi::Contact.new({}, nil, nil)
-      contact2 = GoogleContactsApi::Contact.new({}, nil, nil)
-      contact3 = GoogleContactsApi::Contact.new({}, nil, nil)
+      contact1 = GoogleContactsApi::Contact.new
+      contact2 = GoogleContactsApi::Contact.new
+      contact3 = GoogleContactsApi::Contact.new
 
       contacts = [contact1, contact2, contact3]
       expect(@user).to receive(:batch_xml).with(contacts).and_return('batch xml')
@@ -311,7 +311,7 @@ describe "GoogleContactsApi" do
                                              {'Content-Type' => 'application/atom+xml'})
                       .and_return(double(body: read_spec_file('batch_response.xml'), status: 200))
 
-      responses = @user.batch_create_or_update(contacts)
+      responses = @user.send_batch_create_or_update(contacts)
       expect(responses).to eq([
         {code: 201, reason: 'Created'}, {code: 200, reason: 'Success'}, {code: 500, reason: 'Internal Server Error'}
       ])
@@ -322,6 +322,67 @@ describe "GoogleContactsApi" do
 
       expect(contact2.given_name).to eq('Jane')
       expect(contact2.family_name).to eq('Doe')
+    end
+  end
+
+  describe 'send_batch_with_retries' do
+    before do
+      @user = GoogleContactsApi::User.new(double("oauth"))
+    end
+
+    it 'retries on a 500 error for the whole batch' do
+      times_called = 0
+      expect(@user).to receive(:send_batch_create_or_update).with('contacts').at_least(:twice) do
+        times_called += 1
+        raise '500 error' if times_called == 1
+        'statuses'
+      end
+
+      expect(@user).to receive(:sleep).with(GoogleContactsApi::Contacts::RETRY_BATCH_DELAY_AFTER_ERROR)
+      expect(@user.send_batch_with_retries('contacts')).to eq('statuses')
+    end
+
+    it 'retries on a 500 error for the whole batch' do
+      expect(@user).to receive(:send_batch_create_or_update).with('contacts').at_least(:once).and_raise('500 error')
+      expect(@user).to receive(:sleep).with(GoogleContactsApi::Contacts::RETRY_BATCH_DELAY_AFTER_ERROR)
+      expect { @user.send_batch_with_retries('contacts') }.to raise_error
+    end
+  end
+
+  describe 'batch create or update' do
+    before do
+      @user = GoogleContactsApi::User.new(double("oauth"))
+    end
+
+    it 'calls batch create with each then returns its status' do
+      contacts = *(0..(GoogleContactsApi::Contacts::BATCH_SIZE + 1))
+      expect(@user).to receive(:send_batch_with_retries) { |contacts| contacts }
+
+      contacts.each_with_index do |contact, index|
+        @user.batch_create_or_update(contact) do |status|
+          expect(contact).to eq(status)
+
+          next if index < contacts.size - 1
+          expect(status).to eq(GoogleContactsApi::Contacts::BATCH_SIZE - 1)
+        end
+      end
+    end
+
+    it 'sends an incomplete batch when requested' do
+      contacts = *(0..(GoogleContactsApi::Contacts::BATCH_SIZE - 2))
+      expect(@user).to receive(:send_batch_with_retries) { |contacts| contacts }
+
+      num_responses = 0
+      contacts.each do |contact|
+        @user.batch_create_or_update(contact) do |status|
+          expect(contact).to eq(status)
+          num_responses += 1
+        end
+      end
+
+      expect(num_responses).to eq(0)
+      @user.send_batched_requests
+      expect(num_responses).to eq(contacts.size)
     end
   end
 
