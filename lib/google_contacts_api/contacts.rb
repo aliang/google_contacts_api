@@ -50,7 +50,7 @@ module GoogleContactsApi
     end
 
     def send_batched_requests
-      return unless @batched_contacts
+      return unless @batched_contacts && @batched_contacts.size > 0
       statuses = send_batch_with_retries(@batched_contacts)
 
       statuses.each_with_index { |status, index|
