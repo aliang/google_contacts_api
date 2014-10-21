@@ -444,6 +444,20 @@ describe "GoogleContactsApi" do
       @user.send_batched_requests
       expect(num_responses).to eq(contacts.size)
     end
+
+    it 'does not call the api if you request batch save if no contacts are batched' do
+      expect(@user).to receive(:send_batch_with_retries).exactly(0).times
+      @user.send_batched_requests
+    end
+
+    it 'does not call the api if you request batch save if already emplied batch' do
+      @user.batch_create_or_update('contact') { |status|  }
+      expect(@user).to receive(:send_batch_with_retries).exactly(1).times.and_return(['status'])
+      @user.send_batched_requests
+
+      # Don't call the API after the batch has been completed
+      @user.send_batched_requests
+    end
   end
 
   describe 'group creation' do
