@@ -393,7 +393,7 @@ describe "GoogleContactsApi" do
       times_called = 0
       expect(@user).to receive(:send_batch_create_or_update).with('contacts').at_least(:twice) do
         times_called += 1
-        raise '500 error' if times_called == 1
+        raise GoogleContactsApi::Contacts::InternalServerError if times_called == 1
         'statuses'
       end
 
@@ -402,7 +402,8 @@ describe "GoogleContactsApi" do
     end
 
     it 'retries on a 500 error for the whole batch' do
-      expect(@user).to receive(:send_batch_create_or_update).with('contacts').at_least(:once).and_raise('500 error')
+      expect(@user).to receive(:send_batch_create_or_update).with('contacts').at_least(:once)
+                       .and_raise(GoogleContactsApi::Contacts::InternalServerError)
       expect(@user).to receive(:sleep).with(GoogleContactsApi::Contacts::RETRY_BATCH_DELAY_AFTER_ERROR)
       expect { @user.send_batch_with_retries('contacts') }.to raise_error
     end
