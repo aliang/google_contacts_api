@@ -62,7 +62,7 @@ module GoogleContactsApi
 
     def send_batch_with_retries(contacts, num_retries = 1)
       send_batch_create_or_update(contacts)
-    rescue  => e
+    rescue InternalServerError => e
       # Google Contacts API somtimes returns temporary errors that are worth giving another try to a bit later.
       raise e unless num_retries > 0
       sleep(RETRY_BATCH_DELAY_AFTER_ERROR)
@@ -72,6 +72,7 @@ module GoogleContactsApi
     def send_batch_create_or_update(contacts)
       xml = batch_xml(contacts)
       response = @api.post('contacts/default/full/batch', xml, {'alt' => ''}, 'Content-Type' => 'application/atom+xml')
+      raise_if_failed_response(response)
       parsed = GoogleContactsApi::XMLUtil.parse_as_if_alt_json(response.body)
 
       response_map = {}
@@ -116,9 +117,12 @@ module GoogleContactsApi
         when 401; raise
         when 403; raise
         when 404; raise
-        when 400...500; raise
-        when 500...600; raise
+        when 400...499; raise
+        when 500...600; raise InternalServerError
       end
+    end
+
+    class InternalServerError < StandardError
     end
   end
 end
