@@ -75,8 +75,6 @@ module GoogleContactsApi
       raise_if_failed_response(response)
       parsed = GoogleContactsApi::XMLUtil.parse_as_if_alt_json(response.body)
 
-      puts "send_batch_create_or_update(#{contacts.inspect}), parsed response: #{parsed.inspect}"
-
       response_map = {}
       entries = parsed['feed']['entry']
       entries.each do |entry|
