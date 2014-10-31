@@ -1,5 +1,7 @@
 module GoogleContactsApi
   module Contacts
+    attr_accessor :batched_contacts, :batched_status_handlers
+
     # Google Contacts API limits it to 100.
     BATCH_SIZE = 100
 
@@ -39,6 +41,11 @@ module GoogleContactsApi
       GoogleContactsApi::Contact.create(attrs, @api)
     end
 
+    def delete_contact(id_url, etag)
+      url =id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')
+      @api.delete(url,  {}, 'If-Match' => etag)
+    end
+
     def batch_create_or_update(contact, &block)
       @batched_contacts ||= []
       @batched_status_handlers ||= []
@@ -56,6 +63,7 @@ module GoogleContactsApi
       statuses.each_with_index { |status, index|
         @batched_status_handlers[index].call(status)
       }
+    ensure
       @batched_contacts = []
       @batched_status_handlers = []
     end

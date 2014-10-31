@@ -142,6 +142,12 @@ describe "GoogleContactsApi" do
       contact = @user.get_contact('http://www.google.com/m8/feeds/contacts/test.user%40example.com/base/6b70f8bb0372c')
       expect(contact.given_name).to eq('John')
     end
+    it 'allows you to delete a contact with a given id url and etag' do
+      expected_url = 'https://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c?alt=json&v=3'
+      expect(@oauth).to receive(:request).with(:delete, expected_url,  headers: { 'If-Match' => 'etag' })
+
+      @user.delete_contact('http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c', 'etag')
+    end
   end
 
   describe 'contact creation' do
@@ -398,6 +404,26 @@ describe "GoogleContactsApi" do
 
       # Don't call the API after the batch has been completed
       @user.send_batched_requests
+    end
+
+    it 'clears a batch if an exception occurs' do
+      contacts = *(0..(GoogleContactsApi::Contacts::BATCH_SIZE - 2))
+      expect(@user).to receive(:send_batch_with_retries) { |contacts| contacts }
+
+      num_responses = 0
+      contacts.each do |contact|
+        @user.batch_create_or_update(contact) do |status|
+          num_responses += 1
+          raise if num_responses == GoogleContactsApi::Contacts::BATCH_SIZE - 1
+        end
+      end
+
+      expect(num_responses).to eq(0)
+      expect { @user.send_batched_requests }.to raise_error
+      expect(num_responses).to eq(GoogleContactsApi::Contacts::BATCH_SIZE - 1)
+
+      expect(@user.batched_contacts).to be_empty
+      expect(@user.batched_status_handlers).to be_empty
     end
   end
 
