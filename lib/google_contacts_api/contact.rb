@@ -375,6 +375,44 @@ module GoogleContactsApi
       country['$t'].nil? || country['$t'] == '' ? country['code'] : country['$t']
     end
 
+    def format_entities(key, format_method=:format_entity)
+      self[key] ? self[key].map(&method(format_method)) : []
+    end
+
+    def format_entity(unformatted, default_rel=nil, text_key=nil)
+      attrs = Hash[unformatted.map { |key, value|
+        case key
+        when 'primary'
+          [:primary, value == true || value == 'true']
+        when 'rel'
+          [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
+        when '$t'
+          [text_key || key.underscore.to_sym, value]
+        else
+          [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
+        end
+      }]
+      attrs[:rel] ||= default_rel
+      attrs[:primary] = false if attrs[:primary].nil?
+      attrs
+    end
+
+    def format_address(unformatted)
+      address = format_entity(unformatted, 'work')
+      address[:street] ||= nil
+      address[:city] ||= nil
+      address[:region] ||= nil
+      address[:postcode] ||= nil
+      address[:country] = format_country(unformatted['gd$country'])
+      address.delete :formatted_address
+      address
+    end
+
+    def format_country(country)
+      return nil unless country
+      country['$t'].nil? || country['$t'] == '' ? country['code'] : country['$t']
+    end
+
     def format_phone_number(unformatted)
       format_entity unformatted, nil, :number
     end

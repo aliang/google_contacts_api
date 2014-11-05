@@ -2,7 +2,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 class MockOAuth2Error < StandardError
   attr_accessor :response
-  
+
   def initialize(response)
     @response = response
   end
@@ -19,20 +19,20 @@ describe "GoogleContactsApi" do
       it "should perform a get request using oauth returning json with version 3" do
         # expectation should come before execution
         expect(@oauth).to receive(:request)
-          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3", headers: {"header" => "header"})
-          .and_return('get response')
+                          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=3", headers: {"header" => "header"})
+                          .and_return('get response')
         expect(@api.get("any_url",
-          {"param" => "param"},
-          {"header" => "header"})).to eq("get response")
+                        {"param" => "param"},
+                        {"header" => "header"})).to eq("get response")
       end
 
       it "should perform a get request using oauth with the version specified" do
         expect(@oauth).to receive(:request)
-          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=2", headers: {"header" => "header"})
-          .and_return('get response')
+                          .with(:get, GoogleContactsApi::Api::BASE_URL + "any_url?alt=json&param=param&v=2", headers: {"header" => "header"})
+                          .and_return('get response')
         expect(@api.get("any_url",
-          {"param" => "param", "v" => "2"},
-          {"header" => "header"})).to eq("get response")
+                        {"param" => "param", "v" => "2"},
+                        {"header" => "header"})).to eq("get response")
       end
     end
 
@@ -68,20 +68,20 @@ describe "GoogleContactsApi" do
       allow(oauth).to receive(:request).and_return(Net::HTTPUnauthorized.new("1.1", 401, error_html))
       api = GoogleContactsApi::Api.new(oauth)
       expect { api.get("any url",
-        {"param" => "param"},
-        {"header" => "header"}) }.to raise_error(GoogleContactsApi::UnauthorizedError)
+                       {"param" => "param"},
+                       {"header" => "header"}) }.to raise_error(GoogleContactsApi::UnauthorizedError)
     end
-    
+
     it "should raise UnauthorizedError if OAuth 2.0 returns unauthorized" do
       oauth = double("oauth2")
       oauth2_response = Struct.new(:status)
       allow(oauth).to receive(:request).and_raise(MockOAuth2Error.new(oauth2_response.new(401)))
       api = GoogleContactsApi::Api.new(oauth)
       expect { api.get("any url",
-        {"param" => "param"},
-        {"header" => "header"}) }.to raise_error(GoogleContactsApi::UnauthorizedError)
+                       {"param" => "param"},
+                       {"header" => "header"}) }.to raise_error(GoogleContactsApi::UnauthorizedError)
     end
-    
+
     describe "parsing response code" do
       before(:all) do
         @Oauth = Struct.new(:code)
@@ -110,9 +110,9 @@ describe "GoogleContactsApi" do
     describe ".get_contacts" do
       it "should get the contacts using the internal @api object" do
         expect(api).to receive(:get).with("contacts/default/full", kind_of(Hash)).and_return(Hashie::Mash.new({
-          "body" => "some response", # could use example response here
-          "code" => 200
-        }))
+                                                                                                                "body" => "some response", # could use example response here
+                                                                                                                "code" => 200
+                                                                                                              }))
         allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
         expect(test_class.new(api).get_contacts).to eq("contact set")
       end
@@ -132,9 +132,9 @@ describe "GoogleContactsApi" do
     describe ".get_groups" do
       it "should get the groups using the internal @api object" do
         expect(api).to receive(:get).with("groups/default/full", kind_of(Hash)).and_return(Hashie::Mash.new({
-          "body" => "some response", # could use example response here
-          "code" => 200
-        }))
+                                                                                                              "body" => "some response", # could use example response here
+                                                                                                              "code" => 200
+                                                                                                            }))
         allow(GoogleContactsApi::GroupSet).to receive(:new).and_return("group set")
         expect(test_class.new(api).get_groups).to eq("group set")
       end
@@ -208,7 +208,7 @@ describe "GoogleContactsApi" do
         }
       EOS
       expect(@user.api).to receive(:get).with('contacts/test.user%40example.com/base/6b70f8bb0372c')
-                                        .and_return(double(body: json, status: 200))
+                           .and_return(double(body: json, status: 200))
       contact = @user.get_contact('http://www.google.com/m8/feeds/contacts/test.user%40example.com/base/6b70f8bb0372c')
       expect(contact.given_name).to eq('John')
     end
@@ -389,8 +389,8 @@ describe "GoogleContactsApi" do
 
       responses = @user.send_batch_create_or_update(contacts)
       expect(responses).to eq([
-        {code: 201, reason: 'Created'}, {code: 200, reason: 'Success'}, {code: 500, reason: 'Internal Server Error'}
-      ])
+                                {code: 201, reason: 'Created'}, {code: 200, reason: 'Success'}, {code: 500, reason: 'Internal Server Error'}
+                              ])
 
       expect(contact1.given_name).to eq('John')
       expect(contact1.family_name).to eq('Doe')
@@ -555,11 +555,11 @@ describe "GoogleContactsApi" do
       @update_attrs = { family_name: 'Doe' }
 
       @augmented_update_attrs = {
-          name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
-          content: nil, emails: [], phone_numbers: [], addresses: [], organizations: [], websites: [],
-          group_memberships: [], deleted_group_memberships: [],
-          updated: '2014-09-01T16:25:34.010Z', etag: '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
-          id: 'http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c'
+        name_prefix: nil, given_name: 'John', additional_name: nil, family_name: 'Doe', name_suffix: nil,
+        content: nil, emails: [], phone_numbers: [], addresses: [], organizations: [], websites: [],
+        group_memberships: [], deleted_group_memberships: [],
+        updated: '2014-09-01T16:25:34.010Z', etag: '"SXk6cDdXKit7I2A9Wh9VFUgORgE."',
+        id: 'http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c'
       }
 
       @update_xml = @contact_xml = <<-EOS
@@ -665,9 +665,9 @@ describe "GoogleContactsApi" do
       @contact.create_or_update
       expect(@contact.given_name).to eq('John')
       expect(@contact.family_name).to eq('Doe')
-    end        
+    end
   end
-  
+
   describe 'prep add to group' do
     before do
       user = GoogleContactsApi::User.new(double("oauth"))
@@ -797,9 +797,9 @@ describe "GoogleContactsApi" do
     it "should try to fetch a photo" do
       @oauth = double("oauth")
       allow(@oauth).to receive(:get).and_return(Hashie::Mash.new({
-        "body" => "some response", # could use example response here
-        "code" => 200
-      }))
+                                                                   "body" => "some response", # could use example response here
+                                                                   "code" => 200
+                                                                 }))
       # @api = GoogleContactsApi::Api.new(@oauth)
       @api = double("api")
       allow(@api).to receive(:oauth).and_return(@oauth)
@@ -810,10 +810,10 @@ describe "GoogleContactsApi" do
     it "should feat a photo with metadata" do
       @oauth = double("oauth")
       allow(@oauth).to receive(:get).and_return(Hashie::Mash.new({
-         "body" => "some response",
-         "code" => 200,
-         "headers" => { "content-type" => "image/jpeg" }
-       }))
+                                                                   "body" => "some response",
+                                                                   "code" => 200,
+                                                                   "headers" => { "content-type" => "image/jpeg" }
+                                                                 }))
       @api = double("api")
       allow(@api).to receive(:oauth).and_return(@oauth)
       @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
@@ -854,7 +854,7 @@ describe "GoogleContactsApi" do
 
         @partly_empty = GoogleContactsApi::Contact.new(
           'gd$name' => {},
-          'gContact$relation' => []        
+          'gContact$relation' => []
         )
 
         @contact_v3 = GoogleContactsApi::Contact.new(
@@ -958,7 +958,7 @@ describe "GoogleContactsApi" do
         contact_birthday_no_year = GoogleContactsApi::Contact.new('gContact$birthday' => { 'when' => '--05-12' })
         expect(contact_birthday_no_year.birthday).to eq({ year: nil, month: 5, day: 12 })
       end
-      
+
       it 'has addresses' do
         expect(@empty.addresses).to eq([])
 
