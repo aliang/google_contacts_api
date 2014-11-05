@@ -1,7 +1,7 @@
 # Module that implements a method to get groups for a user
 module GoogleContactsApi
   module Groups
-    # Retrieve the contacts for this user or group
+    # Retrieve groups
     def get_groups(params = {})
       params = params.with_indifferent_access
       # compose params into a string
@@ -22,6 +22,11 @@ module GoogleContactsApi
       when 500...600; raise
       end
       GoogleContactsApi::GroupSet.new(response.body, @api)
+    end
+
+    # Compatibility method for code before the rename to get_groups
+    def groups(params = {})
+      get_groups(params)
     end
   end
 end

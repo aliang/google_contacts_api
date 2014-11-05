@@ -26,12 +26,17 @@ module GoogleContactsApi
       GoogleContactsApi::ContactSet.new(response.body, @api)
     end
 
+    # Compatibility method for older code before rename to get_contacts
+    def contacts(params = {})
+      get_contacts(params)
+    end
+
     def contacts_updated_min(updated_min)
-      contacts('updated-min' => GoogleContactsApi::Api.format_time_for_xml(updated_min))
+      get_contacts('updated-min' => GoogleContactsApi::Api.format_time_for_xml(updated_min))
     end
 
     def query_contacts(query)
-      contacts(q: query)
+      get_contacts(q: query)
     end
 
     def get_contact(id_url)
