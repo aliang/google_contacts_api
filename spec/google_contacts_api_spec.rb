@@ -145,6 +145,17 @@ describe "GoogleContactsApi" do
     let(:oauth) { double ("oauth") }
     let(:user) { GoogleContactsApi::User.new(@oauth) }
 
+    before(:each) do
+      @oauth = double("oauth")
+      @user = GoogleContactsApi::User.new(@oauth)
+      allow(@user.api).to receive(:get).and_return(Hashie::Mash.new({
+                                                                      "body" => "some response", # could use example response here
+                                                                      "code" => 200
+                                                                    }))
+      allow(GoogleContactsApi::GroupSet).to receive(:new).and_return("group set")
+      allow(GoogleContactsApi::ContactSet).to receive(:new).and_return("contact set")
+    end
+
     # Should hit the right URLs and return the right stuff
     describe ".groups" do
       it "should be able to get groups including system groups" do
