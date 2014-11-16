@@ -211,7 +211,8 @@ module GoogleContactsApi
     end
 
     def self.find(id_url, api)
-      contact_from_response(api.get(id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')), api)
+      url = id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '').sub('/base/', '/full/')
+      contact_from_response(api.get(url), api)
     end
 
     def self.create(attrs, api)

@@ -207,16 +207,16 @@ describe "GoogleContactsApi" do
           ]
         }
       EOS
-      expect(@user.api).to receive(:get).with('contacts/test.user%40example.com/base/6b70f8bb0372c')
+      expect(@user.api).to receive(:get).with('contacts/test.user%40example.com/full/6b70f8bb0372c')
                            .and_return(double(body: json, status: 200))
-      contact = @user.get_contact('http://www.google.com/m8/feeds/contacts/test.user%40example.com/base/6b70f8bb0372c')
+      contact = @user.get_contact('http://www.google.com/m8/feeds/contacts/test.user%40example.com/full/6b70f8bb0372c')
       expect(contact.given_name).to eq('John')
     end
     it 'allows you to delete a contact with a given id url and etag' do
-      expected_url = 'https://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c?alt=json&v=3'
+      expected_url = 'https://www.google.com/m8/feeds/contacts/test.user%40gmail.com/full/6b70f8bb0372c?alt=json&v=3'
       expect(@oauth).to receive(:request).with(:delete, expected_url,  headers: { 'If-Match' => 'etag' })
 
-      @user.delete_contact('http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/base/6b70f8bb0372c', 'etag')
+      @user.delete_contact('http://www.google.com/m8/feeds/contacts/test.user%40gmail.com/full/6b70f8bb0372c', 'etag')
     end
   end
 
