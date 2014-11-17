@@ -47,7 +47,8 @@ module GoogleContactsApi
       GoogleContactsApi::Contact.create(attrs, @api)
     end
 
-    def delete_contact(id_url, etag)
+    # An etag of '*' will bypass the etag check and delete the contact no matter the etag
+    def delete_contact(id_url, etag = '*')
       url =id_url.sub('http://', 'https://').sub(GoogleContactsApi::Api::BASE_URL, '')
       @api.delete(url,  {}, 'If-Match' => etag)
     end
