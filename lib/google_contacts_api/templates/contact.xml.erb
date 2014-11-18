@@ -27,7 +27,9 @@
     <%= contact[:content] ? "<atom:content>#{encode(contact[:content], :text)}</atom:content>" : '' %>
 
     <% (contact[:emails] || []).each do |email| %>
-      <gd:email <%= email[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ email[:rel] }\"" : '' %>
+      <gd:email
+                <%= email[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ email[:rel] }\"" : '' %>
+                <%= email[:label] ? "label=#{ encode(email[:label], :attr) }" : '' %>
                 <%= email[:primary] ? 'primary="true"' : '' %>
                 address=<%= encode(email[:address], :attr) %>/>
     <% end %>
