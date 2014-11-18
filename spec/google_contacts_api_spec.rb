@@ -919,6 +919,11 @@ describe "GoogleContactsApi" do
         )
       end
 
+      it 'supports the deleted? method' do
+        expect(GoogleContactsApi::Contact.new('gd$deleted' => {}).deleted?).to be_truthy
+        expect(@contact_v3.deleted?).to be_falsey
+      end
+
       it 'should catch nil values for nested fields' do
         expect(@empty.nested_t_field_or_nil('gd$name', 'gd$givenName')).to be_nil
         expect(@partly_empty.nested_t_field_or_nil('gd$name', 'gd$givenName')).to be_nil

@@ -36,8 +36,9 @@ module GoogleContactsApi
       get_contacts(params)
     end
 
-    def query_contacts(query)
-      get_contacts(q: query)
+    def query_contacts(query, params = {})
+      params['q'] = query
+      get_contacts(params)
     end
 
     def get_contact(id_url)
