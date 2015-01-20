@@ -35,7 +35,7 @@
     <% end %>
 
     <% (contact[:phone_numbers] || []).each do |phone| %>
-      <gd:phoneNumber <%= phone[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ phone[:rel] }\"" : '' %>
+      <gd:phoneNumber rel="http://schemas.google.com/g/2005#<%= phone[:rel] || 'other' %>"
                       <%= phone[:primary] ? 'primary="true"' : '' %>
       ><%= encode(phone[:number], :text) %></gd:phoneNumber>
     <% end %>
