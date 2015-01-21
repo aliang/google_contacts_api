@@ -1100,6 +1100,14 @@ describe "GoogleContactsApi" do
     it "should tell me if it's a system group" do
       expect(@group).to be_system_group
     end
+    it 'tells the system group id or nil if not a system group' do
+      expect(@group).to be_system_group
+      expect(@group.system_group_id).to eq('Contacts')
+
+      @group.delete('gContact$systemGroup')
+      expect(@group).to_not be_system_group
+      expect(@group.system_group_id).to be_nil
+    end
     describe ".contacts" do
       before(:each) do
         @api = double("api")

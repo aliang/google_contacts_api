@@ -8,6 +8,11 @@ module GoogleContactsApi
       !self["gContact$systemGroup"].nil?
     end
 
+    def system_group_id
+      return nil unless system_group?
+      self['gContact$systemGroup']['id']
+    end
+
     # Return the contacts in this group and cache them.
     def contacts(params = {})
       # contacts in this group
