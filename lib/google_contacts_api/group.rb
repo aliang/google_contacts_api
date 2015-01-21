@@ -9,7 +9,7 @@ module GoogleContactsApi
     end
 
     def system_group_id
-      return nil unless system_group?
+      return nil unless self.system_group?
       self['gContact$systemGroup']['id']
     end
 
