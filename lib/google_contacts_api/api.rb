@@ -66,6 +66,7 @@ module GoogleContactsApi
     # Parse the response code
     # Needed because of difference between oauth and oauth2 gems
     def self.parse_response_code(response)
+      return nil if response.nil?
       (defined?(response.code) ? response.code : response.status).to_i
     end
 
