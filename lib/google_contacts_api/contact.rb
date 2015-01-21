@@ -155,7 +155,7 @@ module GoogleContactsApi
       group_membership_info.select { |info| info[:deleted] }.map { |info| info[:href] }
     end
     def prep_add_to_group(group)
-      prep_changes(group_memberships: group_memberships.push(group.id).to_set.to_a,
+      prep_changes(group_memberships: (group_memberships + prepped_changes[:group_memberships].to_a + [group.id]).uniq,
                    deleted_group_memberships: deleted_group_memberships.reject { |deleted| deleted == group.id  })
     end
 

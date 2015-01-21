@@ -692,6 +692,12 @@ describe "GoogleContactsApi" do
       @contact.prep_add_to_group(double(id: 'c'))
       expect(@contact.prepped_changes).to eq({ group_memberships: ['a', 'c'], deleted_group_memberships: ['b']})
     end
+
+    it 'supports prep add for multiple groups' do
+      @contact.prep_add_to_group(double(id: 'c'))
+      @contact.prep_add_to_group(double(id: 'd'))
+      expect(@contact.prepped_changes).to eq({ group_memberships: ['a', 'c', 'd'], deleted_group_memberships: ['b']})
+    end
   end
 
   describe "ResultSet" do
