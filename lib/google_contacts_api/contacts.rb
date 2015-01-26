@@ -88,6 +88,7 @@ module GoogleContactsApi
 
     def send_batch_create_or_update(contacts)
       xml = batch_xml(contacts)
+      @last_batch_xml = xml
       response = @api.post('contacts/default/full/batch', xml, {'alt' => ''}, 'Content-Type' => 'application/atom+xml')
       raise_if_failed_response(response)
       parsed = GoogleContactsApi::XMLUtil.parse_as_if_alt_json(response.body)
@@ -110,6 +111,11 @@ module GoogleContactsApi
         responses << response_map[index]
       end
       responses
+    end
+
+    # Helpful for logging/debugging in error conditions
+    def last_batch_xml
+      @last_batch_xml
     end
 
     def batch_xml(contacts)
