@@ -387,7 +387,9 @@ describe "GoogleContactsApi" do
                                              {'Content-Type' => 'application/atom+xml'})
                       .and_return(double(body: read_spec_file('batch_response.xml'), status: 200))
 
+      expect(@user.last_batch_xml).to be_nil
       responses = @user.send_batch_create_or_update(contacts)
+      expect(@user.last_batch_xml).to eq('batch xml')
       expect(responses).to eq([
                                 {code: 201, reason: 'Created'}, {code: 200, reason: 'Success'}, {code: 500, reason: 'Internal Server Error'}
                               ])
