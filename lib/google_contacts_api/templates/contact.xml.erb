@@ -62,7 +62,7 @@
     <% (contact[:websites] || []).each do |website| %>
         <gContact:website
             href=<%= encode(website[:href], :attr) %>
-            <%= website[:rel] ?  "rel=#{encode(website[:rel], :attr)}" : 'other' %>
+            rel=<%= encode(website[:rel] ? website[:rel] : 'other', :attr) %>
             <%= website[:primary] ? 'primary="true"' : '' %>
         />
     <% end %>

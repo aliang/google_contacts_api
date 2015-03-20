@@ -248,7 +248,8 @@ describe "GoogleContactsApi" do
         ],
         websites: [
           { rel: 'blog', primary: true, href: 'blog.example.com' },
-          { rel: 'home-page', href: 'www.example.com' }
+          { rel: 'home-page', href: 'www.example.com' },
+          { href: 'no-rel.example.com' }
         ],
         organizations: [
           { org_name: 'Example, Inc', org_title: 'Manager', rel: 'other', primary: true }
@@ -289,6 +290,7 @@ describe "GoogleContactsApi" do
         </gd:organization>
         <gContact:website href="blog.example.com" rel="blog" primary="true"/>
         <gContact:website href="www.example.com" rel="home-page"/>
+        <gContact:website href="no-rel.example.com" rel="other"/>
       EOS
 
       @contact_xml = <<-EOS
