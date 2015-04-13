@@ -131,9 +131,9 @@ Google Contacts also offers batch processing for contacts to speed up large numb
 ```
 many_contacts.each do |contact|
   contact.prep_changes(given_name: 'John') # Rename everyone John
-	google_contacts_user.batch_create_or_update do |status|
+  google_contacts_user.batch_create_or_update do |status|
     # This block will get called when a batch is completed
-    fail unless if status[:code].in?(200, 201)
+    fail unless status[:code].in?(200, 201)
   end
 end
 
