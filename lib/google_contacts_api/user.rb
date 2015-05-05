@@ -18,7 +18,7 @@ module GoogleContactsApi
     def contacts!(params = {})
       # contacts in this group
       @contacts = nil
-      contacts
+      contacts(params)
     end
 
     # Return the groups for this user and cache them.
@@ -29,7 +29,7 @@ module GoogleContactsApi
     # Return the groups for this user, retrieving them again from the server.
     def groups!(params = {})
       @groups = nil
-      groups
+      groups(params)
     end
   end
 end
