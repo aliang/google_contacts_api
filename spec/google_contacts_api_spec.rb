@@ -817,7 +817,7 @@ describe "GoogleContactsApi" do
       expect(@oauth).to receive("get").with(@contact.photo_link)
       @contact.photo
     end
-    it "should feat a photo with metadata" do
+    it "should fetch a photo with metadata" do
       @oauth = double("oauth")
       allow(@oauth).to receive(:get).and_return(Hashie::Mash.new({
                                                                    "body" => "some response",
@@ -832,6 +832,14 @@ describe "GoogleContactsApi" do
                                                     etag: 'dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM.',
                                                     content_type: 'image/jpeg'
                                                   } )
+    end
+    it 'should return nil if it attempts to fetch a photo with meta data and an error is returned' do
+      @oauth = double("oauth")
+      @api = double("api")
+      allow(@api).to receive(:oauth).and_return(@oauth)
+      allow(@oauth).to receive(:get).and_raise(MockOAuth2Error.new(double(status: 404)))
+      @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
+      expect(@contact.photo_with_metadata).to be_nil
     end
 
     it "should return all e-mail addresses" do

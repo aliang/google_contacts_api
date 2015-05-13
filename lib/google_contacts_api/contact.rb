@@ -93,6 +93,19 @@ module GoogleContactsApi
             data: response.body
         }
       end
+    rescue => e
+      if defined?(e.response)
+        case GoogleContactsApi::Api.parse_response_code(e.response)
+          # maybe return a placeholder instead of nil
+          when 400; return nil
+          when 401; return nil
+          when 403; return nil
+          when 404; return nil
+          when 400...500; return nil
+          when 500...600; return nil
+        end
+      end
+      raise e
     end
 
     # Convenience method to return a nested $t field.
