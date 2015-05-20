@@ -949,13 +949,11 @@ describe "GoogleContactsApi" do
       end
 
       it 'has given_name' do
-        expect(@contact_v3).to receive(:nested_t_field_or_nil).with('gd$name', 'gd$givenName').and_return('val')
-        expect(@contact_v3.given_name).to eq('val')
+        expect(@contact_v3.given_name).to eq('John')
       end
 
       it 'has family_name' do
-        expect(@contact_v3).to receive(:nested_t_field_or_nil).with('gd$name', 'gd$familyName').and_return('val')
-        expect(@contact_v3.family_name).to eq('val')
+        expect(@contact_v3.family_name).to eq('Doe')
       end
 
       it 'has full_name' do
@@ -1160,5 +1158,29 @@ describe "GoogleContactsApi" do
         expect(contacts).to eq("contact set")
       end
     end
+  end
+
+  # The Google Contacts API (https://developers.google.com/gdata/docs/2.0/elements)
+  # specifies an optional yomi field for orgName, givenName, additionalName and familyName
+  it 'handles Japanese yomigana "yomi" name values', focus: true do
+    contact_params = {
+        'gd$name' => {
+            'gd$givenName' => {'$t' => 'John' },
+            'gd$additionalName' => {'$t' => 'Text name', 'yomi' => 'And yomi chars' },
+            'gd$familyName' => { 'yomi' => 'Yomi chars only' },
+        },
+        'gd$organization' => [{
+                                  'rel' => 'http://schemas.google.com/g/2005#other',
+                                  'primary' => 'true',
+                                  'gd$orgName' => {
+                                      'yomi' => 'Japanese yomigana'
+                                  }
+                              }],
+    }
+    contact = GoogleContactsApi::Contact.new(contact_params, nil, @api)
+    expect(contact.given_name).to eq('John')
+    expect(contact.additional_name).to eq('Text name')
+    expect(contact.family_name).to eq('Yomi chars only')
+    expect(contact.organizations.first[:org_name]).to eq('Japanese yomigana')
   end
 end

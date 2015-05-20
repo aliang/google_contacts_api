@@ -117,16 +117,16 @@ module GoogleContactsApi
     end
 
     def given_name
-      nested_t_field_or_nil 'gd$name', 'gd$givenName'
+      nested_field_optional_yomi 'gd$name', 'gd$givenName'
     end
     def family_name
-      nested_t_field_or_nil 'gd$name', 'gd$familyName'
+      nested_field_optional_yomi 'gd$name', 'gd$familyName'
     end
     def full_name
       nested_t_field_or_nil 'gd$name', 'gd$fullName'
     end
     def additional_name
-      nested_t_field_or_nil 'gd$name', 'gd$additionalName'
+      nested_field_optional_yomi 'gd$name', 'gd$additionalName'
     end
     def name_prefix
       nested_t_field_or_nil 'gd$name', 'gd$namePrefix'
@@ -134,6 +134,17 @@ module GoogleContactsApi
     def name_suffix
       nested_t_field_or_nil 'gd$name', 'gd$nameSuffix'
     end
+
+    def nested_field_optional_yomi(level1, level2)
+      handle_yomigana(self[level1][level2]) if self[level1]
+    end
+
+    def handle_yomigana(name)
+      return name if name.blank?
+      return name if name.is_a?(String)
+      name['$t'] || name['yomi']
+    end
+
     def birthday
       if self['gContact$birthday']
         day, month, year = self['gContact$birthday']['when'].split('-').reverse
@@ -178,7 +189,10 @@ module GoogleContactsApi
     end
 
     def organizations
-      format_entities('gd$organization')
+      format_entities('gd$organization').map do |org|
+        org[:org_name] = handle_yomigana(org[:org_name]) if org[:org_name]
+        org
+      end
     end
     def websites
       format_entities('gContact$website')
