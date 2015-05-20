@@ -5,6 +5,10 @@ require 'json'
 require 'hashie'
 require 'net/http'
 require 'google_contacts_api'
+require 'active_support/core_ext/hash/conversions'
+require 'webmock/rspec'
+require 'rspec/matchers'
+require 'equivalent-xml'
 
 puts "Testing version #{GoogleContactsApi::Version::STRING}"
 
@@ -20,6 +24,10 @@ def load_file(filename)
   json = f.read
   f.close
   json
+end
+
+def read_spec_file(file)
+  File.new(File.dirname(__FILE__) + '/' + file).read
 end
 
 def contact_set_json

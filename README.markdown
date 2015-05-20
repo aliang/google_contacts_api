@@ -46,7 +46,105 @@ contact.title
 contact.id
 contact.primary_email
 contact.emails
+contact.given_name # also family_name, full_name, additional_name, name_prefix, name_suffix
+contact.addresses
+contact.organizations
+contact.websites
+contact.birthday
+contact.relations
+contact.group_memberships
+contact.deleted_group_memberships
 ```
+
+Here are some other ways to retrieve contacts:
+```
+
+# Look up a single contact via a stored contact id URL
+contact = google_contacts_user.get_contact(stored_contact_id)
+
+# Query contacts (Google seems to search over a variety of fields)
+contacts = google_contacts_user.query_contacts("john")
+contacts = google_contacts_user.query_contacts("joe@example.com")
+
+# Get all contacts modified after a certain time
+contacts = google_contacts_user.contacts_updated_min(time_you_last_synced)
+
+```
+
+## Modifying contacts
+
+You can make changes to a contact by calling the `prep_changes` method and passing in a hash with your changes, e.g.:
+
+```
+contact.prep_changes(
+	given_name: 'John',
+	emails: [
+  	{ address: 'john@example.com', primary: true, rel: 'home' },
+    { address: 'johnwork@example.com', primary: false, rel: 'work' },
+   ]
+)
+```
+
+At that point if you call `contact.given_name` it will still return its old value (unlike ActiveRecord objects). However, you can commit the changes to Google when you're ready by calling `contact.create_or_update()`. It will raise an error if the create/update API call fails.
+
+## Creating contacts
+
+You can create a new contact like this:
+
+```
+# Create empty contact associated with the API auth user
+contact = GoogleContactsApi::Contact.new(nil, nil, google_contacts_user.api)
+
+# Prep changes to its fields
+contact.prep_changes(given_name: 'John', family_name: 'Doe')
+
+# Send the API request to crate the contact.
+contact.create_or_update
+```
+
+## Creating groups and assigning them to contacts
+
+Here's an example of how to create a group and assign it to a contact:
+
+```
+# First see if there is already a group with your title
+current_groups = google_contacts_user.groups
+my_group = current_groups.find { |group| group.title = my_title }
+
+# If there isn't you need to create one
+unless my_group
+  my_group = Group.create(title: my_title)
+end
+
+# Now use prep_add_to_group to add contact to your group if it's not in it already
+
+contact.prep_add_to_group(my_group)
+
+# Now save your contact to Google
+contact.create_or_update
+```
+
+## Batched requests
+
+Google Contacts also offers batch processing for contacts to speed up large numbers of updates by combining them into batches which are single HTTP requests. To make a batched request first call `contact.prep_changes(..)` then call `google_contacts_user.batch_create_or_update` with `contact` and a block that will get executed with the status for that batch item's request once the batch is sent and receives a response. You need to call `google_contacts_user.send_batched_requests` to send the requests if the batch doesn't fill up. Here's an example:
+
+```
+many_contacts.each do |contact|
+  contact.prep_changes(given_name: 'John') # Rename everyone John
+  google_contacts_user.batch_create_or_update do |status|
+    # This block will get called when a batch is completed
+    fail unless status[:code].in?(200, 201)
+  end
+end
+
+# Send request in last batch
+google_contacts_user.send_batched_requests
+```
+
+To delete a contact, call `google_contacts_user.delete(contact.id, contact.etag)`.
+
+
+## Other notes
 
 `ContactSet` and `GroupSet` both implement `Enumberable`.
 

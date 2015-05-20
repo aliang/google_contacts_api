@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<feed xmlns='http://www.w3.org/2005/Atom'
+      xmlns:gContact='http://schemas.google.com/contact/2008'
+      xmlns:gd='http://schemas.google.com/g/2005'
+      xmlns:batch='http://schemas.google.com/gdata/batch'>
+
+  <entry>
+    <batch:id>0</batch:id>
+    <batch:operation type='insert'/>
+    <batch:status code='201' reason='Created'/>
+    <id>http://www.google.com/m8/feeds/contacts/userEmail/base/createContactId</id>
+    <updated>2008-12-10T04:45:03.331Z</updated>
+    <app:edited xmlns:app='http://www.w3.org/2007/app'>2008-12-10T04:45:03.331Z</app:edited>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+              term='http://schemas.google.com/contact/2008#contact'/>
+    <title>John Doe</title>
+    <gd:name>
+      <gd:givenName>John</gd:givenName>
+      <gd:familyName>Doe</gd:familyName>
+    </gd:name>
+    <link rel='http://schemas.google.com/contacts/2008/rel#photo' type='image/*'
+          href='https://www.google.com/m8/feeds/photos/media/userEmail/createContactId'/>
+    <link rel='self' type='application/atom+xml'
+          href='https://www.google.com/m8/feeds/contacts/userEmail/full/createContactId'/>
+    <link rel='edit' type='application/atom+xml'
+          href='https://www.google.com/m8/feeds/contacts/userEmail/full/createContactId'/>
+    <gd:email rel='http://schemas.google.com/g/2005#work' primary='true' address='john@example.com'/>
+  </entry>
+  
+  <entry>
+    <batch:id>1</batch:id>
+    <batch:operation type='update'/>
+    <batch:status code='200' reason='Success'/>
+    <updated>2011-05-11T09:30:00.000Z</updated>
+    <category scheme='http://schemas.google.com/g/2005#kind'
+              term='http://schemas.google.com/contact/2008#contact'/>
+    <title type='text'>Jane Doe</title>
+    <gd:name>
+      <gd:givenName>Jane</gd:givenName>
+      <gd:familyName>Doe</gd:familyName>
+    </gd:name>
+    <content type='text'>Notes</content>
+    <link rel='http://schemas.google.com/contacts/2008/rel#photo' type='image/*'
+          href='https://www.google.com/m8/feeds/photos/media/userEmail/updateContactId'/>
+    <link rel='self' type='application/atom+xml'
+          href='https://www.google.com/m8/feeds/contacts/userEmail/full/updateContactId'/>
+    <link rel='edit' type='application/atom+xml'
+          href='https://www.google.com/m8/feeds/contacts/userEmail/full/updateContactId'/>
+    <gd:phoneNumber rel='http://schemas.google.com/g/2005#other'
+                    primary='true'>456-123-2133</gd:phoneNumber>
+    <gd:extendedProperty name='pet' value='hamster'/>
+    <gContact:groupMembershipInfo deleted='false'
+                                  href='http://www.google.com/m8/feeds/groups/userEmail/base/groupId'/>
+  </entry>
+  
+  <entry>
+    <batch:id>2</batch:id>
+    <batch:operation type='update'/>
+    <batch:status code='500' reason='Internal Server Error'/>    
+  </entry>
+</feed>

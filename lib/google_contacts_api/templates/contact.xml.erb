@@ -1,0 +1,81 @@
+<% if action == :create  %>
+<atom:entry xmlns:atom="http://www.w3.org/2005/Atom"
+            xmlns:gd="http://schemas.google.com/g/2005"
+            xmlns:gContact="http://schemas.google.com/contact/2008">
+    <atom:category scheme="http://schemas.google.com/g/2005#kind"
+                 term="http://schemas.google.com/contact/2008#contact"/>
+<% else %>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:gd="http://schemas.google.com/g/2005"
+       gd:etag=<%= encode(contact[:etag], :attr) %>>
+ <id><%= encode(contact[:id], :text) %></id>
+ <updated><%= encode(contact[:updated], :text) %></updated>
+ <category scheme="http://schemas.google.com/g/2005#kind" term="http://schemas.google.com/contact/2008#contact"/>
+<% end %>
+    <% if contact[:batch_id] %>
+        <batch:id><%= encode(contact[:batch_id], :text) %></batch:id>
+        <batch:operation type=<%= encode(contact[:batch_operation], :attr) %>/>
+    <% end %>
+
+    <gd:name>
+        <%= contact[:name_prefix] ? "<gd:namePrefix>#{ encode(contact[:name_prefix], :text) }</gd:namePrefix>" : '' %>
+        <%= contact[:given_name] ? "<gd:givenName>#{ encode(contact[:given_name], :text) }</gd:givenName>" : '' %>
+        <%= contact[:additional_name] ? "<gd:additionalName>#{ encode(contact[:additional_name], :text) }</gd:additionalName>" : '' %>
+        <%= contact[:family_name] ? "<gd:familyName>#{encode(contact[:family_name], :text)}</gd:familyName>" : '' %>
+        <%= contact[:name_suffix] ? "<gd:nameSuffix>#{encode(contact[:name_suffix], :text)}</gd:nameSuffix>" : '' %>
+    </gd:name>
+
+    <%= contact[:content] ? "<atom:content>#{encode(contact[:content], :text)}</atom:content>" : '' %>
+
+    <% (contact[:emails] || []).each do |email| %>
+      <gd:email
+                <%= email[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ email[:rel] }\"" : '' %>
+                <%= email[:label] ? "label=#{ encode(email[:label], :attr) }" : '' %>
+                <%= email[:primary] ? 'primary="true"' : '' %>
+                address=<%= encode(email[:address], :attr) %>/>
+    <% end %>
+
+    <% (contact[:phone_numbers] || []).each do |phone| %>
+      <gd:phoneNumber rel="http://schemas.google.com/g/2005#<%= phone[:rel] || 'other' %>"
+                      <%= phone[:primary] ? 'primary="true"' : '' %>
+      ><%= encode(phone[:number], :text) %></gd:phoneNumber>
+    <% end %>
+
+    <% (contact[:addresses] || []).each do |address| %>
+      <gd:structuredPostalAddress <%= address[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ address[:rel] }\"" : '' %>
+             <%= address[:primary] ? 'primary="true"' : '' %>>
+        <gd:city><%= encode(address[:city], :text) %></gd:city>
+        <gd:street><%= encode(address[:street], :text) %></gd:street>
+        <gd:region><%= encode(address[:region], :text) %></gd:region>
+        <gd:postcode><%= encode(address[:postcode], :text) %></gd:postcode>
+        <gd:country><%= encode(address[:country], :text) %></gd:country>
+      </gd:structuredPostalAddress>
+    <% end %>
+
+    <% (contact[:organizations] || []).each do |org| %>
+       <gd:organization <%= org[:rel] ? "rel=\"http://schemas.google.com/g/2005##{ org[:rel] }\"" : '' %>
+                <%= org[:primary] ? 'primary="true"' : '' %>>
+          <gd:orgName><%= encode(org[:org_name], :text) %></gd:orgName>
+          <gd:orgTitle><%= encode(org[:org_title], :text) %></gd:orgTitle>
+       </gd:organization>
+    <% end %>
+
+    <% (contact[:websites] || []).each do |website| %>
+        <gContact:website
+            href=<%= encode(website[:href], :attr) %>
+            rel=<%= encode(website[:rel] ? website[:rel] : 'other', :attr) %>
+            <%= website[:primary] ? 'primary="true"' : '' %>
+        />
+    <% end %>
+
+    <% (contact[:group_memberships] || []).each do |group_membership| %>
+        <gContact:groupMembershipInfo deleted="false" href=<%= encode(group_membership, :attr)  %>/>
+    <% end %>
+    <% (contact[:deleted_group_memberships] || []).each do |deleted_group_membership| %>
+        <gContact:groupMembershipInfo deleted="true" href=<%= encode(deleted_group_membership, :attr)  %>/>
+    <% end %>
+
+<% if action != :create  %>
+</entry>
+<% else %>
+</atom:entry>
+<% end %>

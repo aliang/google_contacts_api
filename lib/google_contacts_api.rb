@@ -9,3 +9,8 @@ require 'google_contacts_api/result'
 require 'google_contacts_api/group'
 require 'google_contacts_api/contact'
 require 'google_contacts_api/version'
+require 'google_contacts_api/xml_util'
+
+module GoogleContactsApi
+  VERSION = "0.3.3"
+end
