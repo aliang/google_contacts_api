@@ -91,7 +91,11 @@ module GoogleContactsApi
 
       response = @api.oauth.get(photo_link)
       if GoogleContactsApi::Api.parse_response_code(response) == 200
-        { etag: photo_link_entry['gd$etag'], content_type: response.headers['content-type'], data: response.body }
+        {
+            etag: photo_link_entry['gd$etag'].gsub('"',''),
+            content_type: response.headers['content-type'],
+            data: response.body
+        }
       end
     end
 
@@ -137,6 +141,7 @@ module GoogleContactsApi
       spouse_rel['$t'] if spouse_rel
     end
 
+    # Return an Array of Hashes representing addresses with formatted metadata.
     def addresses
       format_entities('gd$structuredPostalAddress', :format_address)
     end
@@ -158,38 +163,42 @@ module GoogleContactsApi
     end
 
   private
-    # Return an Array of Hashes representing addresses with formatted metadata.
     def format_entities(key, format_method=:format_entity)
       self[key] ? self[key].map(&method(format_method)) : []
     end
 
     def format_entity(unformatted, default_rel=nil, text_key=nil)
-      formatted = {}
-
-      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
-      unformatted.delete 'primary'
-
-      if unformatted['rel']
-        formatted[:rel] = unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '')
-        unformatted.delete 'rel'
-      elsif default_rel
-        formatted[:rel] = default_rel
-      end
-
-      if text_key
-        formatted[text_key] = unformatted['$t']
-        unformatted.delete '$t'
-      end
-
-      unformatted.each do |key, value|
-        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t'] ? value['$t'] : value
-      end
-
-      formatted
+      attrs = Hash[unformatted.map { |key, value|
+        case key
+        when 'primary'
+          [:primary, value == true || value == 'true']
+        when 'rel'
+          [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
+        when '$t'
+          [text_key || key.underscore.to_sym, value]
+        else
+          [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
+        end
+      }]
+      attrs[:rel] ||= default_rel
+      attrs[:primary] = false if attrs[:primary].nil?
+      attrs
     end
 
     def format_address(unformatted)
-      return format_entity(unformatted, 'work')
+      address = format_entity(unformatted, 'work')
+      address[:street] ||= nil
+      address[:city] ||= nil
+      address[:region] ||= nil
+      address[:postcode] ||= nil
+      address[:country] = format_country(unformatted['gd$country'])
+      address.delete :formatted_address
+      address
+    end
+
+    def format_country(country)
+      return nil unless country
+      country['$t'].nil? || country['$t'] == '' ? country['code'] : country['$t']
     end
 
     def format_phone_number(unformatted)
