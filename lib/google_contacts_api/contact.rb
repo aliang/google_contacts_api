@@ -22,10 +22,15 @@ module GoogleContactsApi
       _link ? _link.href : nil
     end
 
+    # Returns link entry for the photo
+    def photo_link_entry
+      self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#photo" }
+    end
+
     # Returns link for photo
     # (still need authentication to get the photo data, though)
     def photo_link
-      _link = self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#photo" }
+      _link = photo_link_entry
       _link ? _link.href : nil
     end
 
@@ -86,13 +91,14 @@ module GoogleContactsApi
     end
 
     def photo_with_metadata
-      photo_link_entry = self['link'].find { |l| l.rel == 'http://schemas.google.com/contacts/2008/rel#photo' }
-      return nil unless @api && photo_link_entry['gd$etag'] # etag is always specified if actual photo is present
+      # etag is always specified if actual photo is present
+      _link = photo_link_entry
+      return nil unless @api && _link['gd$etag']
 
-      response = @api.oauth.get(photo_link)
+      response = @api.oauth.get(_link.href)
       if GoogleContactsApi::Api.parse_response_code(response) == 200
         {
-            etag: photo_link_entry['gd$etag'].gsub('"',''),
+            etag: _link['gd$etag'].gsub('"',''),
             content_type: response.headers['content-type'],
             data: response.body
         }

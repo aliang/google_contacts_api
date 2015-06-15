@@ -266,6 +266,14 @@ describe "GoogleContactsApi" do
     it "should return the right self link" do
       expect(@contact.self_link).to eq("https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0")
     end
+    it "should return the right photo link entry" do
+      expect(@contact.photo_link_entry).to eq({
+        "rel" => "http://schemas.google.com/contacts/2008/rel#photo",
+        "type" => "image/*",
+        "href" => "https://www.google.com/m8/feeds/photos/media/example%40gmail.com/0",
+        "gd$etag" => "\"dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM.\""
+      })
+    end
     it "should return the right photo link" do
       expect(@contact.photo_link).to eq("https://www.google.com/m8/feeds/photos/media/example%40gmail.com/0")
     end
