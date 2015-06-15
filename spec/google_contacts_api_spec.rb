@@ -289,6 +289,22 @@ describe "GoogleContactsApi" do
       expect(@oauth).to receive("get").with(@contact.photo_link)
       @contact.photo
     end
+    it "should fetch a photo with metadata" do
+      @oauth = double("oauth")
+      allow(@oauth).to receive(:get).and_return(Hashie::Mash.new({
+         "body" => "some response",
+         "code" => 200,
+         "headers" => { "content-type" => "image/jpeg" }
+       }))
+      @api = double("api")
+      allow(@api).to receive(:oauth).and_return(@oauth)
+      @contact = GoogleContactsApi::Contact.new(@contact_json_hash, nil, @api)
+      expect(@oauth).to receive("get").with(@contact.photo_link)
+      expect(@contact.photo_with_metadata).to eq( { data: 'some response',
+                                                    etag: 'dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM.',
+                                                    content_type: 'image/jpeg'
+                                                  } )
+    end
     # TODO: there isn't any phone number in here
     pending "should return all phone numbers"
     it "should return all e-mail addresses" do
@@ -331,6 +347,9 @@ describe "GoogleContactsApi" do
             'gd$familyName' => { '$t' => 'Doe' },
             'gd$fullName' => { '$t' => 'John Doe' }
           },
+          'gContact$birthday' => {
+            'when' => '1988-05-12'
+          },
           'gContact$relation' => [ { '$t' => 'Jane', 'rel' => 'spouse' } ],
           'gd$structuredPostalAddress' => [
             {
@@ -343,12 +362,11 @@ describe "GoogleContactsApi" do
             },
             {
               'rel' => 'http://schemas.google.com/g/2005#home',
+              'primary' => 'true',
               'gd$country' => { '$t' => 'United States of America' },
               'gd$formattedAddress' => { '$t' => "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America" },
               'gd$city' => { '$t' => 'Anywhere' },
-              'gd$street' => { '$t' => '123 Far Ln.' },
-              'gd$region' => { '$t' => 'MO' },
-              'gd$postcode' => { '$t' => '67891' }
+              'gd$street' => { '$t' => '123 Far Ln.' }
             }
           ],
           'gd$email' => [
@@ -363,6 +381,13 @@ describe "GoogleContactsApi" do
               'primary' => 'true',
               '$t' => '(123) 334-5158',
               'rel' => 'http://schemas.google.com/g/2005#mobile'
+            }
+          ],
+          'gd$organization' => [
+            {
+              'gd$orgTitle' => { '$t' => 'Worker Person' },
+              'gd$orgName' => { '$t' => 'Example, Inc' },
+              'rel' => 'http://schemas.google.com/g/2005#other'
             }
           ]
         )
@@ -399,29 +424,23 @@ describe "GoogleContactsApi" do
         expect(@partly_empty.spouse).to be_nil
         expect(@contact_v3.spouse).to eq('Jane')
       end
+
+      it 'has birthday' do
+        expect(@empty.birthday).to be_nil
+        expect(@contact_v3.birthday).to eq({ year: 1988, month: 5, day: 12 })
+
+        contact_birthday_no_year = GoogleContactsApi::Contact.new('gContact$birthday' => { 'when' => '--05-12' })
+        expect(contact_birthday_no_year.birthday).to eq({ year: nil, month: 5, day: 12 })
+      end
       
       it 'has addresses' do
         expect(@empty.addresses).to eq([])
 
         formatted_addresses = [
-          {
-              :rel => 'work',
-              :country => 'United States of America',
-              :formatted_address => "2345 Long Dr. #232\nSomwhere\nIL\n12345\nUnited States of America",
-              :city => 'Somwhere',
-              :street => '2345 Long Dr. #232',
-              :region => 'IL',
-              :postcode => '12345'
-          },
-          {
-              :rel => 'home',
-              :country => 'United States of America',
-              :formatted_address => "123 Far Ln.\nAnywhere\nMO\n67891\nUnited States of America",
-              :city => 'Anywhere',
-              :street => '123 Far Ln.',
-              :region => 'MO',
-              :postcode => '67891'
-          }
+          { rel: 'work', primary: false, country: 'United States of America', city: 'Somwhere', street: '2345 Long Dr. #232',
+            region: 'IL', postcode: '12345' },
+          { rel: 'home', primary: true, country: 'United States of America', city: 'Anywhere', street: '123 Far Ln.',
+            region: nil, postcode: nil }
         ]
         expect(@contact_v3.addresses).to eq(formatted_addresses)
       end
@@ -433,6 +452,20 @@ describe "GoogleContactsApi" do
       it 'has full emails' do
         expect(@empty.emails_full).to eq([])
         expect(@contact_v3.emails_full).to eq([ { :primary => true, :address => 'johnsmith@example.com', :rel => 'other' } ])
+      end
+
+      it 'has organizations' do
+        expect(@empty.organizations).to eq([])
+
+        formatted_organizations = [
+          {
+            org_title: 'Worker Person',
+            org_name: 'Example, Inc',
+            primary: false,
+            rel: 'other'
+          }
+        ]
+        expect(@contact_v3.organizations).to eq(formatted_organizations)
       end
     end
   end

@@ -85,6 +85,20 @@ module GoogleContactsApi
       self["gd$im"] ? self["gd$im"].map { |i| i.address } : []
     end
 
+    def photo_with_metadata
+      photo_link_entry = self['link'].find { |l| l.rel == 'http://schemas.google.com/contacts/2008/rel#photo' }
+      return nil unless @api && photo_link_entry['gd$etag'] # etag is always specified if actual photo is present
+
+      response = @api.oauth.get(photo_link)
+      if GoogleContactsApi::Api.parse_response_code(response) == 200
+        {
+            etag: photo_link_entry['gd$etag'].gsub('"',''),
+            content_type: response.headers['content-type'],
+            data: response.body
+        }
+      end
+    end
+
     # Convenience method to return a nested $t field.
     # If the field doesn't exist, return nil
     def nested_t_field_or_nil(level1, level2)
@@ -110,6 +124,12 @@ module GoogleContactsApi
     def name_suffix
       nested_t_field_or_nil 'gd$name', 'gd$nameSuffix'
     end
+    def birthday
+      if self['gContact$birthday']
+        day, month, year = self['gContact$birthday']['when'].split('-').reverse
+        { year: year == '' ? nil : year.to_i, month: month.to_i, day: day.to_i }
+      end
+    end
 
     def relations
       self['gContact$relation'] ? self['gContact$relation'] : []
@@ -123,46 +143,66 @@ module GoogleContactsApi
 
     # Return an Array of Hashes representing addresses with formatted metadata.
     def addresses
-      self['gd$structuredPostalAddress'] ? self['gd$structuredPostalAddress'].map(&method(:format_address)) : []
+      format_entities('gd$structuredPostalAddress', :format_address)
+    end
+    def organizations
+      format_entities('gd$organization')
+    end
+    def websites
+      format_entities('gContact$website')
     end
 
     # Return an Array of Hashes representing phone numbers with formatted metadata.
     def phone_numbers_full
-      self["gd$phoneNumber"] ? self["gd$phoneNumber"].map(&method(:format_phone_number)) : []
+      format_entities('gd$phoneNumber', :format_phone_number)
     end
 
     # Return an Array of Hashes representing emails with formatted metadata.
     def emails_full
-      self["gd$email"] ? self["gd$email"].map(&method(:format_email)) : []
+      format_entities('gd$email')
     end
 
   private
-    def format_address(unformatted)
-      formatted = {}
-      formatted[:rel] = unformatted['rel'] ? unformatted['rel'].gsub('http://schemas.google.com/g/2005#', '') : 'work'
-      unformatted.delete 'rel'
-      unformatted.each do |key, value|
-        formatted[key.sub('gd$', '').underscore.to_sym] = value['$t']
-      end
-      formatted
+    def format_entities(key, format_method=:format_entity)
+      self[key] ? self[key].map(&method(format_method)) : []
     end
 
-    def format_email_or_phone(unformatted)
-      formatted = {}
-      unformatted.each do |key, value|
-        formatted[key.underscore.to_sym] = value ? value.gsub('http://schemas.google.com/g/2005#', '') : value
-      end
-      formatted[:primary] = unformatted['primary'] ? unformatted['primary'] == 'true' : false
-      formatted
+    def format_entity(unformatted, default_rel=nil, text_key=nil)
+      attrs = Hash[unformatted.map { |key, value|
+        case key
+        when 'primary'
+          [:primary, value == true || value == 'true']
+        when 'rel'
+          [:rel, value.gsub('http://schemas.google.com/g/2005#', '')]
+        when '$t'
+          [text_key || key.underscore.to_sym, value]
+        else
+          [key.sub('gd$', '').underscore.to_sym, value['$t'] ? value['$t'] : value]
+        end
+      }]
+      attrs[:rel] ||= default_rel
+      attrs[:primary] = false if attrs[:primary].nil?
+      attrs
+    end
+
+    def format_address(unformatted)
+      address = format_entity(unformatted, 'work')
+      address[:street] ||= nil
+      address[:city] ||= nil
+      address[:region] ||= nil
+      address[:postcode] ||= nil
+      address[:country] = format_country(unformatted['gd$country'])
+      address.delete :formatted_address
+      address
+    end
+
+    def format_country(country)
+      return nil unless country
+      country['$t'].nil? || country['$t'] == '' ? country['code'] : country['$t']
     end
 
     def format_phone_number(unformatted)
-      unformatted[:number] = unformatted['$t']
-      unformatted.delete '$t'
-      format_email_or_phone unformatted
-    end
-    def format_email(unformatted)
-      format_email_or_phone unformatted
+      format_entity unformatted, nil, :number
     end
   end
 end
