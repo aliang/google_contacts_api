@@ -22,6 +22,10 @@ module GoogleContactsApi
       _link ? _link.href : nil
     end
 
+    def etag
+      self['gd$etag']
+    end
+
     # Returns link entry for the photo
     def photo_link_entry
       self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#photo" }
