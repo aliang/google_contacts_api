@@ -46,7 +46,7 @@ module GoogleContactsApi
     end
     
     def deleted?
-      raise NotImplementedError
+      self.key?('gd$deleted')
     end
     
     def inspect

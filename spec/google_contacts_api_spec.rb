@@ -240,7 +240,10 @@ describe "GoogleContactsApi" do
   end
 
   describe "Result" do
-    # no testing, it's just an implementation detail to inherit
+    it 'supports the deleted? method' do
+      expect(GoogleContactsApi::Result.new('gd$deleted' => {}).deleted?).to eq(true)
+      expect(GoogleContactsApi::Result.new.deleted?).to eq(false)
+    end
   end
 
   describe "Contact" do
