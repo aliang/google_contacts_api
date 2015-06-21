@@ -117,16 +117,16 @@ module GoogleContactsApi
       end
     end
     def given_name
-      nested_t_field_or_nil 'gd$name', 'gd$givenName'
+      nested_field_optional_yomi 'gd$name', 'gd$givenName'
     end
     def family_name
-      nested_t_field_or_nil 'gd$name', 'gd$familyName'
+      nested_field_optional_yomi 'gd$name', 'gd$familyName'
     end
     def full_name
       nested_t_field_or_nil 'gd$name', 'gd$fullName'
     end
     def additional_name
-      nested_t_field_or_nil 'gd$name', 'gd$additionalName'
+      nested_field_optional_yomi 'gd$name', 'gd$additionalName'
     end
     def name_prefix
       nested_t_field_or_nil 'gd$name', 'gd$namePrefix'
@@ -156,7 +156,10 @@ module GoogleContactsApi
       format_entities('gd$structuredPostalAddress', :format_address)
     end
     def organizations
-      format_entities('gd$organization')
+      format_entities('gd$organization').map do |org|
+        org[:org_name] = handle_yomigana(org[:org_name]) if org[:org_name]
+        org
+      end
     end
     def websites
       format_entities('gContact$website')
@@ -190,6 +193,20 @@ module GoogleContactsApi
     end
 
   private
+    def nested_field_optional_yomi(level1, level2)
+      handle_yomigana(self[level1][level2]) if self[level1]
+    end
+
+    # Certain fields allow an optional Japanese yomigana subfield (making it
+    # sometimes be a hash which can cause a bug if you're expecteding a string)
+    # This will normalize the field to a string by either ignoring the yomigana
+    # or using it as the value of the field if it's present
+    def handle_yomigana(name)
+      return name if name.blank?
+      return name if name.is_a?(String)
+      name['$t'] || name['yomi']
+    end
+
     def format_entities(key, format_method=:format_entity)
       self[key] ? self[key].map(&method(format_method)) : []
     end
