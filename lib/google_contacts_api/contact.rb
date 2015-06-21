@@ -168,6 +168,23 @@ module GoogleContactsApi
       format_entities('gd$email')
     end
 
+    def group_membership_info
+      if self['gContact$groupMembershipInfo']
+        self['gContact$groupMembershipInfo'].map(&method(:format_group_membership))
+      else
+        []
+      end
+    end
+    def format_group_membership(membership)
+      { deleted: membership['deleted'] == 'true', href: membership['href'] }
+    end
+    def group_memberships
+      group_membership_info.select { |info| !info[:deleted] }.map { |info| info[:href] }
+    end
+    def deleted_group_memberships
+      group_membership_info.select { |info| info[:deleted] }.map { |info| info[:href] }
+    end
+
   private
     def format_entities(key, format_method=:format_entity)
       self[key] ? self[key].map(&method(format_method)) : []

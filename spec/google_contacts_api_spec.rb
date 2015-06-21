@@ -397,6 +397,16 @@ describe "GoogleContactsApi" do
               'gd$orgName' => { '$t' => 'Example, Inc' },
               'rel' => 'http://schemas.google.com/g/2005#other'
             }
+          ],
+          'gContact$groupMembershipInfo' => [
+            {
+              'deleted' => 'false',
+              'href' => 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'
+            },
+            {
+              'deleted' => 'true',
+              'href' => 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222'
+            }
           ]
         )
       end
@@ -474,6 +484,24 @@ describe "GoogleContactsApi" do
           }
         ]
         expect(@contact_v3.organizations).to eq(formatted_organizations)
+      end
+
+      it 'has group membership info' do
+        expect(@empty.group_membership_info).to eq([])
+
+        group_membership_info = [
+          { deleted: false, href: 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111' },
+          { deleted: true, href: 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222' }
+        ]
+        expect(@contact_v3.group_membership_info).to eq(group_membership_info)
+      end
+
+      it 'has group memberships' do
+        expect(@contact_v3.group_memberships).to eq(['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'])
+      end
+
+      it 'has deleted group memberships' do
+        expect(@contact_v3.deleted_group_memberships).to eq(['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222'])
       end
     end
   end
