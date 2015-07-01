@@ -78,7 +78,7 @@ by jeweler).
 
 ## Copyright
 
-Copyright (c) 2011-14 Alvin Liang (aliang). See LICENSE.txt for further details.
+Copyright (c) 2011-15 Alvin Liang (aliang). See LICENSE.txt for further details.
 
 Some code based on a few bugfixes in lfittl and fraudpointer forks.
 
