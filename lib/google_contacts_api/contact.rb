@@ -117,16 +117,25 @@ module GoogleContactsApi
       end
     end
     def given_name
-      nested_field_optional_yomi 'gd$name', 'gd$givenName'
+      nested_field_yomi_removed 'gd$name', 'gd$givenName'
+    end
+    def given_name_yomi
+      nested_field_yomi_only 'gd$name', 'gd$givenName'
     end
     def family_name
-      nested_field_optional_yomi 'gd$name', 'gd$familyName'
+      nested_field_yomi_removed 'gd$name', 'gd$familyName'
+    end
+    def family_name_yomi
+      nested_field_yomi_only 'gd$name', 'gd$familyName'
     end
     def full_name
       nested_t_field_or_nil 'gd$name', 'gd$fullName'
     end
     def additional_name
-      nested_field_optional_yomi 'gd$name', 'gd$additionalName'
+      nested_field_yomi_removed 'gd$name', 'gd$additionalName'
+    end
+    def additional_name_yomi
+      nested_field_yomi_only 'gd$name', 'gd$additionalName'
     end
     def name_prefix
       nested_t_field_or_nil 'gd$name', 'gd$namePrefix'
@@ -157,7 +166,10 @@ module GoogleContactsApi
     end
     def organizations
       format_entities('gd$organization').map do |org|
-        org[:org_name] = handle_yomigana(org[:org_name]) if org[:org_name]
+        if org[:org_name]
+          org[:org_name_yomi] = org[:org_name]['yomi'] if org[:org_name]['yomi']
+          org[:org_name] = remove_yomigana(org[:org_name])
+        end
         org
       end
     end
@@ -193,18 +205,21 @@ module GoogleContactsApi
     end
 
   private
-    def nested_field_optional_yomi(level1, level2)
-      handle_yomigana(self[level1][level2]) if self[level1]
+    def nested_field_yomi_removed(level1, level2)
+      remove_yomigana(self[level1][level2]) if self[level1]
     end
 
     # Certain fields allow an optional Japanese yomigana subfield (making it
     # sometimes be a hash which can cause a bug if you're expecteding a string)
-    # This will normalize the field to a string by either ignoring the yomigana
-    # or using it as the value of the field if it's present
-    def handle_yomigana(name)
+    # This normalizes the field to a string whether the yomi is present or not
+    def remove_yomigana(name)
       return name if name.blank?
       return name if name.is_a?(String)
-      name['$t'] || name['yomi']
+      name['$t']
+    end
+
+    def nested_field_yomi_only(level1, level2)
+      self[level1][level2]['yomi'] if self[level1]
     end
 
     def format_entities(key, format_method=:format_entity)

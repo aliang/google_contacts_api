@@ -519,15 +519,23 @@ describe "GoogleContactsApi" do
           'rel' => 'http://schemas.google.com/g/2005#other',
           'primary' => 'true',
           'gd$orgName' => {
-            'yomi' => 'Japanese yomigana'
+            'yomi' => 'Yomigana'
           }
         }],
       }
       contact = GoogleContactsApi::Contact.new(contact_params, nil, @api)
+
       expect(contact.given_name).to eq('John')
+      expect(contact.given_name_yomi).to be_nil
+
       expect(contact.additional_name).to eq('Text name')
-      expect(contact.family_name).to eq('Yomi chars only')
-      expect(contact.organizations.first[:org_name]).to eq('Japanese yomigana')
+      expect(contact.additional_name_yomi).to eq('And yomi chars')
+
+      expect(contact.family_name).to be_nil
+      expect(contact.family_name_yomi).to eq('Yomi chars only')
+
+      expect(contact.organizations.first[:org_name]).to be_nil
+      expect(contact.organizations.first[:org_name_yomi]).to eq('Yomigana')
     end
   end
 
