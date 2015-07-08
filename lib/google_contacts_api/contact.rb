@@ -22,6 +22,10 @@ module GoogleContactsApi
       _link ? _link.href : nil
     end
 
+    def etag
+      self['gd$etag']
+    end
+
     # Returns link entry for the photo
     def photo_link_entry
       self["link"].find { |l| l.rel == "http://schemas.google.com/contacts/2008/rel#photo" }
@@ -113,16 +117,25 @@ module GoogleContactsApi
       end
     end
     def given_name
-      nested_t_field_or_nil 'gd$name', 'gd$givenName'
+      nested_field_yomi_removed 'gd$name', 'gd$givenName'
+    end
+    def given_name_yomi
+      nested_field_yomi_only 'gd$name', 'gd$givenName'
     end
     def family_name
-      nested_t_field_or_nil 'gd$name', 'gd$familyName'
+      nested_field_yomi_removed 'gd$name', 'gd$familyName'
+    end
+    def family_name_yomi
+      nested_field_yomi_only 'gd$name', 'gd$familyName'
     end
     def full_name
       nested_t_field_or_nil 'gd$name', 'gd$fullName'
     end
     def additional_name
-      nested_t_field_or_nil 'gd$name', 'gd$additionalName'
+      nested_field_yomi_removed 'gd$name', 'gd$additionalName'
+    end
+    def additional_name_yomi
+      nested_field_yomi_only 'gd$name', 'gd$additionalName'
     end
     def name_prefix
       nested_t_field_or_nil 'gd$name', 'gd$namePrefix'
@@ -152,7 +165,13 @@ module GoogleContactsApi
       format_entities('gd$structuredPostalAddress', :format_address)
     end
     def organizations
-      format_entities('gd$organization')
+      format_entities('gd$organization').map do |org|
+        if org[:org_name]
+          org[:org_name_yomi] = org[:org_name]['yomi'] if org[:org_name]['yomi']
+          org[:org_name] = remove_yomigana(org[:org_name])
+        end
+        org
+      end
     end
     def websites
       format_entities('gContact$website')
@@ -168,7 +187,41 @@ module GoogleContactsApi
       format_entities('gd$email')
     end
 
+    def group_membership_info
+      if self['gContact$groupMembershipInfo']
+        self['gContact$groupMembershipInfo'].map(&method(:format_group_membership))
+      else
+        []
+      end
+    end
+    def format_group_membership(membership)
+      { deleted: membership['deleted'] == 'true', href: membership['href'] }
+    end
+    def group_memberships
+      group_membership_info.select { |info| !info[:deleted] }.map { |info| info[:href] }
+    end
+    def deleted_group_memberships
+      group_membership_info.select { |info| info[:deleted] }.map { |info| info[:href] }
+    end
+
   private
+    def nested_field_yomi_removed(level1, level2)
+      remove_yomigana(self[level1][level2]) if self[level1]
+    end
+
+    # Certain fields allow an optional Japanese yomigana subfield (making it
+    # sometimes be a hash which can cause a bug if you're expecteding a string)
+    # This normalizes the field to a string whether the yomi is present or not
+    def remove_yomigana(name)
+      return name if name.blank?
+      return name if name.is_a?(String)
+      name['$t']
+    end
+
+    def nested_field_yomi_only(level1, level2)
+      self[level1][level2]['yomi'] if self[level1]
+    end
+
     def format_entities(key, format_method=:format_entity)
       self[key] ? self[key].map(&method(format_method)) : []
     end

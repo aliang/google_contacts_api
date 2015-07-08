@@ -240,7 +240,10 @@ describe "GoogleContactsApi" do
   end
 
   describe "Result" do
-    # no testing, it's just an implementation detail to inherit
+    it 'supports the deleted? method' do
+      expect(GoogleContactsApi::Result.new('gd$deleted' => {}).deleted?).to eq(true)
+      expect(GoogleContactsApi::Result.new.deleted?).to eq(false)
+    end
   end
 
   describe "Contact" do
@@ -397,6 +400,16 @@ describe "GoogleContactsApi" do
               'gd$orgName' => { '$t' => 'Example, Inc' },
               'rel' => 'http://schemas.google.com/g/2005#other'
             }
+          ],
+          'gContact$groupMembershipInfo' => [
+            {
+              'deleted' => 'false',
+              'href' => 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'
+            },
+            {
+              'deleted' => 'true',
+              'href' => 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222'
+            }
           ]
         )
       end
@@ -408,13 +421,11 @@ describe "GoogleContactsApi" do
       end
 
       it 'has given_name' do
-        expect(@contact_v3).to receive(:nested_t_field_or_nil).with('gd$name', 'gd$givenName').and_return('val')
-        expect(@contact_v3.given_name).to eq('val')
+        expect(@contact_v3.given_name).to eq('John')
       end
 
       it 'has family_name' do
-        expect(@contact_v3).to receive(:nested_t_field_or_nil).with('gd$name', 'gd$familyName').and_return('val')
-        expect(@contact_v3.family_name).to eq('val')
+        expect(@contact_v3.family_name).to eq('Doe')
       end
 
       it 'has full_name' do
@@ -475,6 +486,56 @@ describe "GoogleContactsApi" do
         ]
         expect(@contact_v3.organizations).to eq(formatted_organizations)
       end
+
+      it 'has group membership info' do
+        expect(@empty.group_membership_info).to eq([])
+
+        group_membership_info = [
+          { deleted: false, href: 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111' },
+          { deleted: true, href: 'http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222' }
+        ]
+        expect(@contact_v3.group_membership_info).to eq(group_membership_info)
+      end
+
+      it 'has group memberships' do
+        expect(@contact_v3.group_memberships).to eq(['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/111'])
+      end
+
+      it 'has deleted group memberships' do
+        expect(@contact_v3.deleted_group_memberships).to eq(['http://www.google.com/m8/feeds/groups/test.user%40gmail.com/base/222'])
+      end
+    end
+
+    # The Google Contacts API (https://developers.google.com/gdata/docs/2.0/elements)
+    # specifies an optional yomi field for orgName, givenName, additionalName and familyName
+    it 'handles Japanese yomigana "yomi" name values' do
+      contact_params = {
+        'gd$name' => {
+          'gd$givenName' => {'$t' => 'John' },
+          'gd$additionalName' => {'$t' => 'Text name', 'yomi' => 'And yomi chars' },
+          'gd$familyName' => { 'yomi' => 'Yomi chars only' },
+        },
+        'gd$organization' => [{
+          'rel' => 'http://schemas.google.com/g/2005#other',
+          'primary' => 'true',
+          'gd$orgName' => {
+            'yomi' => 'Yomigana'
+          }
+        }],
+      }
+      contact = GoogleContactsApi::Contact.new(contact_params, nil, @api)
+
+      expect(contact.given_name).to eq('John')
+      expect(contact.given_name_yomi).to be_nil
+
+      expect(contact.additional_name).to eq('Text name')
+      expect(contact.additional_name_yomi).to eq('And yomi chars')
+
+      expect(contact.family_name).to be_nil
+      expect(contact.family_name_yomi).to eq('Yomi chars only')
+
+      expect(contact.organizations.first[:org_name]).to be_nil
+      expect(contact.organizations.first[:org_name_yomi]).to eq('Yomigana')
     end
   end
 
@@ -500,6 +561,14 @@ describe "GoogleContactsApi" do
     end
     it "should tell me if it's a system group" do
       expect(@group).to be_system_group
+    end
+    it 'tells the system group id or nil if not a system group' do
+      expect(@group).to be_system_group
+      expect(@group.system_group_id).to eq('Contacts')
+
+      @group.delete('gContact$systemGroup')
+      expect(@group).to_not be_system_group
+      expect(@group.system_group_id).to be_nil
     end
     describe ".contacts" do
       before(:each) do
