@@ -117,13 +117,13 @@ module GoogleContactsApi
       end
     end
     def given_name
-      nested_field_yomi_removed 'gd$name', 'gd$givenName'
+      nested_field_name_only 'gd$name', 'gd$givenName'
     end
     def given_name_yomi
       nested_field_yomi_only 'gd$name', 'gd$givenName'
     end
     def family_name
-      nested_field_yomi_removed 'gd$name', 'gd$familyName'
+      nested_field_name_only 'gd$name', 'gd$familyName'
     end
     def family_name_yomi
       nested_field_yomi_only 'gd$name', 'gd$familyName'
@@ -132,7 +132,7 @@ module GoogleContactsApi
       nested_t_field_or_nil 'gd$name', 'gd$fullName'
     end
     def additional_name
-      nested_field_yomi_removed 'gd$name', 'gd$additionalName'
+      nested_field_name_only 'gd$name', 'gd$additionalName'
     end
     def additional_name_yomi
       nested_field_yomi_only 'gd$name', 'gd$additionalName'
@@ -168,7 +168,7 @@ module GoogleContactsApi
       format_entities('gd$organization').map do |org|
         if org[:org_name]
           org[:org_name_yomi] = org[:org_name]['yomi'] if org[:org_name]['yomi']
-          org[:org_name] = remove_yomigana(org[:org_name])
+          org[:org_name] = name_only(org[:org_name])
         end
         org
       end
@@ -205,14 +205,15 @@ module GoogleContactsApi
     end
 
   private
-    def nested_field_yomi_removed(level1, level2)
-      remove_yomigana(self[level1][level2]) if self[level1]
+    def nested_field_name_only(level1, level2)
+      name_only(self[level1][level2]) if self[level1]
     end
 
     # Certain fields allow an optional Japanese yomigana subfield (making it
     # sometimes be a hash which can cause a bug if you're expecteding a string)
     # This normalizes the field to a string whether the yomi is present or not
-    def remove_yomigana(name)
+    # This method also accounts for any other unexpected fields
+    def name_only(name)
       return name if name.blank?
       return name if name.is_a?(String)
       name['$t']
