@@ -606,7 +606,7 @@ describe "GoogleContactsApi" do
     end
     describe 'builder' do
       it 'should build proper xml' do
-        GoogleContactsApi::Builder.new(JSON.parse contact_set_json).to_xml
+        expect(GoogleContactsApi::Builder.new(JSON.parse contact_set_json).to_xml).to eql(contact_set_xml)
         expect(GoogleContactsApi::Builder.new(JSON.parse contact_entry_json).to_xml).to eql(contact_entry_xml)
       end
     end

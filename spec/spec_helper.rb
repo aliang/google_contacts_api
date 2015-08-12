@@ -34,6 +34,10 @@ def contact_set_json
   load_file("contact_set.json")
 end
 
+def contact_set_xml
+  load_file("contact_set.xml")
+end
+
 def group_set_json
   load_file("group_set.json")
 end
