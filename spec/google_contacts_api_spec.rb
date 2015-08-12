@@ -604,5 +604,10 @@ describe "GoogleContactsApi" do
         expect(contacts).to eq("contact set")
       end
     end
+    describe 'builder' do
+      it 'should build proper xml' do
+        puts GoogleContactsApi::Builder.new(JSON.parse contact_set_json).to_xml
+      end
+    end
   end
 end
