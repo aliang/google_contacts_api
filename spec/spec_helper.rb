@@ -1,6 +1,8 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
+require 'rspec/matchers' # req by equivalent-xml custom matcher `be_equivalent_to`
+require 'equivalent-xml'
 require 'json'
 require 'hashie'
 require 'net/http'

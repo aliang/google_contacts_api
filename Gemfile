@@ -14,6 +14,7 @@ group :test, :development do
   gem "simplecov"
   gem "rspec", "~> 3.0"
   gem "rdoc"
+  gem 'equivalent-xml'
 end
 
 group :development do

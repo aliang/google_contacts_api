@@ -605,9 +605,21 @@ describe "GoogleContactsApi" do
       end
     end
     describe 'builder' do
-      it 'should build proper xml' do
-        expect(GoogleContactsApi::Builder.new(JSON.parse contact_set_json).to_xml).to eql(contact_set_xml)
-        expect(GoogleContactsApi::Builder.new(JSON.parse contact_entry_json).to_xml).to eql(contact_entry_xml)
+      subject { GoogleContactsApi::Builder.new(JSON.parse source).to_xml }
+      shared_examples 'proper xml converter' do
+        it 'converts to xml properly' do
+          expect(Nokogiri::XML.parse subject).to be_equivalent_to(Nokogiri::XML.parse expected)
+        end
+      end
+      context 'contact set' do
+        let(:source) { contact_set_json }
+        let(:expected) { contact_set_xml }
+        it_behaves_like 'proper xml converter'
+      end
+      context 'contact entry' do
+        let(:source) { contact_entry_json }
+        let(:expected) { contact_entry_xml }
+        it_behaves_like 'proper xml converter'
       end
     end
   end
