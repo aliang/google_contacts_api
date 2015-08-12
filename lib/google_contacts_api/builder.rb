@@ -17,8 +17,8 @@ module GoogleContactsApi
     private
     def build_node(name, data)
       children, attributes = data.partition { |key, value| value.kind_of?(Hash) || value.kind_of?(Array) }
-      attributes = Hash[attributes].with_indifferent_access
-      @xml.method_missing name, attributes.delete('$t'), attributes do
+      attributes = Hash[attributes.map { |key, value| [format_key(key), value] }]
+      @xml.method_missing format_key(name), attributes.delete(':t'), attributes do
         children.each do |key, value|
           if value.kind_of? Array
             value.each do |v|
@@ -29,6 +29,10 @@ module GoogleContactsApi
           end
         end
       end
+    end
+
+    def format_key(key)
+      key.to_s.gsub('$', ':')
     end
   end
 end
