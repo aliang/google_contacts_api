@@ -22,6 +22,14 @@ def load_file(filename)
   json
 end
 
+def contact_entry_json
+  load_file('contact_entry.json')
+end
+
+def contact_entry_xml
+  load_file('contact_entry.xml')
+end
+
 def contact_set_json
   load_file("contact_set.json")
 end
