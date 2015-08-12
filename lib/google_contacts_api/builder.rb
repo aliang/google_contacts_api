@@ -7,10 +7,7 @@ module GoogleContactsApi
       @builder = Nokogiri::XML::Builder.new data.slice('encoding') do |xml|
         @xml = xml
         data.each_pair do |key, value|
-          if value.kind_of? Hash
-            build_node key, value
-            break
-          end
+          build_node key, value if value.kind_of? Hash
         end
       end
     end
