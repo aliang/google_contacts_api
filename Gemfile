@@ -5,6 +5,7 @@ gem "activesupport"
 gem "i18n"
 gem "json"
 gem "hashie"
+gem 'nokogiri'
 
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
@@ -13,6 +14,7 @@ group :test, :development do
   gem "simplecov"
   gem "rspec", "~> 3.0"
   gem "rdoc"
+  gem 'equivalent-xml'
 end
 
 group :development do

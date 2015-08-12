@@ -1,6 +1,8 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
+require 'rspec/matchers' # req by equivalent-xml custom matcher `be_equivalent_to`
+require 'equivalent-xml'
 require 'json'
 require 'hashie'
 require 'net/http'
@@ -22,8 +24,20 @@ def load_file(filename)
   json
 end
 
+def contact_entry_json
+  load_file('contact_entry.json')
+end
+
+def contact_entry_xml
+  load_file('contact_entry.xml')
+end
+
 def contact_set_json
   load_file("contact_set.json")
+end
+
+def contact_set_xml
+  load_file("contact_set.xml")
 end
 
 def group_set_json
