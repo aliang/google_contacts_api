@@ -80,6 +80,6 @@ by jeweler).
 
 Copyright (c) 2011-15 Alvin Liang (aliang). See LICENSE.txt for further details.
 
-Some code based on a few bugfixes in lfittl and fraudpointer forks.
-
-Support for Google Contacts API version 3 fields by draffensperger.
+* Some code based on a few bugfixes in lfittl and fraudpointer forks.
+* Support for Google Contacts API version 3 fields by draffensperger.
+* Additional specs and empty GroupSet entry fix by Jeiwan.
