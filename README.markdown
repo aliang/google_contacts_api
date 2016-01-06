@@ -38,6 +38,11 @@ group = groups.first
 group.contacts
 # => <GoogleContactsApi::ContactSet: @start_index=1, @items_per_page=100000, @total_results=20>
 
+# creating or deleting a group
+api = GoogleContactsApi::Api.new(oauth_access_token_for_user)
+group = Group.create(api, 'New group')
+group.delete(api)
+
 # contact methods
 contact = contacts.first
 # => <GoogleContactsApi::Contact: Alvin>
@@ -62,7 +67,7 @@ by jeweler).
 * Any missing tests! (using RSpec, please)
 * Read more contact information (structured name, address, ...)
 * Get single contacts and groups
-* Posting/putting/deleting groups, contacts and their photos. This might require XML?
+* Posting/putting/deleting contacts and their photos. This might require XML?
 * Adapter layer for different OAuth libraries? I'm not sure there are any other widely used libraries though
 * Support ClientLogin (maybe not, since Google's old library covers it)
 
