@@ -23,5 +23,28 @@ module GoogleContactsApi
       end
       GoogleContactsApi::GroupSet.new(response.body, @api)
     end
+
+    def create_group(title)
+      response = @api.post('groups/default/full', create_group_xml(title), {},
+                          'Content-Type' => 'application/atom+xml')
+      Group.new(Hashie::Mash.new(JSON.parse(response.body)).entry)
+    end
+
+    def delete_group(group)
+      @api.delete(group.id_path, {}, 'If-Match' => group.etag)
+    end
+
+    private
+
+    def create_group_xml(title)
+      <<-EOS
+      <atom:entry xmlns:gd="http://schemas.google.com/g/2005"
+        xmlns:atom="http://www.w3.org/2005/Atom">
+        <atom:category scheme="http://schemas.google.com/g/2005#kind"
+          term="http://schemas.google.com/contact/2008#group"/>
+        <atom:title type="text">#{title.to_s.encode(xml: :text)}</atom:title>
+      </atom:entry>
+      EOS
+    end
   end
 end

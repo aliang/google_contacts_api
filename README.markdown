@@ -39,9 +39,8 @@ group.contacts
 # => <GoogleContactsApi::ContactSet: @start_index=1, @items_per_page=100000, @total_results=20>
 
 # creating or deleting a group
-api = GoogleContactsApi::Api.new(oauth_access_token_for_user)
-group = Group.create(api, 'New group')
-group.delete(api)
+new_group = google_contacts_user.create_group('New group')
+api.delete_group(new_group)
 
 # contact methods
 contact = contacts.first

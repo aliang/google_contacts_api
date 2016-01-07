@@ -6,6 +6,8 @@ require 'hashie'
 require 'net/http'
 require 'google_contacts_api'
 require 'ostruct'
+require 'rspec/matchers' # needed for equivalent-xml custom matcher `be_equivalent_to`
+require 'equivalent-xml'
 Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f }
 
 puts "Testing version #{GoogleContactsApi::Version::STRING}"
