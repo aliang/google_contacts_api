@@ -24,6 +24,7 @@ module GoogleContactsApi
       GoogleContactsApi::GroupSet.new(response.body, @api)
     end
 
+    # Create and return a group
     def create_group(title)
       response = @api.post('groups/default/full', create_group_xml(title), {},
                           'Content-Type' => 'application/atom+xml')
