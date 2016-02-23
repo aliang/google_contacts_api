@@ -12,14 +12,19 @@ module GoogleContactsApi
       super(source_hash, default, &blk)
     end
 
-    # TODO: Conditional retrieval? There might not be an etag in the
-    # JSON representation, there is in the XML representation
     def etag
+      self['gd$etag']
     end
 
     def id
       _id = self["id"]
       _id ? _id["$t"] : nil
+    end
+
+    # Item path relative to Google contacts URL base for puts/posts/deletes
+    def id_path
+      id.sub('http://', 'https://')
+        .sub(GoogleContactsApi::Api::BASE_URL, '').sub('/base/', '/full/')
     end
 
     # For Contacts, returns the (full) name.

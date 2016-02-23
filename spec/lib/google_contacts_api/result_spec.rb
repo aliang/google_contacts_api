@@ -4,6 +4,7 @@ describe GoogleContactsApi::Result do
       "id" => {
         "$t" => "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/0"
       },
+      "gd$etag" => "\"Rno6fDVSLit7I2A9XRNREEUORAH.\"",
       "updated" => {
         "$t" => "2011-07-07T21:02:42.360Z"
       },
@@ -24,6 +25,18 @@ describe GoogleContactsApi::Result do
   describe "#id" do
     it "returns id parsed from entry" do
       expect(subject.id).to eq "http://www.google.com/m8/feeds/contacts/example%40gmail.com/base/0"
+    end
+  end
+
+  describe "#etag" do
+    it "returns etag parsed from entry" do
+      expect(subject.etag).to eq "\"Rno6fDVSLit7I2A9XRNREEUORAH.\""
+    end
+  end
+
+  describe "#id_path" do
+    it "returns item path relative to the base Google contacts URL" do
+      expect(subject.id_path).to eq "contacts/example%40gmail.com/full/0"
     end
   end
 
