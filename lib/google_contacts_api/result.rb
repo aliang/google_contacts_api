@@ -33,27 +33,27 @@ module GoogleContactsApi
       _title = self["title"]
       _title ? _title["$t"] : nil
     end
-    
+
     def content
       _content = self["content"]
       _content ? _content["$t"] : nil
     end
-    
+
     def updated
       _updated = self["updated"]
       _updated ? DateTime.parse(_updated["$t"]) : nil
     end
-    
+
     # Returns the array of categories, as category is an array for Hashie.
     # There is a scheme and a term.
     def categories
       category
     end
-    
+
     def deleted?
       self.key?('gd$deleted')
     end
-    
+
     def inspect
       "<#{self.class}: #{title}>"
     end
