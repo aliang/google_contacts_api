@@ -2,7 +2,7 @@ module GoogleContactsApi
   class User
     include GoogleContactsApi::Contacts
     include GoogleContactsApi::Groups
-    
+
     attr_reader :api
     def initialize(oauth)
       @api = GoogleContactsApi::Api.new(oauth)
@@ -12,6 +12,11 @@ module GoogleContactsApi
     def contacts(params = {})
       # contacts in this group
       @contacts ||= get_contacts(params)
+    end
+
+    # Return a single contact for this user
+    def contact(params = {})
+      get_contact(params)
     end
 
     # Return the contacts for this user, retrieving them again from the server.

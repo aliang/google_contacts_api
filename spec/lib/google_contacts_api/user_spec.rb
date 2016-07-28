@@ -63,4 +63,11 @@ describe GoogleContactsApi::User do
       expect(contacts).to eq("contact set")
     end
   end
+
+  describe "#contact" do
+    it "passess params to 'get_contacts'" do
+      expect(user).to receive(:get_contact).with(test: :param)
+      user.contact(test: :param)
+    end
+  end
 end

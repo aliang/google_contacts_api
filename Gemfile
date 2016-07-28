@@ -1,7 +1,7 @@
 source "http://rubygems.org"
 # Add dependencies required to use your gem here.
 # Example:
-gem "activesupport"
+gem "activesupport", "~> 4.2.6"
 gem "i18n"
 gem "json"
 gem "hashie"
@@ -21,3 +21,4 @@ group :development do
   gem "jeweler"
   gem "travis-lint"
 end
+

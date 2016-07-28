@@ -6,6 +6,10 @@ module RspecHelpers
     json
   end
 
+  def contact_json
+    load_file("contact.json")
+  end
+
   def contact_set_json
     load_file("contact_set.json")
   end
