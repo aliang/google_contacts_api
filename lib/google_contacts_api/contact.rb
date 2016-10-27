@@ -38,6 +38,18 @@ module GoogleContactsApi
       _link ? _link.href : nil
     end
 
+    def photo_etag
+      photo_link_entry.try(:[], 'gd$etag')
+    end
+
+    #
+    # If a contact does not have a photo, then the photo link element has no gd:etag attribute.
+    # https://developers.google.com/google-apps/contacts/v3/#retrieving_a_contacts_photo
+    #
+    def has_photo?
+      photo_etag != nil
+    end
+
     # Returns binary data for the photo. You can probably
     # use it in a data-uri. This is in PNG format.
     def photo

@@ -24,6 +24,18 @@ describe GoogleContactsApi::Contact do
     end
   end
 
+  describe "#photo_etag" do
+    it "returns correct photo_etag" do
+      expect(subject.photo_etag).to eq("\"dxt2DAEZfCp7ImA-AV4zRxBoPG4UK3owXBM.\"")
+    end
+  end
+
+  describe "#has_photo?" do
+    it "returns true" do
+      expect(subject.has_photo?).to eq(true)
+    end
+  end
+
   describe "#edit_link" do
     it "returns correct edit_link" do
       expect(subject.edit_link).to eq("https://www.google.com/m8/feeds/contacts/example%40gmail.com/full/0")
@@ -129,7 +141,7 @@ describe GoogleContactsApi::Contact do
 
       @partly_empty = GoogleContactsApi::Contact.new(
         'gd$name' => {},
-        'gContact$relation' => []        
+        'gContact$relation' => []
       )
 
       @contact_v3 = GoogleContactsApi::Contact.new(
