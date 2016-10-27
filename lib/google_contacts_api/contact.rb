@@ -38,6 +38,14 @@ module GoogleContactsApi
       _link ? _link.href : nil
     end
 
+    def photo_etag
+      photo_link_entry.try(:[], 'gd$etag')
+    end
+
+    def has_photo?
+      photo_etag != nil
+    end
+
     # Returns binary data for the photo. You can probably
     # use it in a data-uri. This is in PNG format.
     def photo
